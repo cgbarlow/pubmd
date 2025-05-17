@@ -53,11 +53,15 @@ This HTML-based tool allows users to convert Markdown text into a PDF document. 
 ## Next Steps
 
 - Resolve missing hyphenation in list items
-- Add full screen view, incorporating side-by-side preview
+- Navigation in PDF by markdown heading levels
 - Investigate adding Microsoft Word (.docx) export option
-- Add link to readme on github
 - 'Powered by' to include all external libraries used
+- Add link to readme on github
 - Create bash and powershell versions
+
+## Future Considerations
+
+- Add full screen view, incorporating side-by-side preview, markdown syntax view
 
 ## Changelog (v3.8)
 

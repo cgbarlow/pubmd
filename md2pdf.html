@@ -538,8 +538,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const dpi = 96;
         const a4WidthInPx = Math.floor(210 * dpi / 25.4);
-        const marginInPx = Math.floor(10 * dpi / 25.4);
-        const contentWidthInPx = a4WidthInPx - (2 * marginInPx);
+        const marginInPxPdf = Math.floor(10 * dpi / 25.4); // Renamed to avoid conflict in html2canvas.onclone
+        const contentWidthInPx = a4WidthInPx - (2 * marginInPxPdf);
 
         renderArea.style.width = contentWidthInPx + 'px';
         renderArea.style.fontSize = '12pt';
@@ -631,8 +631,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
             const dpi = 96;
-            const marginInPx = Math.floor(10 * dpi / 25.4);
-            const contentWidthInPx = Math.floor((210 - 20) * dpi / 25.4);
+            const marginInPx = Math.floor(10 * dpi / 25.4); // This is the margin for pdf.html()
+            const contentWidthForCanvas = Math.floor((210 - 20) * dpi / 25.4); // This is for html2canvas width
 
             await pdf.html(sourceElementForPdf, {
                 callback: function (doc) {
@@ -649,51 +649,54 @@ document.addEventListener('DOMContentLoaded', () => {
                     logging: true,
                     backgroundColor: '#ffffff',
                     dpi: dpi,
-                    width: contentWidthInPx,
-                    windowWidth: contentWidthInPx,
+                    width: contentWidthForCanvas,
+                    windowWidth: contentWidthForCanvas,
                     onclone: (clonedDoc, clonedEl) => {
                         console.log('html2canvas.onclone fired. Applying styles for PDF.');
                         
                         const style = clonedDoc.createElement('style');
-                        const selectedPdfFontForCSS = selectedPdfFontName; // Already in scope
+                        // selectedPdfFontName is available from the outer scope
                         style.textContent = `
                             ul, ol { 
                                 list-style: none !important; 
                                 padding-left: 20pt !important; /* Maintain indentation */
                                 margin-left: 0 !important; 
                             }
-                            /* Updated bullet that is kept **inside** the <li> box */
-                            ul li::before {
-                                content: "-" !important;             /* plain dash plus normal space */
-                                position: absolute !important;
-                                left: 0; top: 0;
-                                font-family: "${selectedPdfFontForCSS}" !important;
-                                line-height: 1.2;
-                            }
-                            ol {
-                                counter-reset: list-item-counter !important;
-                            }
-                            ol li::before {
-                                content: counter(list-item-counter) ".\\00a0" !important; /* Number + dot + nbsp */
-                                counter-increment: list-item-counter !important;
-                                font-family: "${selectedPdfFontForCSS}" !important;
-                                display: inline-block;
-                                width: 2em; 
-                                text-align: left;
-                                margin-left: -2em; 
-                            }
                             li {
-                                position: relative !important;
-                                padding-left: 1.1em !important;      /* room for the dash */
+                                /* position: relative !important; /* This is now set by the addRealMarkers script */
+                                /* padding-left: 1.1em !important; /* Space for old ::before, new script handles its own spacing */
                                 margin-bottom: 5px !important;       /* preserved from original li style */
                             }
                         `;
                         clonedDoc.head.appendChild(style);
 
+                        // New function to add real markers for lists in PDF
+                        (function addRealMarkers(root, font) {
+                          root.querySelectorAll('ul, ol').forEach(list => {
+                            const ordered = list.tagName === 'OL';
+                            let counter = Number(list.getAttribute('start')) || 1;
+                            list.style.listStyle = 'none';                // hide native bullets
+                            list.querySelectorAll(':scope > li').forEach(li => {
+                              // skip if we've already added one (important when print-preview regenerates)
+                              if (li.dataset.markerStamped) return;
+                              li.dataset.markerStamped = 'true';
+
+                              const span = root.ownerDocument.createElement('span');
+                              span.textContent = ordered ? `${counter++}. ` : '– ';   // en-dash + NBSP
+                              span.style.fontFamily = font;
+                              span.style.display = 'inline-block';
+                              span.style.width = '1.4em';                // keeps text aligned
+                              span.style.marginLeft = '-1.4em';
+                              li.style.position = 'relative';            // makes negative margin safe
+                              li.insertBefore(span, li.firstChild);
+                            });
+                          });
+                        })(clonedEl, selectedFontFamilyCSS); // Pass selectedFontFamilyCSS here
+
                         clonedEl.style.setProperty('background-color', 'white', 'important');
                         clonedEl.style.setProperty('color', 'black', 'important');
                         clonedEl.style.setProperty('font-family', selectedFontFamilyCSS, 'important');
-                        clonedEl.style.setProperty('width', contentWidthInPx + 'px', 'important');
+                        clonedEl.style.setProperty('width', contentWidthForCanvas + 'px', 'important');
                         clonedEl.style.setProperty('box-sizing', 'border-box', 'important');
 
                         const allDescendants = clonedEl.querySelectorAll('*');
@@ -702,7 +705,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             el.style.setProperty('font-family', selectedFontFamilyCSS, 'important');
                             el.style.setProperty('color', 'black', 'important');
                             // Then specific background overrides
-                            if (!el.matches('pre') && !el.matches('code:not(pre code)') && !el.matches('th') && !el.matches('li::before')) {
+                            if (!el.matches('pre') && !el.matches('code:not(pre code)') && !el.matches('th') && !el.matches('li span')) { // Adjusted to not override marker span
                                el.style.setProperty('background-color', '#ffffff', 'important');
                             }
                         });
@@ -714,7 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         clonedEl.querySelectorAll('em, i').forEach(el => el.style.setProperty('font-style', 'italic', 'important'));
                         clonedEl.querySelectorAll('blockquote').forEach(el => {
                              el.style.setProperty('border-left', '3px solid #ccc', 'important');
-                             el.style.setProperty('background-color', '#f9f9f9', 'important');
+                             el.style.setProperty('background-color', '#f9f9f9', 'important'); // Ensure blockquote background is distinct
                         });
                     }
                 }
