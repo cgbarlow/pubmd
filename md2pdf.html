@@ -402,10 +402,23 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('initializeFonts - fontBase64Serif (first 50):', fontBase64Serif ? fontBase64Serif.substring(0, 50) : 'null');
 
         if (fontBase64Sans && fontBase64Serif) {
+            const fontFaceStyle = document.createElement('style');
+            fontFaceStyle.textContent = `
+              @font-face{
+                font-family:'DejaVu Sans';
+                src:url(data:font/ttf;base64,${fontBase64Sans}) format('truetype');
+              }
+              @font-face{
+                font-family:'DejaVu Serif';
+                src:url(data:font/ttf;base64,${fontBase64Serif}) format('truetype');
+              }`;
+            document.head.appendChild(fontFaceStyle);
+            console.log("DejaVu @font-face rules injected into document head.");
+
             fontsReady = true;
-            console.log("All DejaVu fonts fetched and converted to base64.");
+            console.log("All DejaVu fonts fetched, converted to base64, and @font-face rules applied.");
         } else {
-            console.error("One or more DejaVu fonts failed to be fetched or converted.");
+            console.error("One or more DejaVu fonts failed to be fetched or converted. Cannot inject @font-face.");
             statusMessage.textContent = 'Error loading custom fonts. PDF output may be affected.';
             statusMessage.style.color = 'red';
             fontsReady = false;
@@ -655,44 +668,54 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log('html2canvas.onclone fired. Applying styles for PDF.');
                         
                         const style = clonedDoc.createElement('style');
-                        // selectedPdfFontName is available from the outer scope
                         style.textContent = `
                             ul, ol { 
                                 list-style: none !important; 
-                                padding-left: 20pt !important; /* Maintain indentation */
+                                padding-left: 20pt !important; /* Maintain indentation from original theme */
                                 margin-left: 0 !important; 
                             }
                             li {
-                                /* position: relative !important; /* This is now set by the addRealMarkers script */
-                                /* padding-left: 1.1em !important; /* Space for old ::before, new script handles its own spacing */
                                 margin-bottom: 5px !important;       /* preserved from original li style */
                             }
                         `;
                         clonedDoc.head.appendChild(style);
 
-                        // New function to add real markers for lists in PDF
-                        (function addRealMarkers(root, font) {
-                          root.querySelectorAll('ul, ol').forEach(list => {
-                            const ordered = list.tagName === 'OL';
-                            let counter = Number(list.getAttribute('start')) || 1;
-                            list.style.listStyle = 'none';                // hide native bullets
-                            list.querySelectorAll(':scope > li').forEach(li => {
-                              // skip if we've already added one (important when print-preview regenerates)
-                              if (li.dataset.markerStamped) return;
-                              li.dataset.markerStamped = 'true';
+                        /* === Real-marker stamper for unlimited nesting (Updated) === */
+                        (function stampMarkers(root, font) {
+                          const glyph = ['● ', '○ ', '▪ ', '▫ ', '– ', '● '];   // repeats after 5
 
+                          function walk(listEl, depth) {
+                            const ordered = listEl.tagName === 'OL';
+                            let n = Number(listEl.getAttribute('start')) || 1;
+
+                            listEl.style.listStyle = 'none';    // hide native marker
+
+                            listEl.querySelectorAll(':scope > li').forEach(li => {
+                              if (li.dataset.mk) return;        // avoid double run
+                              li.dataset.mk = '✓';
+
+                              /* marker span */
                               const span = root.ownerDocument.createElement('span');
-                              span.textContent = ordered ? `${counter++}. ` : '– ';   // en-dash + NBSP
+                              span.textContent = ordered ? `${n++}. ` : glyph[depth % glyph.length];
                               span.style.fontFamily = font;
-                              span.style.display = 'inline-block';
-                              span.style.width = '1.4em';                // keeps text aligned
-                              span.style.marginLeft = '-1.4em';
-                              li.style.position = 'relative';            // makes negative margin safe
-                              li.insertBefore(span, li.firstChild);
-                            });
-                          });
-                        })(clonedEl, selectedFontFamilyCSS); // Pass selectedFontFamilyCSS here
+                              span.style.position = 'absolute';
+                              span.style.left = '0'; // Will be offset by li's padding
+                              span.style.lineHeight = '1.2'; // Match typical line height
 
+                              li.style.position = 'relative'; // For absolute positioning of the span
+                              li.style.paddingLeft = '1.6em'; // Make space for the marker
+                              li.insertBefore(span, li.firstChild);
+
+                              /* recurse into direct child UL/OL only */
+                              li.querySelectorAll(':scope > ul, :scope > ol')
+                                .forEach(child => walk(child, depth + 1));
+                            });
+                          }
+
+                          /* run on every top-level list */
+                          root.querySelectorAll('ul,ol').forEach(l => !l.closest('li') && walk(l, 0));
+                        })(clonedEl, selectedFontFamilyCSS);
+                        
                         clonedEl.style.setProperty('background-color', 'white', 'important');
                         clonedEl.style.setProperty('color', 'black', 'important');
                         clonedEl.style.setProperty('font-family', selectedFontFamilyCSS, 'important');
@@ -701,11 +724,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         const allDescendants = clonedEl.querySelectorAll('*');
                         allDescendants.forEach(el => {
-                            // Apply base font to all elements first
                             el.style.setProperty('font-family', selectedFontFamilyCSS, 'important');
                             el.style.setProperty('color', 'black', 'important');
-                            // Then specific background overrides
-                            if (!el.matches('pre') && !el.matches('code:not(pre code)') && !el.matches('th') && !el.matches('li span')) { // Adjusted to not override marker span
+                            if (!el.matches('pre') && !el.matches('code:not(pre code)') && !el.matches('th') && 
+                                !(el.tagName === 'SPAN' && el.parentElement.tagName === 'LI' && el.style.position === 'absolute')) {
                                el.style.setProperty('background-color', '#ffffff', 'important');
                             }
                         });
@@ -717,7 +739,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         clonedEl.querySelectorAll('em, i').forEach(el => el.style.setProperty('font-style', 'italic', 'important'));
                         clonedEl.querySelectorAll('blockquote').forEach(el => {
                              el.style.setProperty('border-left', '3px solid #ccc', 'important');
-                             el.style.setProperty('background-color', '#f9f9f9', 'important'); // Ensure blockquote background is distinct
+                             el.style.setProperty('background-color', '#f9f9f9', 'important'); 
                         });
                     }
                 }
