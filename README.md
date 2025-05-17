@@ -1,5 +1,5 @@
 # Markdown to PDF Converter v3.8
-
+*Atomised version that breaks everything into sub-components for managability during development.*
 ## Description
 
 This HTML-based tool allows users to convert Markdown text into a PDF document. It provides a user-friendly interface with a live Markdown editor, a preview modal, and various customization options. Version 3.8 focuses on improved font handling for PDF output, robust list rendering in PDFs, and enhanced security with DOMPurify.

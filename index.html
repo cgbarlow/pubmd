@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown to PDF Converter v3.8 (CDN DejaVu Fonts)</title>
+
+    <!-- External CSS Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/material-darker.min.css">
+
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Initial Preferences Script (runs early) -->
+    <script src="preferences.js"></script>
+
+    <!-- External JS Libraries (deferred) -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/markdown/markdown.min.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Markdown to PDF Converter v3.8 (CDN DejaVu Fonts)</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <input type="file" id="markdownFile" accept=".md,.txt" style="margin-bottom: 0;">
+            <div class="dark-mode-toggle">
+                <label class="switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label>
+                <span class="toggle-label">Dark Mode</span>
+            </div>
+        </div>
+        <label for="markdownInputInternal" class="label">Markdown Text:</label>
+        <div id="codeMirrorPlaceholder" class="code-mirror-placeholder">Loading Editor...</div>
+        <textarea id="markdownInputInternal"></textarea>
+        <div class="controls-row">
+            <div class="controls-left">
+                <button id="clearButton" class="secondary">Clear Text</button>
+                <div id="editorTogglesContainer">
+                    
+                </div>
+            </div>
+            <button id="convertToPdfButton" class="primary" disabled>Initializing...</button>
+        </div>
+        <div id="statusMessage">&nbsp;</div>
+    </div>
+
+    <div id="previewModalOverlay">
+        <div id="previewModal">
+            <div id="previewModalHeader"><h2>PDF Preview</h2></div>
+            <div id="previewModalContent"></div>
+            <div id="previewModalFilename">
+                <label for="fileNameInputModal">Filename:</label>
+                <input type="text" id="fileNameInputModal" value="md2pdf_v3.8.pdf">
+            </div>
+            <div id="previewModalActions">
+                <div class="font-toggle"> 
+                    <label class="switch"><input type="checkbox" id="fontToggle"><span class="slider"></span></label>
+                    <span class="toggle-label">Serif Font</span>
+                </div>
+                <div class="action-buttons"> 
+                    <button id="cancelModalButton" class="secondary">Cancel</button>
+                    <button id="savePdfFromModalButton" class="primary">Save PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="renderArea"></div>
+
+    <div class="footer">
+        <p>Powered by marked.js, html2canvas, jsPDF, CodeMirror, and Mermaid.</p>
+        <p>Discover more widgets at <a href="https://cgee.nz/widgets" target="_blank">Chris Barlow's Widget Workshop</a>!</p>
+    </div>
+
+    <!-- Main Application Script (deferred) -->
+    <script src="script.js" defer></script>
+</body>
+</html>
