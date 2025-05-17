@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown to PDF Converter v3.8 (CDN DejaVu Fonts)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/material-darker.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            margin: 0; padding: 20px; background-color: #f0f2f5; color: #1c1e21;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.preload .slider, body.preload .slider:before { transition: none !important; }
+        html.dark-mode body { background-color: #18191a; color: #e4e6eb; }
+
+        .container {
+            background-color: #ffffff; padding: 30px; border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); width: 100%; max-width: 800px;
+            box-sizing: border-box; transition: background-color 0.3s;
+        }
+        html.dark-mode .container { background-color: #242526; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
+
+        h1 { color: #0a66c2; text-align: center; margin-bottom: 30px; font-size: 2em; transition: color 0.3s; }
+        html.dark-mode h1 { color: #58a6ff; }
+
+        .label { display: block; font-weight: 600; margin-bottom: 8px; color: #333; font-size: 1.1em; transition: color 0.3s; }
+        html.dark-mode .label { color: #dadce1; }
+
+        textarea#markdownInputInternal { display: none; }
+        .code-mirror-placeholder {
+            min-height: 400px; border: 1px solid #ccd0d5; border-radius: 6px; margin-bottom: 20px;
+            background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;
+            color: #6c757d; font-style: italic; box-sizing: border-box;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+        html.dark-mode .code-mirror-placeholder { background-color: #3a3b3c; border-color: #555; color: #adb5bd; }
+
+        .CodeMirror {
+            border: 1px solid #ccd0d5; border-radius: 6px; min-height: 400px; font-size: 1em;
+            line-height: 1.5; font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            margin-bottom: 20px; opacity: 0; /* Initial opacity for transition */
+            transition: border-color 0.3s, opacity 0.2s ease-in-out;
+        }
+        html.dark-mode .CodeMirror.cm-s-material-darker {
+            border-color: #555 !important; background-color: #1E1E1E !important; color: #D4D4D4 !important;
+        }
+        html.dark-mode .CodeMirror.cm-s-material-darker .CodeMirror-gutters {
+            background-color: #1E1E1E !important; border-right: 1px solid #444 !important; color: #858585 !important;
+        }
+        html.dark-mode .CodeMirror.cm-s-material-darker .cm-header { color: #569CD6 !important; font-weight: bold !important; }
+
+
+        input[type="file"] {
+            display: block; padding: 10px; border: 1px solid #ccd0d5; border-radius: 6px;
+            cursor: pointer; margin: 0 0 30px 0; transition: border-color 0.3s, background-color 0.3s;
+        }
+        html.dark-mode input[type="file"] { background-color: #3a3b3c; border-color: #555; color: #e4e6eb; }
+
+        .controls-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        .controls-left { display: flex; align-items: center; gap: 15px; }
+        #editorTogglesContainer { display: flex; align-items: center; gap: 15px; opacity: 0; transition: opacity 0.3s ease-in-out 0.1s; }
+
+        input[type="file"]::file-selector-button, button.secondary {
+            border: none; background: #0a66c2; padding: 8px 12px; border-radius: 4px; color: #fff;
+            cursor: pointer; transition: background-color .2s ease-in-out; font-family: inherit;
+        }
+        html.dark-mode input[type="file"]::file-selector-button,
+        html.dark-mode button.secondary { background: #3081d2; color: #e4e6eb; }
+
+        button.primary {
+            background-color: #0a66c2; color: white; border: none; padding: 12px 25px;
+            border-radius: 6px; font-size: 1em; font-weight: 600; cursor: pointer;
+            transition: background-color 0.2s ease-in-out; font-family: inherit;
+        }
+        html.dark-mode button.primary { background-color: #3081d2; color: #e4e6eb; }
+        button:disabled { background-color: #cccccc; color: #666666; cursor: not-allowed; }
+        html.dark-mode button:disabled { background-color: #404040; color: #888888; }
+
+        #statusMessage { text-align:center; margin-top:15px; font-weight:bold; min-height: 1.2em; line-height: 1.2em; }
+        .footer { text-align: center; margin-top: 30px; font-size: 0.9em; color: #606770; transition: color 0.3s; }
+        html.dark-mode .footer { color: #b0b3b8; }
+        .footer a { color: #0a66c2; text-decoration: none; transition: color 0.3s; }
+        html.dark-mode .footer a { color: #58a6ff; }
+
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccd0d5; transition: .2s; border-radius: 24px; }
+        html.dark-mode .slider { background-color: #555; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .2s; border-radius: 50%; }
+        input:checked + .slider { background-color: #0a66c2; }
+        html.dark-mode input:checked + .slider { background-color: #3081d2; }
+        input:checked + .slider:before { transform: translateX(26px); }
+        .toggle-label { font-size: 0.9em; color: #666; white-space: nowrap; transition: color 0.3s; margin-left: 5px; vertical-align: middle;}
+        html.dark-mode .toggle-label { color: #b0b3b8; }
+        .font-toggle, .dark-mode-toggle { display: flex; align-items: center; }
+
+
+        .mermaid svg { max-width: 100%; height: auto; }
+
+        #renderArea {
+            position: absolute; left: -9999px; top: 0; visibility: hidden;
+            padding: 0; box-sizing: border-box;
+            /* font-family will be set by JS */
+            color: black; background-color: white;
+            font-size: 12pt; overflow-wrap: break-word;
+        }
+        #renderArea h1, #renderArea h2, #renderArea h3, #renderArea h4, #renderArea h5, #renderArea h6 { color: black; text-align: left; overflow-wrap: break-word;}
+        #renderArea h1 { font-size: 24pt; margin-bottom: 12pt;}
+        #renderArea h2 { font-size: 18pt; margin-bottom: 10pt;}
+        #renderArea h3 { font-size: 14pt; margin-bottom: 8pt;}
+        #renderArea p { font-size: 12pt; line-height: 1.5; margin-bottom: 10pt; color: black; overflow-wrap: break-word; }
+        #renderArea ul, #renderArea ol { margin-bottom: 10pt; padding-left: 20pt; color: black; } /* Standard list styling */
+        #renderArea li { font-size: 12pt; margin-bottom: 5pt; color: black; overflow-wrap: break-word; } /* Standard li styling */
+        #renderArea strong, #renderArea b { color: black; font-weight: bold; }
+        #renderArea em, #renderArea i { color: black; font-style: italic; }
+        #renderArea pre {
+            background-color: #f5f5f5; border: 1px solid #ccc; padding: 10px; border-radius: 4px;
+            overflow-x: auto; font-family: 'Courier New', Courier, monospace; font-size: 10pt; color: black;
+            white-space: pre-wrap; word-wrap: break-word;
+        }
+        #renderArea code {
+            font-family: 'Courier New', Courier, monospace; background-color: #f0f0f0;
+            padding: 2px 4px; border-radius: 3px; font-size: 0.9em; color: black;
+            word-break: break-all; overflow-wrap: break-word;
+        }
+        #renderArea pre code { background-color: transparent; padding: 0; border-radius: 0; font-size: 1em; }
+        #renderArea blockquote { border-left: 3px solid #ccc; padding-left: 10px; margin-left: 0; font-style: italic; color: black; overflow-wrap: break-word; }
+        #renderArea table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
+        #renderArea th, #renderArea td { border: 1px solid #ddd; padding: 8px; text-align: left; color: black; overflow-wrap: break-word; }
+        #renderArea th { background-color: #f2f2f2; }
+        #renderArea img { max-width: 100%; height: auto; display: block; margin: 10px 0; }
+
+        #previewModalOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5); z-index: 1000;
+            justify-content: center; align-items: center;
+        }
+        #previewModal {
+            background-color: white; color: black;
+            padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%; max-width: 700px;
+            max-height: 90vh; display: flex; flex-direction: column;
+        }
+        #previewModalHeader { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        #previewModalHeader h2 { margin: 0; font-size: 1.5em; }
+        #previewModalContent {
+            overflow-y: auto; flex-grow: 1;
+            border: 1px solid #ccc; padding: 15px;
+            /* font-family will be set by JS */ font-size: 12pt;
+            background-color: white; color: black;
+        }
+        #previewModalContent h1, #previewModalContent h2, #previewModalContent h3 { color: black; }
+        #previewModalContent p, #previewModalContent li { color: black; } 
+        #previewModalContent ul, #previewModalContent ol { padding-left: 20pt; }
+
+
+        #previewModalContent strong, #previewModalContent b { font-weight: bold; color: black; }
+        #previewModalContent em, #previewModalContent i { font-style: italic; color: black; }
+        #previewModalContent pre { background-color: #f5f5f5; border: 1px solid #ccc; padding: 10px; color: black; }
+        #previewModalContent code { background-color: #f0f0f0; padding: 2px 4px; color: black; }
+        #previewModalContent pre code { background-color: transparent; }
+        #previewModalContent blockquote { border-left: 3px solid #ccc; padding-left: 10px; color: #555; }
+        #previewModalContent table { border-collapse: collapse; width: 100%; }
+        #previewModalContent th, #previewModalContent td { border: 1px solid #ddd; padding: 8px; color: black; }
+        #previewModalContent th { background-color: #f2f2f2; }
+        #previewModalContent .mermaid svg { max-width: 100%; height: auto; }
+
+        #previewModalFilename { margin-top: 20px; }
+        #previewModalFilename label { display: block; margin-bottom: 5px; font-weight: bold; }
+        #fileNameInputModal { width: calc(100% - 22px); padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+
+        #previewModalActions {
+            margin-top: 20px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        #previewModalActions .action-buttons { 
+            display: flex;
+            gap: 10px;
+        }
+        #previewModalActions button { 
+             padding: 10px 20px;
+        }
+        #previewModalActions .font-toggle {
+            margin-right: auto; 
+        }
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/markdown/markdown.min.js" defer></script>
+</head>
+<body>
+    <script>
+        (function() {
+            try {
+                const darkModePreference = localStorage.getItem('darkMode');
+                if (darkModePreference === 'enabled') document.documentElement.classList.add('dark-mode');
+                document.body.classList.add('preload');
+            } catch (e) { console.error('[Inline Script] Error applying initial preferences:', e); }
+        })();
+    </script>
+    <div class="container">
+        <h1>Markdown to PDF Converter v3.8 (CDN DejaVu Fonts)</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <input type="file" id="markdownFile" accept=".md,.txt" style="margin-bottom: 0;">
+            <div class="dark-mode-toggle">
+                <label class="switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label>
+                <span class="toggle-label">Dark Mode</span>
+            </div>
+        </div>
+        <label for="markdownInputInternal" class="label">Markdown Text:</label>
+        <div id="codeMirrorPlaceholder" class="code-mirror-placeholder">Loading Editor...</div>
+        <textarea id="markdownInputInternal"># Test Markdown Document
+
+This is a test document to verify our markdown and mermaid implementation.
+
+## Features Being Tested
+
+1.  **Basic Markdown**
+    -   Headers
+    -   Lists
+    -   **Bold** and *italic* text
+    -   [Links](#)
+    -   Code blocks
+
+## Code Example
+
+```typescript
+function hello(name: string) {
+  console.log(`Hello, ${name}!`);
+}
+```
+
+## Mermaid Diagram Test
+
+```mermaid
+graph TD
+    A[Start] -->|Initialize| B(Load Config)
+    B --> C{Check Type}
+    C -->|Markdown| D[Process MD]
+    C -->|Regular| E[Process Text]
+    D --> F[Display Result]
+    E --> F
+```
+
+## Tables
+
+| Feature    | Status |
+| :--------- | :----- |
+| Markdown   | ✅     |
+| Mermaid    | ✅     |
+| Dark Mode  | ✅     |
+
+## Task Lists
+
+-   [x] Implement markdown support
+-   [x] Add mermaid diagrams
+-   [x] Support dark mode
+
+> This is a quote
+> This is another quote</textarea>
+        <div class="controls-row">
+            <div class="controls-left">
+                <button id="clearButton" class="secondary">Clear Text</button>
+                <div id="editorTogglesContainer">
+                    
+                </div>
+            </div>
+            <button id="convertToPdfButton" class="primary" disabled>Initializing...</button>
+        </div>
+        <div id="statusMessage">&nbsp;</div>
+    </div>
+
+    <div id="previewModalOverlay">
+        <div id="previewModal">
+            <div id="previewModalHeader"><h2>PDF Preview</h2></div>
+            <div id="previewModalContent"></div>
+            <div id="previewModalFilename">
+                <label for="fileNameInputModal">Filename:</label>
+                <input type="text" id="fileNameInputModal" value="md2pdf_v3.8.pdf">
+            </div>
+            <div id="previewModalActions">
+                <div class="font-toggle"> 
+                    <label class="switch"><input type="checkbox" id="fontToggle"><span class="slider"></span></label>
+                    <span class="toggle-label">Serif Font</span>
+                </div>
+                <div class="action-buttons"> 
+                    <button id="cancelModalButton" class="secondary">Cancel</button>
+                    <button id="savePdfFromModalButton" class="primary">Save PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="renderArea"></div>
+
+    <div class="footer">
+        <p>Powered by marked.js, html2canvas, jsPDF, CodeMirror, and Mermaid.</p>
+        <p>Discover more widgets at <a href="https://cgee.nz/widgets" target="_blank">Chris Barlow's Widget Workshop</a>!</p>
+    </div>
+
+    <script>
+        let markdownEditor;
+        function setPreference(name, value) { try { localStorage.setItem(name, value); } catch (e) { console.error(e); } }
+        function getPreference(name) { try { return localStorage.getItem(name); } catch (e) { console.error(e); return null; } }
+
+        const DEJAVU_SANS_URL = 'https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSans.ttf';
+        const DEJAVU_SERIF_URL = 'https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSerif.ttf';
+        const DEJAVU_SANS_VFS_NAME = 'DejaVuSans.ttf';
+        const DEJAVU_SERIF_VFS_NAME = 'DejaVuSerif.ttf';
+        const DEJAVU_SANS_PDF_NAME = 'DejaVuSans'; // Name for jsPDF registration
+        const DEJAVU_SERIF_PDF_NAME = 'DejaVuSerif'; // Name for jsPDF registration
+
+        let libsReady = false;
+        let fontsReady = false;
+document.addEventListener('DOMContentLoaded', () => {
+    const markdownInputTextArea = document.getElementById('markdownInputInternal');
+    const codeMirrorPlaceholder = document.getElementById('codeMirrorPlaceholder');
+    const editorTogglesContainer = document.getElementById('editorTogglesContainer');
+    const convertToPdfButton = document.getElementById('convertToPdfButton');
+    const renderArea = document.getElementById('renderArea');
+    const statusMessage = document.getElementById('statusMessage');
+    const fontToggle = document.getElementById('fontToggle');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const clearButton = document.getElementById('clearButton');
+
+    const previewModalOverlay = document.getElementById('previewModalOverlay');
+    const previewModalContent = document.getElementById('previewModalContent');
+    const fileNameInputModal = document.getElementById('fileNameInputModal');
+    const savePdfFromModalButton = document.getElementById('savePdfFromModalButton');
+    const cancelModalButton = document.getElementById('cancelModalButton');
+
+    const initialDarkMode = getPreference('darkMode') === 'enabled';
+    const initialSerifFont = getPreference('fontPreference') === 'serif';
+    let cmTheme = initialDarkMode ? 'material-darker' : 'default';
+
+    function updateMainButtonState() {
+        if (libsReady && fontsReady) {
+            if (convertToPdfButton) {
+                convertToPdfButton.disabled = false;
+                convertToPdfButton.textContent = 'Preview PDF';
+            }
+            statusMessage.textContent = 'Ready.'; statusMessage.style.color = 'green';
+        } else if (!libsReady) {
+            if (convertToPdfButton) {
+                convertToPdfButton.disabled = true;
+                convertToPdfButton.textContent = 'Libs Missing';
+            }
+            statusMessage.textContent = 'Error: Core libraries missing. Check console.'; statusMessage.style.color = 'red';
+        } else { // Libs ready, but fonts not
+             if (convertToPdfButton) {
+                convertToPdfButton.disabled = true;
+                convertToPdfButton.textContent = 'Loading Fonts...';
+            }
+            statusMessage.textContent = 'Please wait, loading fonts...'; statusMessage.style.color = '#333';
+        }
+    }
+    
+    async function arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+
+    let fontBase64Sans = null;
+    let fontBase64Serif = null;
+
+    async function loadFontAsBase64(fontUrl, pdfFontName) {
+        try {
+            const response = await fetch(fontUrl);
+            if (!response.ok) throw new Error(`Failed to fetch ${fontUrl}: ${response.statusText}`);
+            const fontBlob = await response.arrayBuffer();
+            const fontBase64 = await arrayBufferToBase64(fontBlob);
+            console.log(`${pdfFontName} font fetched and converted to base64 from ${fontUrl}.`);
+            return fontBase64;
+        } catch (error) {
+            console.error(`Error loading font ${pdfFontName} from ${fontUrl}:`, error);
+            statusMessage.textContent = `Error loading font: ${pdfFontName}. PDF generation may have issues.`;
+            statusMessage.style.color = 'red';
+            return null;
+        }
+    }
+
+    async function initializeFonts() {
+        statusMessage.textContent = 'Loading fonts...';
+        fontBase64Sans = await loadFontAsBase64(DEJAVU_SANS_URL, DEJAVU_SANS_PDF_NAME);
+        fontBase64Serif = await loadFontAsBase64(DEJAVU_SERIF_URL, DEJAVU_SERIF_PDF_NAME);
+        console.log('initializeFonts - fontBase64Sans (first 50):', fontBase64Sans ? fontBase64Sans.substring(0, 50) : 'null');
+        console.log('initializeFonts - fontBase64Serif (first 50):', fontBase64Serif ? fontBase64Serif.substring(0, 50) : 'null');
+
+        if (fontBase64Sans && fontBase64Serif) {
+            fontsReady = true;
+            console.log("All DejaVu fonts fetched and converted to base64.");
+        } else {
+            console.error("One or more DejaVu fonts failed to be fetched or converted.");
+            statusMessage.textContent = 'Error loading custom fonts. PDF output may be affected.';
+            statusMessage.style.color = 'red';
+            fontsReady = false;
+        }
+        updateMainButtonState();
+    }
+
+    const updateUIStates = (isDarkModeActive, isSerifFontActive) => {
+        if (isDarkModeActive) {
+            document.documentElement.classList.add('dark-mode');
+            if (darkModeToggle) darkModeToggle.checked = true;
+            if (markdownEditor?.setOption) markdownEditor.setOption("theme", "material-darker");
+        } else {
+            document.documentElement.classList.remove('dark-mode');
+            if (darkModeToggle) darkModeToggle.checked = false;
+            if (markdownEditor?.setOption) markdownEditor.setOption("theme", "default");
+        }
+        if (fontToggle) fontToggle.checked = isSerifFontActive;
+
+        const currentFontFamily = isSerifFontActive ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
+        if (renderArea) renderArea.style.fontFamily = currentFontFamily;
+        if (previewModalContent) previewModalContent.style.fontFamily = currentFontFamily;
+    };
+
+    if (typeof CodeMirror !== 'undefined') {
+         markdownEditor = CodeMirror.fromTextArea(markdownInputTextArea, {
+            mode: 'markdown', lineNumbers: true, lineWrapping: true, theme: cmTheme
+        });
+        if (markdownEditor && markdownEditor.getWrapperElement) { 
+            markdownEditor.getWrapperElement().style.opacity = '1'; 
+        }
+        if (codeMirrorPlaceholder) codeMirrorPlaceholder.style.display = 'none';
+        if (editorTogglesContainer) editorTogglesContainer.style.opacity = '1';
+    } else {
+        console.error("CodeMirror not loaded");
+        if (codeMirrorPlaceholder) codeMirrorPlaceholder.textContent = "CodeMirror failed to load.";
+        markdownInputTextArea.style.display = 'block';
+        markdownEditor = {
+            getValue: () => markdownInputTextArea.value,
+            setValue: (v) => markdownInputTextArea.value = v,
+            focus: () => markdownInputTextArea.focus(),
+            setOption: () => {}
+        };
+        if (editorTogglesContainer) editorTogglesContainer.style.opacity = '1';
+    }
+    
+    updateUIStates(initialDarkMode, initialSerifFont);
+
+    const checkLibsInterval = setInterval(() => {
+        if (typeof window.marked?.parse === 'function' && 
+            typeof window.html2canvas === 'function' &&
+            typeof window.jspdf?.jsPDF === 'function' && 
+            typeof window.mermaid?.render === 'function' &&
+            typeof window.DOMPurify?.sanitize === 'function') { 
+            clearInterval(checkLibsInterval);
+            libsReady = true;
+            console.log("Core libraries ready.");
+            initializeFonts();
+        } else {
+            console.log("Waiting for core libraries...");
+        }
+    }, 100);
+
+    async function prepareContentForPreviewAndPdf() {
+        if (!fontsReady) {
+            statusMessage.textContent = 'Fonts are still loading. Please wait.';
+            statusMessage.style.color = 'orange';
+            return false;
+        }
+        if (convertToPdfButton) {
+            convertToPdfButton.disabled = true;
+            convertToPdfButton.textContent = 'Processing...';
+        }
+        statusMessage.textContent = 'Preparing content...';
+
+        const mdText = markdownEditor.getValue();
+        if (!mdText.trim()) {
+            statusMessage.textContent = 'Please enter some Markdown.';
+            statusMessage.style.color = 'red';
+            if (convertToPdfButton) {
+                convertToPdfButton.disabled = false;
+                convertToPdfButton.textContent = 'Preview PDF';
+            }
+            return false;
+        }
+
+        if (typeof mermaid !== 'undefined') {
+            mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+        }
+        const customRenderer = new marked.Renderer(); // Standard renderer, no list overrides here
+        
+        customRenderer.code = function(code, language) {
+            if (language === 'mermaid') {
+                const codeAsString = String(code || ''); 
+                const id = 'mermaid-' + Date.now() + Math.random().toString(16).slice(2);
+                return `<div class="mermaid-wrapper" style="display: block; text-align: center;"><div class="mermaid" id="${id}" data-mermaid-code="${encodeURIComponent(codeAsString)}">Rendering Mermaid...</div></div>`;
+            }
+            const rawHtml = language
+                ? `<pre><code class="language-${language}">${code}</code></pre>\n`
+                : `<pre><code>${code}</code></pre>\n`;
+            
+            if (typeof DOMPurify !== 'undefined' && typeof DOMPurify.sanitize === 'function') {
+                return DOMPurify.sanitize(rawHtml);
+            } else {
+                console.error("DOMPurify.sanitize is not available. Code block will not be properly sanitized.");
+                const basicEscapedCode = String(code || '');
+                return language
+                    ? `<pre><code class="language-${language}">${basicEscapedCode}</code></pre>\n`
+                    : `<pre><code>${basicEscapedCode}</code></pre>\n`;
+            }
+        };
+
+        if (typeof marked !== 'undefined') {
+             marked.use({ renderer: customRenderer, gfm: true, breaks: true, mangle: false, headerIds: true });
+             renderArea.innerHTML = marked.parse(mdText);
+        } else {
+            renderArea.innerHTML = "Marked.js not loaded.";
+            statusMessage.textContent = "Error: Marked.js library not loaded.";
+            statusMessage.style.color = 'red';
+            if (convertToPdfButton) {
+                convertToPdfButton.disabled = false;
+                convertToPdfButton.textContent = 'Preview PDF';
+            }
+            return false;
+        }
+        
+        const isSerif = fontToggle && fontToggle.checked;
+        const currentFontFamilyCSS = isSerif ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
+        renderArea.style.fontFamily = currentFontFamilyCSS;
+
+        const dpi = 96;
+        const a4WidthInPx = Math.floor(210 * dpi / 25.4);
+        const marginInPx = Math.floor(10 * dpi / 25.4);
+        const contentWidthInPx = a4WidthInPx - (2 * marginInPx);
+
+        renderArea.style.width = contentWidthInPx + 'px';
+        renderArea.style.fontSize = '12pt';
+        renderArea.style.backgroundColor = 'white';
+        renderArea.style.color = 'black';
+
+        const mermaidPlaceholders = Array.from(renderArea.querySelectorAll('div.mermaid[data-mermaid-code]'));
+        if (mermaidPlaceholders.length > 0 && typeof mermaid !== 'undefined') {
+            statusMessage.textContent = `Rendering ${mermaidPlaceholders.length} diagram(s)...`;
+            await Promise.all(mermaidPlaceholders.map(async (ph) => {
+                const mCode = decodeURIComponent(ph.dataset.mermaidCode);
+                try {
+                    const { svg, bindFunctions } = await mermaid.render(ph.id + '-svg', mCode);
+                    ph.innerHTML = svg;
+                    if (bindFunctions) bindFunctions(ph);
+                } catch (e) { ph.innerHTML = `<pre style="color:red">Mermaid Error: ${e.message}</pre>`; console.error(e); }
+            }));
+        }
+
+        const images = Array.from(renderArea.querySelectorAll('img'));
+        await Promise.all(images.filter(img => !img.complete).map(img =>
+            new Promise(resolve => { img.onload = img.onerror = resolve; })
+        ));
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        previewModalContent.style.fontFamily = currentFontFamilyCSS;
+        previewModalContent.innerHTML = renderArea.innerHTML;
+        fileNameInputModal.value = `md2pdf_v3.8_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.pdf`;
+        previewModalOverlay.style.display = 'flex';
+
+        statusMessage.textContent = 'Preview ready.';
+        if (convertToPdfButton) {
+            convertToPdfButton.disabled = false;
+            convertToPdfButton.textContent = 'Update Preview';
+        }
+        return true;
+    }
+
+    if (convertToPdfButton) convertToPdfButton.addEventListener('click', prepareContentForPreviewAndPdf);
+
+    if (cancelModalButton) {
+        cancelModalButton.addEventListener('click', () => {
+            previewModalOverlay.style.display = 'none';
+            renderArea.innerHTML = '';
+            previewModalContent.innerHTML = '';
+            statusMessage.textContent = 'PDF generation cancelled.';
+        });
+    }
+
+    if (savePdfFromModalButton) savePdfFromModalButton.addEventListener('click', async () => {
+        if (!fontsReady || !fontBase64Sans || !fontBase64Serif) {
+            statusMessage.textContent = 'Fonts are not loaded. Cannot generate PDF.';
+            statusMessage.style.color = 'red';
+            console.error('Attempted to save PDF, but fonts are not ready or base64 data is missing.');
+            return;
+        }
+        console.log('Save PDF clicked. Font status:', { fontsReady, fontBase64Sans: fontBase64Sans ? fontBase64Sans.substring(0,30) : null, fontBase64Serif: fontBase64Serif ? fontBase64Serif.substring(0,30) : null });
+        console.log('PDF Font Names:', { sans: DEJAVU_SANS_PDF_NAME, serif: DEJAVU_SERIF_PDF_NAME });
+
+
+        let fileName = fileNameInputModal.value.trim();
+        if (!fileName) fileName = "md2pdf_v3.8.pdf";
+        if (!fileName.toLowerCase().endsWith('.pdf')) fileName += '.pdf';
+
+        savePdfFromModalButton.disabled = true;
+        savePdfFromModalButton.textContent = 'Generating PDF...';
+        statusMessage.textContent = 'Processing PDF... please wait.';
+        statusMessage.style.color = '#333';
+        
+        const sourceElementForPdf = previewModalContent;
+
+        try {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4', hotfixes: ['px_scaling'] });
+
+            pdf.addFileToVFS(DEJAVU_SANS_VFS_NAME, fontBase64Sans);
+            pdf.addFont(DEJAVU_SANS_VFS_NAME, DEJAVU_SANS_PDF_NAME, 'normal');
+            pdf.addFileToVFS(DEJAVU_SERIF_VFS_NAME, fontBase64Serif);
+            pdf.addFont(DEJAVU_SERIF_VFS_NAME, DEJAVU_SERIF_PDF_NAME, 'normal');
+
+            const isSerif = fontToggle && fontToggle.checked;
+            const selectedPdfFontName = isSerif ? DEJAVU_SERIF_PDF_NAME : DEJAVU_SANS_PDF_NAME;
+            const selectedFontFamilyCSS = isSerif ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
+            
+            pdf.setFont(selectedPdfFontName);
+            console.log(`jsPDF font set to: ${selectedPdfFontName}`);
+            console.log(`CSS font-family for html2canvas.onclone: ${selectedFontFamilyCSS}`);
+
+
+            const dpi = 96;
+            const marginInPx = Math.floor(10 * dpi / 25.4);
+            const contentWidthInPx = Math.floor((210 - 20) * dpi / 25.4);
+
+            await pdf.html(sourceElementForPdf, {
+                callback: function (doc) {
+                    doc.save(fileName);
+                    statusMessage.textContent = 'PDF generated successfully: ' + fileName;
+                    statusMessage.style.color = 'green';
+                    previewModalOverlay.style.display = 'none';
+                },
+                margin: [marginInPx, marginInPx, marginInPx, marginInPx],
+                autoPaging: 'text',
+                html2canvas: {
+                    scale: 1,
+                    useCORS: true,
+                    logging: true,
+                    backgroundColor: '#ffffff',
+                    dpi: dpi,
+                    width: contentWidthInPx,
+                    windowWidth: contentWidthInPx,
+                    onclone: (clonedDoc, clonedEl) => {
+                        console.log('html2canvas.onclone fired. Applying styles for PDF.');
+                        
+                        const style = clonedDoc.createElement('style');
+                        const selectedPdfFontForCSS = selectedPdfFontName; // Already in scope
+                        style.textContent = `
+                            ul, ol { 
+                                list-style: none !important; 
+                                padding-left: 20pt !important; /* Maintain indentation */
+                                margin-left: 0 !important; 
+                            }
+                            /* Updated bullet that is kept **inside** the <li> box */
+                            ul li::before {
+                                content: "-" !important;             /* plain dash plus normal space */
+                                position: absolute !important;
+                                left: 0; top: 0;
+                                font-family: "${selectedPdfFontForCSS}" !important;
+                                line-height: 1.2;
+                            }
+                            ol {
+                                counter-reset: list-item-counter !important;
+                            }
+                            ol li::before {
+                                content: counter(list-item-counter) ".\\00a0" !important; /* Number + dot + nbsp */
+                                counter-increment: list-item-counter !important;
+                                font-family: "${selectedPdfFontForCSS}" !important;
+                                display: inline-block;
+                                width: 2em; 
+                                text-align: left;
+                                margin-left: -2em; 
+                            }
+                            li {
+                                position: relative !important;
+                                padding-left: 1.1em !important;      /* room for the dash */
+                                margin-bottom: 5px !important;       /* preserved from original li style */
+                            }
+                        `;
+                        clonedDoc.head.appendChild(style);
+
+                        clonedEl.style.setProperty('background-color', 'white', 'important');
+                        clonedEl.style.setProperty('color', 'black', 'important');
+                        clonedEl.style.setProperty('font-family', selectedFontFamilyCSS, 'important');
+                        clonedEl.style.setProperty('width', contentWidthInPx + 'px', 'important');
+                        clonedEl.style.setProperty('box-sizing', 'border-box', 'important');
+
+                        const allDescendants = clonedEl.querySelectorAll('*');
+                        allDescendants.forEach(el => {
+                            // Apply base font to all elements first
+                            el.style.setProperty('font-family', selectedFontFamilyCSS, 'important');
+                            el.style.setProperty('color', 'black', 'important');
+                            // Then specific background overrides
+                            if (!el.matches('pre') && !el.matches('code:not(pre code)') && !el.matches('th') && !el.matches('li::before')) {
+                               el.style.setProperty('background-color', '#ffffff', 'important');
+                            }
+                        });
+                        clonedEl.querySelectorAll('pre').forEach(el => el.style.setProperty('background-color', '#f5f5f5', 'important'));
+                        clonedEl.querySelectorAll('code:not(pre code)').forEach(el => el.style.setProperty('background-color', '#f0f0f0', 'important'));
+                        clonedEl.querySelectorAll('pre code').forEach(el => el.style.setProperty('background-color', 'transparent', 'important'));
+                        clonedEl.querySelectorAll('th').forEach(el => el.style.setProperty('background-color', '#f2f2f2', 'important'));
+                        clonedEl.querySelectorAll('strong, b').forEach(el => el.style.setProperty('font-weight', 'bold', 'important'));
+                        clonedEl.querySelectorAll('em, i').forEach(el => el.style.setProperty('font-style', 'italic', 'important'));
+                        clonedEl.querySelectorAll('blockquote').forEach(el => {
+                             el.style.setProperty('border-left', '3px solid #ccc', 'important');
+                             el.style.setProperty('background-color', '#f9f9f9', 'important');
+                        });
+                    }
+                }
+            });
+
+        } catch (error) {
+            statusMessage.textContent = 'Error generating PDF: ' + error.message + '.';
+            statusMessage.style.color = 'red';
+            console.error("PDF Generation Error:", error);
+        } finally {
+            savePdfFromModalButton.disabled = false;
+            savePdfFromModalButton.textContent = 'Save PDF';
+        }
+    });
+
+    if (darkModeToggle) darkModeToggle.addEventListener('change', () => {
+        const isChecked = darkModeToggle.checked;
+        setPreference('darkMode', isChecked ? 'enabled' : 'disabled');
+        updateUIStates(isChecked, fontToggle ? fontToggle.checked : false);
+    });
+    
+    if (fontToggle) fontToggle.addEventListener('change', () => {
+        const isChecked = fontToggle.checked;
+        setPreference('fontPreference', isChecked ? 'serif' : 'sans-serif');
+        updateUIStates(darkModeToggle ? darkModeToggle.checked : false, isChecked);
+        if (previewModalOverlay.style.display === 'flex' && fontsReady) {
+            const currentFontFamilyCSS = isChecked ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
+            renderArea.style.fontFamily = currentFontFamilyCSS; 
+            previewModalContent.style.fontFamily = currentFontFamilyCSS;
+        }
+    });
+    
+    if (clearButton) clearButton.addEventListener('click', () => {
+        if(markdownEditor) {
+            markdownEditor.setValue('');
+            setTimeout(() => { markdownEditor.refresh(); markdownEditor.focus(); }, 10); 
+        }
+    });
+
+    const markdownFileInput = document.getElementById('markdownFile');
+    if (markdownFileInput) {
+        markdownFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    if (markdownEditor) {
+                        markdownEditor.setValue(e.target.result);
+                        setTimeout(() => { markdownEditor.refresh(); }, 10); 
+                        statusMessage.textContent = `File "${file.name}" loaded.`;
+                        statusMessage.style.color = 'green';
+                        previewModalContent.innerHTML = ''; 
+                        if (convertToPdfButton && (libsReady && fontsReady)) {
+                           convertToPdfButton.disabled = false;
+                           convertToPdfButton.textContent = 'Preview PDF';
+                        }
+                    }
+                };
+                reader.onerror = () => {
+                    statusMessage.textContent = `Error reading file "${file.name}".`;
+                    statusMessage.style.color = 'red';
+                };
+                reader.readAsText(file);
+            }
+        });
+    }
+});
+
+    </script>
+</body>
+</html>
