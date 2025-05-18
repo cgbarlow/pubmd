@@ -103,5 +103,47 @@
     "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
     "tier": 1,
     "is_directory": false
+  },
+  "/workspaces/pubmd/src": {
+    "key_string": "1D",
+    "norm_path": "/workspaces/pubmd/src",
+    "parent_path": null,
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/src/web": {
+    "key_string": "1Da",
+    "norm_path": "/workspaces/pubmd/src/web",
+    "parent_path": "/workspaces/pubmd/src",
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/src/web/default.md": {
+    "key_string": "1Da1",
+    "norm_path": "/workspaces/pubmd/src/web/default.md",
+    "parent_path": "/workspaces/pubmd/src/web",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/src/web/index.html": {
+    "key_string": "1Da2",
+    "norm_path": "/workspaces/pubmd/src/web/index.html",
+    "parent_path": "/workspaces/pubmd/src/web",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/src/web/script.js": {
+    "key_string": "1Da3",
+    "norm_path": "/workspaces/pubmd/src/web/script.js",
+    "parent_path": "/workspaces/pubmd/src/web",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/src/web/style.css": {
+    "key_string": "1Da4",
+    "norm_path": "/workspaces/pubmd/src/web/style.css",
+    "parent_path": "/workspaces/pubmd/src/web",
+    "tier": 1,
+    "is_directory": false
   }
 }

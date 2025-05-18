@@ -12,6 +12,8 @@ next_phase: "Strategy"
 
 [CODE_ROOT_DIRECTORIES]
 - src
+- ../src
+- packages/core
 
 [DOC_DIRECTORIES]
 - docs

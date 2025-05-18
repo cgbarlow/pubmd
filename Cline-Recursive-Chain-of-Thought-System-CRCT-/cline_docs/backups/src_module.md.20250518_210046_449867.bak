@@ -1,0 +1,16 @@
+---KEY_DEFINITIONS_START---
+Key Definitions:
+1D: /workspaces/pubmd/src
+1Da: /workspaces/pubmd/src/web
+---KEY_DEFINITIONS_END---
+
+last_KEY_edit: Assigned keys: 1D, 1Da
+last_GRID_edit: Initial creation
+
+---GRID_START---
+X 1D 1Da
+1D = ox
+1Da = xo
+---GRID_END---
+
+

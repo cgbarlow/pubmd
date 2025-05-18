@@ -6,8 +6,11 @@ flowchart TB
   linkStyle default stroke:#CCCCCC,stroke-width:1px
 
   %% -- Nodes and Subgraphs --
-  subgraph sg_1B ["1B<br>core"]
-    style sg_1B fill:#282828,stroke:#39FF14,stroke-width:4px
+  subgraph sg_1D ["1D<br>src"]
+    style sg_1D fill:#282828,stroke:#39FF14,stroke-width:4px
+    subgraph sg_1Da ["1Da<br>web"]
+      style sg_1Da fill:#282828,stroke:#39FF14,stroke-width:4px
+    end
   end
 
   %% -- Fallback Node Definitions --
