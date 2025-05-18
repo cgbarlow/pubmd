@@ -3,9 +3,9 @@ n + 1 = (x)
 *This is a systemwide progressive counter where x = number of current response. This must be displayed at the top of every response.(e.g. 1, 2, ...)*
 
 [LAST_ACTION_STATE]
-last_action: "Completed Set-up/Maintenance Phase"
-current_phase: "Set-up/Maintenance"
-next_action: "Phase Complete - User Action Required"
+last_action: "Strategy Step 1: Selected 'Area: @pubmd/core Package' for planning."
+current_phase: "Strategy"
+next_action: "Analyze Dependencies for Selected Area"
 next_phase: "Strategy"
 
 ---
@@ -41,6 +41,9 @@ next_phase: "Strategy"
 - Monitor and manage context window size to avoid exceeding limits and requiring premature handoffs.
 - When updating the HDTA Review Progress Tracker, accurately reflect whether the document's content has been *read and reviewed* in the current session, not just whether the file exists or was created. The status checkboxes should reflect *my* processing of the document's.
 - Paths in `[DOC_DIRECTORIES]` and `[CODE_ROOT_DIRECTORIES]` are relative to the project root (`Cline-Recursive-Chain-of-Thought-System-CRCT-` in this case). Use `../` to go up one directory level.
+- Commands for `dependency_processor.py` must be run from the project root directory (`Cline-Recursive-Chain-of-Thought-System-CRCT-`) to correctly resolve the `cline_utils` module.
+- Ensure template file names are accurate when using `read_file`. `task_template.md` was the correct name, not `task_instruction_template.md`.
+- The `apply_diff` tool is not available in `code` mode. Use `write_to_file` with the full reconstructed content instead for file modifications.
 
 [Character_Definitions]
 

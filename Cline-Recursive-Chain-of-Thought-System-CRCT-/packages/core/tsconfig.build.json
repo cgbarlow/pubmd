@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json", // Extends the root tsconfig
+  "compilerOptions": {
+    "outDir": "./dist", // Output directory for CommonJS files
+    "rootDir": "./src", // Source files directory
+    "module": "commonjs", // Ensure CommonJS output
+    "declarationDir": "./dist" // Output directory for declaration files
+  },
+  "include": ["src/**/*"], // Include all files in the src directory
+  "exclude": ["node_modules", "dist", "**/*.test.ts"] // Exclude tests and other non-source files
+}

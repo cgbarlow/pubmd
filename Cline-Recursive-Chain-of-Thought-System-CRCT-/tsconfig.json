@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Target modern JavaScript
+    "module": "commonjs", // CommonJS for Node.js compatibility, can be overridden by packages
+    "esModuleInterop": true, // Enables interoperability between CommonJS and ES modules
+    "forceConsistentCasingInFileNames": true, // Enforces consistent casing in file names
+    "strict": true, // Enables all strict type-checking options
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "resolveJsonModule": true, // Allows importing JSON modules
+    "declaration": true, // Generates corresponding '.d.ts' file
+    "sourceMap": true, // Generates corresponding '.map' file
+    "outDir": "dist", // Redirect output structure to the directory
+    "rootDir": ".", // Specify the root directory of input files
+    "baseUrl": ".", // Base directory to resolve non-absolute module names
+    "paths": { // For monorepo path aliases, will be configured more specifically later
+      "@pubmd/*": ["packages/*"]
+    }
+  },
+  "exclude": [ // Exclude files from compilation
+    "node_modules",
+    "dist"
+  ]
+}
