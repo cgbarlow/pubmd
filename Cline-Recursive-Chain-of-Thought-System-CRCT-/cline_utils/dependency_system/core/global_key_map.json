@@ -1,0 +1,107 @@
+{
+  "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs": {
+    "key_string": "1A",
+    "norm_path": "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs",
+    "parent_path": null,
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src": {
+    "key_string": "1B",
+    "norm_path": "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src",
+    "parent_path": null,
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation": {
+    "key_string": "1C",
+    "norm_path": "/workspaces/pubmd/documentation",
+    "parent_path": null,
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/00_Planning_And_Initiation": {
+    "key_string": "1Ca",
+    "norm_path": "/workspaces/pubmd/documentation/00_Planning_And_Initiation",
+    "parent_path": "/workspaces/pubmd/documentation",
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/00_Planning_And_Initiation/nextstepsforthisproject.md": {
+    "key_string": "1Ca1",
+    "norm_path": "/workspaces/pubmd/documentation/00_Planning_And_Initiation/nextstepsforthisproject.md",
+    "parent_path": "/workspaces/pubmd/documentation/00_Planning_And_Initiation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/01_Requirements": {
+    "key_string": "1Cb",
+    "norm_path": "/workspaces/pubmd/documentation/01_Requirements",
+    "parent_path": "/workspaces/pubmd/documentation",
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/01_Requirements/.Business_Requirements.md": {
+    "key_string": "1Cb1",
+    "norm_path": "/workspaces/pubmd/documentation/01_Requirements/.Business_Requirements.md",
+    "parent_path": "/workspaces/pubmd/documentation/01_Requirements",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/02_Architecture": {
+    "key_string": "1Cc",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "parent_path": "/workspaces/pubmd/documentation",
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Log.md": {
+    "key_string": "1Cc1",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Log.md",
+    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Pending.md": {
+    "key_string": "1Cc2",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Pending.md",
+    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/02_Architecture/Core_Logic_Componentization_Strategy.md": {
+    "key_string": "1Cc3",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/Core_Logic_Componentization_Strategy.md",
+    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md": {
+    "key_string": "1Cc4",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md",
+    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/02_Architecture/solution_options_analysis.md": {
+    "key_string": "1Cc5",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/solution_options_analysis.md",
+    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation": {
+    "key_string": "1Cd",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "parent_path": "/workspaces/pubmd/documentation",
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md": {
+    "key_string": "1Cd1",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 1,
+    "is_directory": false
+  }
+}

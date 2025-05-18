@@ -1,0 +1,16 @@
+{
+  "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs": {
+    "key_string": "1A",
+    "norm_path": "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs",
+    "parent_path": null,
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src": {
+    "key_string": "1B",
+    "norm_path": "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src",
+    "parent_path": null,
+    "tier": 1,
+    "is_directory": true
+  }
+}

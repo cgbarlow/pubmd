@@ -1,0 +1,38 @@
+---KEY_DEFINITIONS_START---
+Key Definitions:
+1A: /workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs
+1C: /workspaces/pubmd/documentation
+1Ca: /workspaces/pubmd/documentation/00_Planning_And_Initiation
+1Ca1: /workspaces/pubmd/documentation/00_Planning_And_Initiation/nextstepsforthisproject.md
+1Cb: /workspaces/pubmd/documentation/01_Requirements
+1Cb1: /workspaces/pubmd/documentation/01_Requirements/.Business_Requirements.md
+1Cc: /workspaces/pubmd/documentation/02_Architecture
+1Cc1: /workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Log.md
+1Cc2: /workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Pending.md
+1Cc3: /workspaces/pubmd/documentation/02_Architecture/Core_Logic_Componentization_Strategy.md
+1Cc4: /workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md
+1Cc5: /workspaces/pubmd/documentation/02_Architecture/solution_options_analysis.md
+1Cd: /workspaces/pubmd/documentation/03_Implementation
+1Cd1: /workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md
+---KEY_DEFINITIONS_END---
+
+last_KEY_edit: Assigned keys: 1A, 1C, 1Ca, 1Ca1, 1Cb, 1Cb1, 1Cc, 1Cc1, 1Cc2, 1Cc3, 1Cc4, 1Cc5, 1Cd, 1Cd1
+last_GRID_edit: Manual dependency update 1Cd1 -> ['1Ca1'] (<) (2025-05-18T03:34:28.750764)
+
+---GRID_START---
+X 1A 1C 1Ca 1Ca1 1Cb 1Cb1 1Cc 1Cc1 1Cc2 1Cc3 1Cc4 1Cc5 1Cd 1Cd1
+1A = on13
+1C = nox12
+1Ca = nxoxn10
+1Ca1 = nxxon>n>5n>
+1Cb = nxnnoxn8
+1Cb1 = nxn<xon>5n>
+1Cc = nxn4ox5nn
+1Cc1 = nxn<n<xo<<><nx
+1Cc2 = nxn<n<x>ox><n>
+1Cc3 = nxn<n<x>po><n>
+1Cc4 = nxn<n<x<3o<nx
+1Cc5 = nxn<n<x>x>>on>
+1Cd = nxn10ox
+1Cd1 = nxn<n<np<<p<xo
+---GRID_END---
