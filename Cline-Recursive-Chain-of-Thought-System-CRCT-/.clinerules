@@ -3,10 +3,10 @@ n + 1 = (x)
 *This is a systemwide progressive counter where x = number of current response. This must be displayed at the top of every response.(e.g. 1, 2, ...)*
 
 [LAST_ACTION_STATE]
-last_action: "Ran analyze-project, Trackers Updated with New Docs"
+last_action: "Completed Set-up/Maintenance Phase"
 current_phase: "Set-up/Maintenance"
-next_action: "Verify doc_tracker.md Dependencies"
-next_phase: "Set-up/Maintenance"
+next_action: "Phase Complete - User Action Required"
+next_phase: "Strategy"
 
 ---
 
@@ -32,7 +32,7 @@ next_phase: "Set-up/Maintenance"
 - Centralizing configuration like character priorities (`config_manager.py`) improves consistency and maintainability over defining them in multiple places.
 - Confirm data types returned by functions (e.g., list vs. set) before applying methods like `.union()`.
 - Systematically verifying dependencies for both directions between keys and understanding the reciprocal system's behavior is crucial for accurate tracker updates.
-- Leveraging the reciprocal system with `add-dependency` by setting '>' from the source to the targets automatically sets the '<' dependency from the targets back to the source and vice versa.
+- Leveraging the reciprocal system with `add-dependency` by setting '>' from the source to the targets automatically sets the '<' dependency from the targets back to the source and vice versa. For 'd' dependencies, adding it from code to doc in a mini-tracker correctly establishes the bi-directional link globally.
 - Use `execute_command` with appropriate shell commands (like `Rename-Item` for PowerShell) for file system operations such as renaming, instead of trying to simulate them with `write_to_file` or `read_file`. *use the full path*
 - It is critical to perform dependency analysis and read dependent files *before* attempting code modifications to ensure all relevant context is considered. Failing to do so leads to errors and wasted effort.
 - When `apply_diff` fails to find a match, even after re-reading, using `write_to_file` with the complete intended content is a reliable alternative for updating the file.
