@@ -22,7 +22,7 @@ This HTML-based tool allows users to convert Markdown text into a PDF document. 
 
 ## How to Use
 
-1.  Open the `md2pdf.html` (or your working copy) file in a web browser.
+1.  Open the `index.html` (or your working copy) file in a web browser.
 2.  **Input Markdown**:
     *   Click the "Choose File" button to upload a Markdown file (`.md` or `.txt`).
     *   Or, type/paste your Markdown content directly into the editor.
@@ -50,18 +50,25 @@ This HTML-based tool allows users to convert Markdown text into a PDF document. 
 *   **[DejaVu Fonts (CDN)](https://dejavu-fonts.github.io/)**: For improved character support in PDFs.
 *   HTML, CSS, JavaScript
 
-## Next Steps
+## Next Steps / Roadmap
 
-- Resolve missing hyphenation in list items
-- Navigation in PDF by markdown heading levels
-- Investigate adding Microsoft Word (.docx) export option
-- 'Powered by' to include all external libraries used
-- Add link to readme on github
-- Create bash and powershell versions
-
-## Future Considerations
-
-- Add full screen view, incorporating side-by-side preview, markdown syntax view
+### Phase 1: 
+*   **Architectural Evolution:**
+    *   **Componentization:** Refactor core JavaScript logic (especially PDF generation) into separate, reusable components. This will facilitate easier maintenance and use in different environments.
+    *   **Dual Version Strategy:**
+        *   Continue to enhance the current single-HTML (CDN-based) version.
+        *   Develop a new Linux shell-based version for command-line usage, prioritizing code reuse from the web version.
+### Phase 2:
+*   **Core Functionality & Bug Fixes:**
+    *   Resolve missing hyphenation in PDF list items.
+    *   Implement PDF navigation by Markdown heading levels.
+### Phase 3:
+*   **Feature Enhancements:**
+    *   Investigate Microsoft Word (.docx) export option.
+    *   Add a link to the project's GitHub repository within the application.
+### Phase 4:
+*   **User Experience:**
+    *   Add a full-screen view with side-by-side live preview and Markdown syntax highlighting.
 
 ## Changelog (v3.8)
 
@@ -85,4 +92,3 @@ This HTML-based tool allows users to convert Markdown text into a PDF document. 
     *   Dark mode preference for CodeMirror editor and the main UI now persists via localStorage.
     *   Font preference for PDF output also persists.
 *   **General Stability**: Addressed various minor bugs and improved script loading logic.
-
