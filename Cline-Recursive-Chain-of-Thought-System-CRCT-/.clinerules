@@ -3,9 +3,9 @@ n + 1 = (x)
 *This is a systemwide progressive counter where x = number of current response. This must be displayed at the top of every response.(e.g. 1, 2, ...)*
 
 [LAST_ACTION_STATE]
-last_action: "Strategy Step 1: Selected 'Area: @pubmd/core Package' for planning."
+last_action: "Completed planning for area: @pubmd/core Package. More areas pending for roadmap construction within cycle goals."
 current_phase: "Strategy"
-next_action: "Analyze Dependencies for Selected Area"
+next_action: "Select Area for Planning"
 next_phase: "Strategy"
 
 ---
@@ -44,6 +44,8 @@ next_phase: "Strategy"
 - Commands for `dependency_processor.py` must be run from the project root directory (`Cline-Recursive-Chain-of-Thought-System-CRCT-`) to correctly resolve the `cline_utils` module.
 - Ensure template file names are accurate when using `read_file`. `task_template.md` was the correct name, not `task_instruction_template.md`.
 - The `apply_diff` tool is not available in `code` mode. Use `write_to_file` with the full reconstructed content instead for file modifications.
+- When a file path is referenced in documentation (like `system_manifest.md`), always verify its actual location using `list_files` if `read_file` fails, as documentation paths might be relative to different roots or slightly outdated.
+- CRITICAL: Always cross-reference with existing architectural documentation (like Solution Architecture Design Specification) when planning new packages or refactoring, as it provides vital structural guidance.
 
 [Character_Definitions]
 
