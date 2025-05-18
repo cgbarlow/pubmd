@@ -77,6 +77,31 @@ A CLI version (`pubmd-cli`) is currently under development. It will allow for Ma
 *   **Fonts:**
     *   **[DejaVu Fonts (CDN)](https://dejavu-fonts.github.io/)**: For PDF character support.
 
+## Project Structure
+
+The project is being refactored into a `pnpm` monorepo structure. The target layout is as follows:
+
+```
+/
+├── documentation/      # Project planning, architecture, and requirements documents
+│   ├── 00_Planning_And_Initiation/
+│   ├── 01_Requirements/
+│   ├── 02_Architecture/
+│   └── 03_Implementation/
+├── packages/           # pnpm workspace for core, cli, and web packages
+│   ├── core/           # @pubmd/core: Shared TypeScript library for all conversion logic
+│   ├── cli/            # pubmd-cli: Node.js/TypeScript CLI application
+│   └── web/            # (Future) Refactored web UI package, consuming @pubmd/core
+├── src/                # Original source code (currently contains the web UI)
+│   └── web/
+│       ├── index.html
+│       ├── script.js   # (To be refactored into packages/core and packages/web)
+│       ├── style.css
+│       └── default.md
+├── README.md           # This file
+└── ...                 # Configuration files (e.g., pnpm-workspace.yaml, tsconfig.json, .eslintrc.json)
+```
+
 ## Next Steps / Roadmap
 
 The project is undergoing a significant architectural evolution. The immediate focus is on laying a robust foundation through an initial 5-week sprint cycle, followed by phased feature development.
