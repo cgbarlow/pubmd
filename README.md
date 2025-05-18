@@ -1,8 +1,10 @@
-# Markdown to PDF Converter v3.8
+# Markdown to PDF Converter
 *Atomised version that breaks everything into sub-components for managability during development.*
 ## Description
 
 This HTML-based tool allows users to convert Markdown text into a PDF document. It provides a user-friendly interface with a live Markdown editor, a preview modal, and various customization options. Version 3.8 focuses on improved font handling for PDF output, robust list rendering in PDFs, and enhanced security with DOMPurify.
+
+The project is currently undergoing a significant architectural refactoring to improve maintainability, enable a Command-Line Interface (CLI), and modernize the development stack. For detailed project planning, see the [Implementation Plan](documentation/03_Implementation/Implementation_Plan.md).
 
 ## Features
 
@@ -22,6 +24,8 @@ This HTML-based tool allows users to convert Markdown text into a PDF document. 
 
 ## How to Use
 
+**Web UI (Current):**
+
 1.  Open the `index.html` (or your working copy) file in a web browser.
 2.  **Input Markdown**:
     *   Click the "Choose File" button to upload a Markdown file (`.md` or `.txt`).
@@ -39,38 +43,67 @@ This HTML-based tool allows users to convert Markdown text into a PDF document. 
     *   Use the "Dark Mode" toggle to switch the application's theme.
     *   Use the "Clear Text" button to empty the Markdown editor.
 
-## Dependencies / Technologies Used
+**Command-Line Interface (CLI - Under Development):**
 
-*   **[marked.js](https://marked.js.org/)**: For parsing Markdown to HTML.
-*   **[html2canvas](https://html2canvas.hertzen.com/)**: For capturing HTML elements as a canvas.
-*   **[jsPDF](https://parall.ax/products/jspdf)**: For generating PDF documents from the canvas.
-*   **[CodeMirror](https://codemirror.net/)**: As the Markdown text editor.
-*   **[Mermaid](https://mermaid.js.org/)**: For rendering Mermaid diagrams.
-*   **[DOMPurify](https://github.com/cure53/DOMPurify)**: For HTML sanitization.
-*   **[DejaVu Fonts (CDN)](https://dejavu-fonts.github.io/)**: For improved character support in PDFs.
-*   HTML, CSS, JavaScript
+A CLI version (`pubmd-cli`) is currently under development. It will allow for Markdown to PDF (and potentially .docx) conversion directly from the terminal. Details on installing (via npm and standalone binaries) and using the CLI will be provided here once it reaches its initial release. See the [Implementation Plan](documentation/03_Implementation/Implementation_Plan.md) for development timelines.
+
+## Key Technologies & Development Stack
+
+*   **Core Conversion & Rendering:**
+    *   **[marked.js](https://marked.js.org/)**: Markdown to HTML parsing.
+    *   **[html2canvas](https://html2canvas.hertzen.com/)**: HTML to canvas rendering.
+    *   **[jsPDF](https://parall.ax/products/jspdf)**: PDF generation.
+    *   **[Mermaid](https://mermaid.js.org/)**: Diagram rendering.
+    *   **[DOMPurify](https://github.com/cure53/DOMPurify)**: HTML sanitization.
+    *   **[mammoth.js](https://github.com/mwilliamson/mammoth.js)**: Planned for .docx export.
+*   **Web UI:**
+    *   **[CodeMirror](https://codemirror.net/)**: Markdown editor.
+    *   HTML, CSS, JavaScript (core logic transitioning to TypeScript).
+*   **CLI (Under Development):**
+    *   **Node.js**: Runtime environment.
+    *   **TypeScript**: Language for CLI development.
+    *   **[commander.js](https://github.com/tj/commander.js)**: Command-line argument parsing.
+*   **Development & Build Tooling:**
+    *   **TypeScript**: For type safety and improved code maintainability in core logic and CLI.
+    *   **pnpm**: Package manager and monorepo (workspace) management.
+    *   **Vitest**: Unit and component testing.
+    *   **Playwright**: End-to-end and integration testing for the web UI.
+    *   **ESLint** & **Prettier**: Code linting and formatting.
+    *   **pkg**: For packaging the CLI into standalone executables.
+    *   **Docker**: For optional containerized builds/distribution.
+    *   **GitHub Actions**: CI/CD.
+    *   **Renovate Bot**: Automated dependency updates.
+    *   **semantic-release**: Automated versioning and package publishing.
+*   **Fonts:**
+    *   **[DejaVu Fonts (CDN)](https://dejavu-fonts.github.io/)**: For PDF character support.
 
 ## Next Steps / Roadmap
 
-### Phase 1: 
-*   **Architectural Evolution:**
-    *   **Componentization:** Refactor core JavaScript logic (especially PDF generation) into separate, reusable components. This will facilitate easier maintenance and use in different environments.
-    *   **Dual Version Strategy:**
-        *   Continue to enhance the current single-HTML (CDN-based) version.
-        *   Develop a new Linux shell-based version for command-line usage, prioritizing code reuse from the web version.
-### Phase 2:
-*   **Core Functionality & Bug Fixes:**
-    *   Resolve missing hyphenation in PDF list items.
-    *   Implement PDF navigation by Markdown heading levels.
-### Phase 3:
-*   **Feature Enhancements:**
-    *   Investigate Microsoft Word (.docx) export option.
-    *   Add a link to the project's GitHub repository within the application.
-### Phase 4:
-*   **User Experience:**
-    *   Add a full-screen view with side-by-side live preview and Markdown syntax highlighting.
+The project is undergoing a significant architectural evolution. The immediate focus is on laying a robust foundation through an initial 5-week sprint cycle, followed by phased feature development.
 
-## Changelog (v3.8)
+**For a detailed breakdown of the 5-week plan and subsequent phases, please see the [Project Implementation Plan](documentation/03_Implementation/Implementation_Plan.md).**
+
+**Summary of Development Phases:**
+
+*   **Initial 5-Week Sprint Cycle (Architectural Refactoring & CLI Foundation):**
+    *   **Goal:** Establish a componentized core (`@pubmd/core`), ensure web UI stability with this core, then develop a functional `pubmd-cli`, and implement modern development practices.
+    *   **Key Outcomes:** Refactored core logic, stable web UI using the new core, installable CLI (MVP), and automated testing/DevOps infrastructure.
+
+*   **Phase 2 (Post Initial Sprint Cycle): Core PDF Functionality & Bug Fixes:**
+    *   Resolve outstanding PDF list rendering issues.
+    *   Implement robust PDF navigation by Markdown heading levels.
+
+*   **Phase 3: Feature Enhancements & Polish:**
+    *   Fully develop and refine the Microsoft Word (.docx) export option.
+    *   Add a link to the project's GitHub repository within the application's UI.
+    *   Further enhancements to CLI usability and features.
+
+*   **Phase 4: Advanced User Experience (Web UI):**
+    *   Develop a full-screen view for the web UI.
+    *   Integrate a side-by-side live preview.
+    *   Consider other Markdown editor enhancements.
+
+## Changelog
 
 *   **Enhanced PDF Font Handling**:
     *   Integrated DejaVu Sans and DejaVu Serif fonts loaded from CDN for PDF generation.
