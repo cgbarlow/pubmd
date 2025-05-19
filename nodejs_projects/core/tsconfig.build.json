@@ -4,8 +4,9 @@
     "outDir": "./dist", // Output directory for CommonJS files
     "rootDir": "./src", // Source files directory
     "module": "commonjs", // Ensure CommonJS output
+    "moduleResolution": "node", // Explicitly set module resolution for CJS
     "declaration": true, // Generate .d.ts files
-    "declarationDir": "./dist" // Output directory for declaration files
+    "declarationDir": "./dist/types" // Output directory for declaration files (corrected from ./dist to avoid conflict)
   },
   "include": ["src/**/*"], // Include all files in the src directory
   "exclude": ["node_modules", "dist", "**/*.test.ts"] // Exclude tests and other non-source files

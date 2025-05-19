@@ -1,27 +1,64 @@
 {
   "name": "@pubmd/core",
   "version": "0.1.0",
-  "description": "Core logic for PubMD Markdown to PDF converter.",
-  "main": "dist/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/index.d.ts",
+  "description": "Core library for PubMD application, providing services for PDF generation, Markdown processing, and more.",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.esm.json",
-    "dev": "tsc -w -p tsconfig.build.json",
-    "clean": "rm -rf dist"
+    "build:watch": "npm run build -- --watch",
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "test:markdown": "npm run build && node ./scripts/test-markdown-service.mjs",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "keywords": [
     "markdown",
     "pdf",
-    "core"
+    "generation",
+    "utility"
   ],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {},
+  "author": "PubMD Team",
+  "license": "MIT",
+  "homepage": "https://github.com/your-repo/pubmd-core#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-repo/pubmd-core.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-repo/pubmd-core/issues"
+  },
   "devDependencies": {
+    "@types/jsdom": "^21.1.7", 
+    "@types/node": "^22.15.19",
+    "jsdom": "^26.1.0",
+    "rimraf": "^6.0.1",
     "typescript": "^5.8.3"
   },
-  "publishConfig": {
-    "access": "public"
-  }
+  "dependencies": {
+    "dompurify": "^3.2.5",
+    "isomorphic-dompurify": "^2.24.0",
+    "marked": "^15.0.11",
+    "mermaid": "^11.6.0"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
 }
