@@ -6,14 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MarkdownService = void 0;
 const marked_1 = require("marked");
 const mermaid_1 = __importDefault(require("mermaid"));
-const isomorphic_dompurify_1 = __importDefault(require("isomorphic-dompurify")); // Use isomorphic-dompurify
 const DEFAULT_MARKDOWN_PARSE_OPTIONS = {
     gfm: true,
     breaks: true,
     headerIds: true,
     sanitizeHtml: true,
     mermaidTheme: 'default',
-    mermaidSecurityLevel: 'loose', // Default to 'loose' as the issue should be resolved
+    mermaidSecurityLevel: 'loose',
 };
 const escape = (html, encode) => {
     return html
@@ -25,24 +24,32 @@ const escape = (html, encode) => {
 };
 class MarkdownService {
     constructor() {
-        // JSDOM and global DOMPurify instance should be set up by the environment (e.g., test script)
-        // for server-side Mermaid rendering.
-        // The MarkdownService itself will use the imported isomorphic-dompurify directly.
+        // JSDOM and global DOMPurify instance should be set up by the environment 
+        // (e.g., test script or main application bootstrap) for server-side Mermaid rendering
+        // and for the service's own sanitization needs if sanitizeHtml is true.
     }
     async parse(markdownText, options) {
         const mergedOptions = { ...DEFAULT_MARKDOWN_PARSE_OPTIONS, ...options };
-        // Initialize Mermaid. It should pick up the global DOMPurify instance set by the environment.
+        // Ensure globalThis.DOMPurify is available if sanitization is needed by this service or by Mermaid
+        const currentDOMPurify = globalThis.DOMPurify;
+        if (mergedOptions.sanitizeHtml && (!currentDOMPurify || typeof currentDOMPurify.sanitize !== 'function')) {
+            console.warn("MarkdownService: sanitizeHtml is true, but globalThis.DOMPurify.sanitize is not available. HTML will not be sanitized by the service for non-Mermaid code blocks.");
+            // Potentially throw an error or disable sanitization for code blocks
+        }
+        if ((mergedOptions.mermaidSecurityLevel !== 'loose' && mergedOptions.mermaidSecurityLevel !== 'antiscript') && // strict or sandbox
+            (!currentDOMPurify || typeof currentDOMPurify.sanitize !== 'function')) {
+            // Mermaid will also log an error or fail if it can't find globalThis.DOMPurify.sanitize
+            console.warn("MarkdownService: Mermaid security level requires DOMPurify, but globalThis.DOMPurify.sanitize is not available.");
+        }
         if (typeof mermaid_1.default.initialize === 'function') {
             mermaid_1.default.initialize({
                 startOnLoad: false,
                 theme: mergedOptions.mermaidTheme,
                 securityLevel: mergedOptions.mermaidSecurityLevel,
-                // According to research, Mermaid v11+ uses its imported DOMPurify.
-                // Providing a global DOMPurify instance (as done in test script) is key.
-                // This config might fine-tune it if needed.
+                // Mermaid v11+ uses its imported DOMPurify or globalThis.DOMPurify.
+                // The globalThis.DOMPurify should be configured by the environment.
                 dompurifyConfig: {
-                    USE_PROFILES: { html: true, svg: true }, // Allow HTML and SVG for 'loose' mode
-                    // ADD_TAGS: ['span'], // Example if we need to allow specific tags in Mermaid
+                    USE_PROFILES: { html: true, svg: true },
                 }
             });
         }
@@ -62,22 +69,18 @@ class MarkdownService {
                 return placeholderString;
             }
             const classAttribute = lang ? ` class="language-${escape(lang, true)}"` : '';
-            // For non-Mermaid code blocks, use isomorphic-dompurify directly for sanitization if enabled.
-            // `token.text` is the raw code. `token.escaped` is true if `marked` already escaped it.
-            // We generally want to sanitize the raw code if `sanitizeHtml` is true.
-            const codeToDisplay = token.escaped ? token.text : escape(token.text, true); // Basic escaping for display
+            const codeToDisplay = token.escaped ? token.text : escape(token.text, true);
             let rawHtml = `<pre><code${classAttribute}>${codeToDisplay}\n</code></pre>\n`;
-            if (mergedOptions.sanitizeHtml) {
-                // isomorphic-dompurify can be used directly.
-                // It handles server-side (JSDOM) and client-side transparently.
-                // Ensure we only pass what's necessary for a code block.
-                // Default config of isomorphic-dompurify is quite strict.
-                return isomorphic_dompurify_1.default.sanitize(rawHtml, {
-                    USE_PROFILES: { html: true }, // Allow basic HTML structure of pre/code
-                    ADD_TAGS: ['pre', 'code'], // Ensure pre and code are allowed
-                    ADD_ATTR: ['class'] // Allow class attribute for syntax highlighting
+            if (mergedOptions.sanitizeHtml && currentDOMPurify && typeof currentDOMPurify.sanitize === 'function') {
+                // Use the globally provided DOMPurify instance
+                return currentDOMPurify.sanitize(rawHtml, {
+                    USE_PROFILES: { html: true },
+                    ADD_TAGS: ['pre', 'code'],
+                    ADD_ATTR: ['class']
                 });
             }
+            // If sanitizeHtml is true but DOMPurify is not available, rawHtml is returned (with a warning logged earlier)
+            // If sanitizeHtml is false, rawHtml is returned.
             return rawHtml;
         };
         marked_1.marked.use({ renderer });
@@ -85,9 +88,7 @@ class MarkdownService {
             gfm: mergedOptions.gfm,
             breaks: mergedOptions.breaks,
             headerIds: mergedOptions.headerIds,
-            mangle: false, // Important for security, prevents mangling of email addresses
-            // Marked's own sanitize option is deprecated and removed in later versions.
-            // We handle sanitization via DOMPurify for code blocks and rely on Mermaid's securityLevel.
+            mangle: false,
         };
         let html = await Promise.resolve(marked_1.marked.parse(markdownText, markedOptions));
         if (typeof html !== 'string') {
@@ -97,6 +98,8 @@ class MarkdownService {
             for (const item of mermaidPlaceholders) {
                 try {
                     const { svg } = await mermaid_1.default.render(item.id, item.code);
+                    // Mermaid's output (SVG) is assumed to be safe if securityLevel is not 'unsafe',
+                    // as it would have used the global DOMPurify.
                     html = html.replace(item.placeholderRegex, `<div class="mermaid">${svg}</div>`);
                 }
                 catch (e) {

@@ -43,7 +43,8 @@
     "url": "https://github.com/your-repo/pubmd-core/issues"
   },
   "devDependencies": {
-    "@types/jsdom": "^21.1.7", 
+    "@types/dompurify": "^3.0.5",
+    "@types/jsdom": "^21.1.7",
     "@types/node": "^22.15.19",
     "jsdom": "^26.1.0",
     "rimraf": "^6.0.1",
@@ -51,7 +52,6 @@
   },
   "dependencies": {
     "dompurify": "^3.2.5",
-    "isomorphic-dompurify": "^2.24.0",
     "marked": "^15.0.11",
     "mermaid": "^11.6.0"
   },

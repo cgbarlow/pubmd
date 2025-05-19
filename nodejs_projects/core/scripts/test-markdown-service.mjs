@@ -1,21 +1,12 @@
 // nodejs_projects/core/scripts/test-markdown-service.mjs
+import './bootstrap-mermaid.mjs'; // IMPORTANT: This MUST be the first import to set up globals.
+
 import { MarkdownService } from '../dist/esm/index.js';
-import { JSDOM } from 'jsdom';
-import DOMPurify from 'isomorphic-dompurify'; // Use isomorphic-dompurify
-
-// 1. Fake a browser environment for JSDOM
-const { window } = new JSDOM('<!DOCTYPE html><html><body><div id="mermaid-container"></div></body></html>');
-global.window = window;
-global.document = window.document;
-
-// 2. Expose the DOMPurify instance (isomorphic-dompurify provides an instance-like object)
-//    globally for Mermaid to pick up.
-global.DOMPurify = DOMPurify; 
-console.log("Test Script: global.DOMPurify is now set using 'isomorphic-dompurify'. Mermaid should find this instance.");
+// JSDOM and DOMPurify are now handled by bootstrap-mermaid.mjs
 
 async function testMarkdownService() {
     console.log("Testing MarkdownService...");
-    // MarkdownService will be configured to use 'loose' security for Mermaid
+    // MarkdownService will use the globally configured Mermaid and DOMPurify
     const markdownService = new MarkdownService(); 
 
     const sampleMarkdown = `
@@ -41,9 +32,8 @@ console.log('This is a JS code block with <script>alert(1)</script>.');
 
     try {
         console.log("\nInput Markdown:\n", sampleMarkdown);
-        // The MarkdownService will be updated to use 'loose' for Mermaid by default
-        // and use isomorphic-dompurify for its own sanitization.
-        const htmlOutput = await markdownService.parse(sampleMarkdown, { mermaidSecurityLevel: 'loose' });
+        // Test with 'strict' security level for Mermaid, as configured in bootstrap
+        const htmlOutput = await markdownService.parse(sampleMarkdown, { mermaidSecurityLevel: 'strict' }); 
         console.log("\nHTML Output:\n", htmlOutput);
 
         let mermaidTestPassed = false;
@@ -51,7 +41,11 @@ console.log('This is a JS code block with <script>alert(1)</script>.');
             console.log("\n✅ Test Passed: Mermaid diagram seems to be rendered as SVG.");
             mermaidTestPassed = true;
         } else if (htmlOutput.includes('class="mermaid-error"')) {
-             console.log("\n❌ Test Failed: Mermaid rendering error reported in HTML. This should be fixed now.");
+             console.log("\n❌ Test Failed: Mermaid rendering error reported in HTML.");
+             const errorDetails = htmlOutput.match(/<pre class="mermaid-error"[^>]*>([\s\S]*?)<\/pre>/);
+             if (errorDetails && errorDetails[1]) {
+                 console.log("   Error details:", errorDetails[1].trim());
+             }
         } else {
             console.log("\n❌ Test Failed: Mermaid diagram not found or not processed as expected.");
         }
@@ -65,21 +59,22 @@ console.log('This is a JS code block with <script>alert(1)</script>.');
         }
         
         let jsCodeBlockPassed = false;
-        // Expecting sanitization from isomorphic-dompurify used by MarkdownService
-        // <script> should be removed or escaped.
-        // isomorphic-dompurify by default will remove the script tag.
+        // Expecting sanitization. MarkdownService uses globalThis.DOMPurify.
+        // <script> should be removed.
         const expectedSanitizedJs = "<pre><code class=\"language-javascript\">console.log('This is a JS code block with .');\n</code></pre>";
-        const expectedSanitizedJsAlternative = "<pre><code class=\"language-javascript\">console.log('This is a JS code block with .');\n</code></pre>";
-
-
-        if (htmlOutput.includes(expectedSanitizedJs) || htmlOutput.includes(expectedSanitizedJsAlternative)) {
-            console.log("✅ Test Passed: JavaScript code block rendered and appears sanitized by MarkdownService (script tag removed/neutralized).");
+        
+        if (htmlOutput.includes(expectedSanitizedJs)) {
+            console.log("✅ Test Passed: JavaScript code block rendered and appears sanitized (script tag removed).");
             jsCodeBlockPassed = true;
         } else {
             console.log(`❌ Test Failed: JavaScript code block not rendered and sanitized as expected. Looking for script tag removal.`);
-            console.log("   Actual relevant part for JS block:", htmlOutput.substring(htmlOutput.indexOf("<pre><code class=\"language-javascript\">")));
+            const actualJsBlockMatch = htmlOutput.match(/<pre><code class="language-javascript">([\s\S]*?)<\/code><\/pre>/);
+            if (actualJsBlockMatch && actualJsBlockMatch[1]) {
+                console.log("   Actual JS block content:", actualJsBlockMatch[1].trim());
+            } else {
+                console.log("   Could not find JS block in output for detailed comparison.");
+            }
         }
-
 
         if (mermaidTestPassed && basicMarkdownPassed && jsCodeBlockPassed) {
             console.log("\n🎉 All core tests passed!");

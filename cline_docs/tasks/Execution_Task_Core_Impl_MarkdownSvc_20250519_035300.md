@@ -1,7 +1,7 @@
 # Execution Task: Implement `MarkdownService.ts`
 
 **Date Created:** 2025-05-19
-**Status:** To Do
+**Status:** Completed
 **Parent Strategy Task:** `cline_docs/tasks/Strategy_Task_CoreRefactor_MarkdownSvc_20250518_095730.md`
 **Target Files:**
 - `nodejs_projects/core/src/services/markdown/markdown.service.ts`
