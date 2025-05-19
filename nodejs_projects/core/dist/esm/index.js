@@ -3,8 +3,7 @@
  * It exports all the public APIs of the library.
  */
 // Export services
-export { MarkdownService } from './services/markdown/markdown.service';
-export { IMarkdownService, MarkdownParseOptions, MermaidTheme, MermaidSecurityLevel } from './services/markdown/markdown.types';
+export { MarkdownService } from './services/markdown/markdown.service.js'; // Updated import with .js
 // Add other exports here as the library grows, for example:
 // export * from './services/pdf/pdf.service';
 // export * from './utils/utils';

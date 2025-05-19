@@ -1,7 +1,7 @@
 import { marked, Renderer, Tokens } from 'marked';
 import mermaid from 'mermaid';
 import DOMPurify from 'isomorphic-dompurify'; // Use isomorphic-dompurify
-import { IMarkdownService, MarkdownParseOptions, MermaidTheme, MermaidSecurityLevel } from './markdown.types';
+import { IMarkdownService, MarkdownParseOptions, MermaidTheme, MermaidSecurityLevel } from './markdown-types.js'; // Updated import with .js
 
 const DEFAULT_MARKDOWN_PARSE_OPTIONS: Required<Omit<MarkdownParseOptions, 'mermaidTheme' | 'mermaidSecurityLevel'>> & Pick<MarkdownParseOptions, 'mermaidTheme' | 'mermaidSecurityLevel'> = {
     gfm: true,

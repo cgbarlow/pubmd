@@ -6,8 +6,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MarkdownService = void 0;
 // Export services
-var markdown_service_1 = require("./services/markdown/markdown.service");
-Object.defineProperty(exports, "MarkdownService", { enumerable: true, get: function () { return markdown_service_1.MarkdownService; } });
+var markdown_service_js_1 = require("./services/markdown/markdown.service.js"); // Updated import with .js
+Object.defineProperty(exports, "MarkdownService", { enumerable: true, get: function () { return markdown_service_js_1.MarkdownService; } });
 // Add other exports here as the library grows, for example:
 // export * from './services/pdf/pdf.service';
 // export * from './utils/utils';
