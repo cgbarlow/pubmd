@@ -3,9 +3,9 @@ n + 1 = (x)
 *This is a systemwide progressive counter where x = number of current response. This must be displayed at the top of every response.(e.g. 1, 2, ...)*
 
 [LAST_ACTION_STATE]
-last_action: "MUP complete for Web UI testing of MarkdownService integration. All associated CRCT files updated (HDTA_Task_WebUIIntegration_20250519_115200.md, activeContext.md, changelog.md, progress.md). Identified issue: SVGs from core MarkdownService not rendering in PDF via local html2canvas."
+last_action: "Initial implementation of PdfService in @pubmd/core, including types, service structure, placeholder HTML rendering, exports, and a test script. MUP in progress."
 current_phase: "Execution"
-next_action: "Address SVG rendering in PDF issue, or proceed with PdfService core implementation (Strategy_Task_CoreRefactor_PdfSvc_20250518_095954.md)."
+next_action: "Complete MUP. Then, build @pubmd/core and run 'npm run test:pdf' to verify placeholder PdfService. Then, implement full html2canvas logic in PdfService."
 next_phase: "Execution"
 
 ---
@@ -59,6 +59,9 @@ next_phase: "Execution"
 - MUP for MarkdownService completion performed. File paths for task files need careful verification; they might be at the workspace root's `cline_docs` or within the project's `cline_docs`.
 - Integrating core services (like MarkdownService) into existing UI scripts (`script.js`) requires careful replacement of local logic with service calls, and updating any readiness checks or dependencies.
 - `html2canvas` (used by jsPDF's `html()` method) may have limitations rendering complex SVGs (like those from Mermaid) into PDFs. This needs investigation when SVGs are missing from PDF output.
+- Noted that `html2canvas` provides its own type definitions, making `@types/html2canvas` redundant.
+- The `MarkdownService` method for parsing is `parse()`, not `parseMarkdown()`.
+- Test scripts for Node.js services that rely on browser globals (like `document` for Mermaid/DOMPurify) require JSDOM setup.
 
 [Character_Definitions]
 

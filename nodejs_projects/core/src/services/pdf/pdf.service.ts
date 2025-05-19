@@ -1,44 +1,109 @@
-// nodejs_projects/core/src/services/pdf/pdf.service.ts
-import { IPdfService, PdfRenderOptions, PdfRenderResult } from './pdf.types';
-// Import jsPDF, html2canvas, etc. as needed
-// import jsPDF from 'jspdf';
-// import html2canvas from 'html2canvas';
+import { jsPDF, HTMLOptions } from 'jspdf';
+import html2canvas from 'html2canvas';
+import { MarkdownService } from '../markdown/markdown.service.js';
+import { IPdfService, PdfOptions } from './pdf.types.js';
+// JSDOM is not imported here; the service relies on a pre-configured global JSDOM environment.
 
 export class PdfService implements IPdfService {
-    constructor() {
-        // Initialize any dependencies or configurations
-        console.log('PdfService instantiated');
-    }
+  private markdownService: MarkdownService;
 
-    async render(htmlContent: string, options?: PdfRenderOptions): Promise<PdfRenderResult> {
-        console.log('PdfService.render called with options:', options);
-        // Placeholder implementation
-        // This is where jsPDF and html2canvas logic will go.
-        // Key consideration: Ensure SVGs (e.g., from Mermaid) in htmlContent are rendered.
+  constructor(markdownService?: MarkdownService) {
+    this.markdownService = markdownService || new MarkdownService();
+  }
 
-        if (!htmlContent) {
-            return { success: false, error: 'HTML content cannot be empty.' };
+  public async generatePdfFromHtml(htmlContent: string, options?: PdfOptions): Promise<Blob> {
+    return new Promise(async (resolve, reject) => {
+      // Ensure global document is available (should be set up by the environment)
+      if (typeof globalThis.document === 'undefined' || typeof globalThis.document.createElement !== 'function') {
+        return reject(new Error("PdfService: globalThis.document is not available or not a valid JSDOM document. The environment must be pre-configured with JSDOM."));
+      }
+
+      let tempContainer: HTMLElement | null = null;
+
+      try {
+        console.log('generatePdfFromHtml called with options:', options);
+
+        const pdfOutputOptions = {
+          orientation: options?.orientation || 'p',
+          unit: 'mm',
+          format: options?.pageFormat || 'a4',
+          hotfixes: ['px_scaling']
+        };
+        const pdf = new jsPDF(pdfOutputOptions as any);
+
+        const margins = {
+          top: options?.margins?.top || 10,
+          right: options?.margins?.right || 10,
+          bottom: options?.margins?.bottom || 10,
+          left: options?.margins?.left || 10,
+        };
+
+        // Use the global document to create a temporary container
+        tempContainer = globalThis.document.createElement('div');
+        tempContainer.id = `pdf-render-container-${Date.now()}`;
+        tempContainer.style.backgroundColor = 'white'; // Ensure background for rendering
+        tempContainer.style.width = 'fit-content'; // Important for html2canvas to capture actual content width
+        tempContainer.style.height = 'fit-content';
+        tempContainer.innerHTML = htmlContent;
+        globalThis.document.body.appendChild(tempContainer);
+        
+        const pixelsPerMm = 96 / 25.4;
+        const pageWidthInPx = pdf.internal.pageSize.getWidth() * pixelsPerMm;
+        const marginWidthInPx = (margins.left + margins.right) * pixelsPerMm;
+        let contentWidthForCanvas = pageWidthInPx - marginWidthInPx;
+        
+        // If the actual rendered width of the container is less than the page width, use that.
+        // This helps prevent excessive scaling or whitespace if content is narrow.
+        // Note: getComputedStyle and offsetWidth might be less reliable in JSDOM without full layout.
+        // We might need to rely more on explicit width settings or the `onclone` logic.
+        // For now, we'll primarily use the calculated page content width.
+        // const actualRenderedWidth = tempContainer.offsetWidth;
+        // if (actualRenderedWidth > 0 && actualRenderedWidth < contentWidthForCanvas) {
+        //    contentWidthForCanvas = actualRenderedWidth;
+        // }
+
+
+        const htmlOptions: HTMLOptions = {
+          html2canvas: {
+            scale: options?.html2canvasScale || 1,
+            useCORS: true,
+            logging: true,
+            backgroundColor: '#ffffff',
+            width: Math.floor(contentWidthForCanvas),
+            windowWidth: Math.floor(contentWidthForCanvas),
+            // onclone: (clonedDoc) => {
+            //   // Placeholder for future onclone logic
+            // }
+          },
+          autoPaging: 'text',
+          x: margins.left,
+          y: margins.top,
+          width: pdf.internal.pageSize.getWidth() - margins.left - margins.right,
+          windowWidth: Math.floor(contentWidthForCanvas),
+          callback: (doc) => {
+            if (tempContainer && tempContainer.parentNode) {
+              tempContainer.parentNode.removeChild(tempContainer);
+            }
+            console.log(`PDF generation complete. Filename: ${options?.filename || 'document.pdf'}`);
+            resolve(doc.output('blob'));
+          }
+        };
+
+        await pdf.html(tempContainer, htmlOptions);
+
+      } catch (error) {
+        if (tempContainer && tempContainer.parentNode) {
+          tempContainer.parentNode.removeChild(tempContainer);
         }
+        console.error("Error in generatePdfFromHtml:", error);
+        reject(error);
+      }
+    });
+  }
 
-        try {
-            // Example:
-            // const pdf = new jsPDF();
-            // const canvas = await html2canvas(someElementDerivedFromHtmlContent, { /* options */ });
-            // const imgData = canvas.toDataURL('image/png');
-            // pdf.addImage(imgData, 'PNG', 0, 0);
-            // const pdfOutput = pdf.output('arraybuffer');
-
-            // For now, return a dummy success
-            const dummyPdfData = new Uint8Array([37, 80, 68, 70, 45, 49, 46, 51]).buffer; // Minimal PDF header %PDF-1.3
-
-            return {
-                success: true,
-                pdfData: dummyPdfData,
-                message: 'PDF rendered successfully (placeholder).',
-            };
-        } catch (error: any) {
-            console.error('Error rendering PDF:', error);
-            return { success: false, error: error.message || 'Unknown error during PDF rendering.' };
-        }
-    }
+  public async generatePdfFromMarkdown(markdownContent: string, options?: PdfOptions): Promise<Blob> {
+    console.log('generatePdfFromMarkdown called with options:', options);
+    const htmlFromMarkdown = await this.markdownService.parse(markdownContent);
+    return this.generatePdfFromHtml(htmlFromMarkdown, options);
+  }
 }

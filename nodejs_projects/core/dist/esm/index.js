@@ -4,8 +4,8 @@
  */
 // Export services
 export { MarkdownService } from './services/markdown/markdown.service.js'; // Updated import with .js
+export { PdfService } from './services/pdf/pdf.service.js';
 // Add other exports here as the library grows, for example:
-// export * from './services/pdf/pdf.service';
 // export * from './utils/utils';
 console.log("@pubmd/core main entry point loaded."); // For debugging purposes
 //# sourceMappingURL=index.js.map

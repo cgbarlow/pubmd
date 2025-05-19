@@ -10,8 +10,9 @@
     - [x] Task Finalized and Marked Complete
 - [ ] **PdfService**:
     - [x] Initial Strategy and Planning ([`Strategy_Task_CoreRefactor_PdfSvc_20250518_095954.md`](../tasks/Strategy_Task_CoreRefactor_PdfSvc_20250518_095954.md))
-    - [ ] Implementation
-    - [ ] Testing and verification
+    - [x] Initial Implementation (Types, Service structure, placeholder HTML rendering, Test script) ([`Execution_Task_Core_Impl_PdfSvc_20250519_215432.md`](../tasks/Execution_Task_Core_Impl_PdfSvc_20250519_215432.md))
+    - [ ] Full HTML rendering (html2canvas, jsdom, onclone logic)
+    - [ ] Testing and verification (SVG rendering)
 - [ ] **FontService**:
     - [ ] Initial Strategy and Planning ([`Strategy_Task_CoreRefactor_FontSvc_20250518_095458.md`](../tasks/Strategy_Task_CoreRefactor_FontSvc_20250518_095458.md))
     - [ ] Implementation
@@ -20,9 +21,10 @@
     - [ ] Initial Strategy and Planning ([`Strategy_Task_CoreRefactor_PreferenceSvc_20250518_095259.md`](../tasks/Strategy_Task_CoreRefactor_PreferenceSvc_20250518_095259.md))
     - [ ] Implementation
     - [ ] Testing and verification
-- [ ] API Index File (`index.ts` for service exports)
+- [x] API Index File (`index.ts` for service exports)
     - [x] Initial Strategy and Planning ([`Strategy_Task_CoreSetup_IndexTs_20250518_094656.md`](../tasks/Strategy_Task_CoreSetup_IndexTs_20250518_094656.md))
     - [x] Basic implementation (exports MarkdownService)
+    - [x] Updated with PdfService exports
     - [ ] Update with other services
 - [x] Package README ([`Strategy_Task_CoreSetup_Readme_20250518_094841.md`](../tasks/Strategy_Task_CoreSetup_Readme_20250518_094841.md))
 

@@ -1,6 +1,23 @@
 # Changelog
 **The Changelog is for tracking changes to the *project's* files, not CRCT operations. CRCT operations are tracked in the HDTA documents.**
 
+- **2025-05-20:** Initial implementation of `PdfService` in `@pubmd/core`.
+    - Created `nodejs_projects/core/src/services/pdf/pdf.types.ts` with `IPdfService` and `PdfOptions`.
+    - Created `nodejs_projects/core/src/services/pdf/pdf.service.ts` with basic class structure and placeholder PDF generation logic (using `pdf.text()`).
+    - Updated `nodejs_projects/core/src/index.ts` to export `PdfService` and related types.
+    - Created `nodejs_projects/core/scripts/test-pdf-service.mjs` for basic testing.
+    - Added `test:pdf` script to `nodejs_projects/core/package.json`.
+    - Files created/modified:
+        - `nodejs_projects/core/src/services/pdf/pdf.types.ts`
+        - `nodejs_projects/core/src/services/pdf/pdf.service.ts`
+        - `nodejs_projects/core/src/index.ts`
+        - `nodejs_projects/core/scripts/test-pdf-service.mjs`
+        - `nodejs_projects/core/package.json`
+
+- **2025-05-20:** Ran `npm install` in `nodejs_projects/core/`.
+    - Removed `@types/html2canvas` from `devDependencies` in `nodejs_projects/core/package.json` as it's deprecated and `html2canvas` provides its own types.
+    - Files modified: `nodejs_projects/core/package.json`, `nodejs_projects/core/package-lock.json`.
+
 - **2025-05-20:** Tested Web UI integration of `@pubmd/core` `MarkdownService`.
     - `src/web/index.html` updated with an import map for `marked`, `dompurify`, `mermaid` ESM modules from CDN. Corresponding script tags removed.
     - **Result**: HTML preview of Markdown (including Mermaid SVGs) via core `MarkdownService` works flawlessly.

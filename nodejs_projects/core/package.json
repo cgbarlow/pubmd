@@ -23,6 +23,7 @@
     "build:watch": "npm run build -- --watch",
     "test": "echo \"Error: no test specified\" && exit 0",
     "test:markdown": "npm run build && node ./scripts/test-markdown-service.mjs",
+    "test:pdf": "npm run build && node ./scripts/test-pdf-service.mjs",
     "clean": "rimraf dist",
     "prepublishOnly": "npm run clean && npm run build"
   },
@@ -43,7 +44,6 @@
     "url": "https://github.com/your-repo/pubmd-core/issues"
   },
   "devDependencies": {
-    "@types/html2canvas": "^1.0.0",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.15.19",
     "jsdom": "^26.1.0",
@@ -51,6 +51,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "canvas": "^2.11.2",
     "dompurify": "^3.2.5",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
