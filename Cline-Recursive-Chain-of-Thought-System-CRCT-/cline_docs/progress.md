@@ -7,6 +7,7 @@
     - [x] Initial Strategy and Planning ([`Strategy_Task_CoreRefactor_MarkdownSvc_20250518_095730.md`](../tasks/Strategy_Task_CoreRefactor_MarkdownSvc_20250518_095730.md))
     - [x] Implementation including Mermaid rendering and DOMPurify sanitization ([`Execution_Task_Core_Impl_MarkdownSvc_20250519_035300.md`](../tasks/Execution_Task_Core_Impl_MarkdownSvc_20250519_035300.md))
     - [x] Testing and verification
+    - [x] Task Finalized and Marked Complete
 - [ ] **PdfService**:
     - [x] Initial Strategy and Planning ([`Strategy_Task_CoreRefactor_PdfSvc_20250518_095954.md`](../tasks/Strategy_Task_CoreRefactor_PdfSvc_20250518_095954.md))
     - [ ] Implementation
@@ -26,10 +27,10 @@
 - [x] Package README ([`Strategy_Task_CoreSetup_Readme_20250518_094841.md`](../tasks/Strategy_Task_CoreSetup_Readme_20250518_094841.md))
 
 ## Web UI Integration
-- [ ] Plan Web UI integration with `@pubmd/core` ([`HDTA_Task_WebUIIntegration_20250519_115200.md`](../tasks/HDTA_Task_WebUIIntegration_20250519_115200.md))
-- [ ] Modify `src/web/script.js` to import and use services from `@pubmd/core`.
-- [ ] Test PDF generation using the new `PdfService`.
-- [ ] Test Markdown rendering using the new `MarkdownService`.
+- [x] Plan Web UI integration with `@pubmd/core` ([`HDTA_Task_WebUIIntegration_20250519_115200.md`](../tasks/HDTA_Task_WebUIIntegration_20250519_115200.md))
+- [x] Modify `src/web/script.js` to import and use `MarkdownService` from `@pubmd/core`.
+- [x] Test Markdown rendering using the new `MarkdownService` (HTML Preview works, including Mermaid SVGs).
+- [ ] Test PDF generation using the new `PdfService` (Currently uses local PDF logic; Mermaid SVGs from core `MarkdownService` do not render in PDF).
 - [ ] Ensure font handling works correctly via `FontService`.
 - [ ] Integrate `PreferenceService`.
 

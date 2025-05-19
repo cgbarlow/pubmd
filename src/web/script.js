@@ -1,4 +1,4 @@
-import { corePackageMessage } from '../../nodejs_projects/core/dist/esm/index.js';
+import { MarkdownService } from '../../nodejs_projects/core/dist/esm/index.js';
 
 let markdownEditor;
 function setPreference(name, value) { try { localStorage.setItem(name, value); } catch (e) { console.error(e); } }
@@ -13,9 +13,11 @@ const DEJAVU_SERIF_PDF_NAME = 'DejaVuSerif'; // Name for jsPDF registration
 
 let libsReady = false;
 let fontsReady = false;
+let markdownServiceInstance; // Instance of the core MarkdownService
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Core Package Message:', corePackageMessage); // Verify import
+    markdownServiceInstance = new MarkdownService(); // Instantiate the service
+    console.log('Core MarkdownService instantiated.');
 
     const markdownInputTextArea = document.getElementById('markdownInputInternal');
     const codeMirrorPlaceholder = document.getElementById('codeMirrorPlaceholder');
@@ -187,17 +189,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Check for external libraries and initialize fonts
             const checkLibsInterval = setInterval(() => {
-                if (typeof window.marked?.parse === 'function' && 
+                if (/*typeof window.marked?.parse === 'function' &&*/ // Marked is now in core
                     typeof window.html2canvas === 'function' &&
                     typeof window.jspdf?.jsPDF === 'function' && 
-                    typeof window.mermaid?.render === 'function' &&
-                    typeof window.DOMPurify?.sanitize === 'function') { 
+                    /*typeof window.mermaid?.render === 'function' &&*/ // Mermaid is now in core
+                    /*typeof window.DOMPurify?.sanitize === 'function' &&*/ // DOMPurify is now in core
+                    markdownServiceInstance) { // Check if core service is ready
                     clearInterval(checkLibsInterval);
                     libsReady = true;
-                    console.log("Core libraries ready.");
+                    console.log("External libraries (html2canvas, jspdf) and Core MarkdownService are ready.");
                     initializeFonts(); 
                 } else {
-                    console.log("Waiting for core libraries...");
+                    console.log("Waiting for core libraries and/or MarkdownService instance...");
                 }
             }, 100);
 
@@ -274,6 +277,13 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMessage.style.color = 'orange';
             return false;
         }
+        if (!markdownServiceInstance) {
+            statusMessage.textContent = 'MarkdownService not ready. Please wait.';
+            statusMessage.style.color = 'red';
+            console.error('MarkdownService instance not available for prepareContentForPreviewAndPdf');
+            return false;
+        }
+
         if (convertToPdfButton) {
             convertToPdfButton.disabled = true;
             convertToPdfButton.textContent = 'Processing...';
@@ -291,38 +301,30 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
 
-        if (typeof mermaid !== 'undefined') {
-            mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
-        }
-        const customRenderer = new marked.Renderer();
-        
-        customRenderer.code = function(code, language) {
-            if (language === 'mermaid') {
-                const codeAsString = String(code || ''); 
-                const id = 'mermaid-' + Date.now() + Math.random().toString(16).slice(2);
-                return `<div class="mermaid-wrapper" style="display: block; text-align: center;"><div class="mermaid" id="${id}" data-mermaid-code="${encodeURIComponent(codeAsString)}">Rendering Mermaid...</div></div>`;
-            }
-            const rawHtml = language
-                ? `<pre><code class="language-${language}">${code}</code></pre>\n`
-                : `<pre><code>${code}</code></pre>\n`;
-            
-            if (typeof DOMPurify !== 'undefined' && typeof DOMPurify.sanitize === 'function') {
-                return DOMPurify.sanitize(rawHtml);
-            } else {
-                console.error("DOMPurify.sanitize is not available. Code block will not be properly sanitized.");
-                const basicEscapedCode = String(code || '').replace(/</g, "<").replace(/>/g, ">");
-                return language
-                    ? `<pre><code class="language-${language}">${basicEscapedCode}</code></pre>\n`
-                    : `<pre><code>${basicEscapedCode}</code></pre>\n`;
-            }
-        };
+        try {
+            // Options for MarkdownService.parse()
+            // Based on previous local settings:
+            // mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+            // DOMPurify.sanitize was used.
+            // marked.use({ renderer: customRenderer, gfm: true, breaks: true, mangle: false, headerIds: true });
+            const parseOptions = {
+                mermaidTheme: 'default', // Matches previous 'default'
+                mermaidSecurityLevel: 'loose', // Matches previous 'loose'
+                sanitizeHtml: true, // DOMPurify was used
+                gfm: true, // Matches previous
+                breaks: true, // Matches previous
+                headerIds: true // Matches previous
+            };
 
-        if (typeof marked !== 'undefined') {
-             marked.use({ renderer: customRenderer, gfm: true, breaks: true, mangle: false, headerIds: true });
-             renderArea.innerHTML = marked.parse(mdText);
-        } else {
-            renderArea.innerHTML = "Marked.js not loaded.";
-            statusMessage.textContent = "Error: Marked.js library not loaded.";
+            console.log("Calling core MarkdownService.parse with options:", parseOptions);
+            const htmlContent = await markdownServiceInstance.parse(mdText, parseOptions);
+            renderArea.innerHTML = htmlContent;
+            console.log("Content rendered by core MarkdownService.");
+
+        } catch (error) {
+            console.error("Error during MarkdownService.parse:", error);
+            renderArea.innerHTML = `<p style="color:red;">Error processing Markdown: ${error.message}</p>`;
+            statusMessage.textContent = "Error processing Markdown. Check console.";
             statusMessage.style.color = 'red';
             if (convertToPdfButton) {
                 convertToPdfButton.disabled = false;
@@ -344,19 +346,9 @@ document.addEventListener('DOMContentLoaded', () => {
         renderArea.style.fontSize = '12pt';
         renderArea.style.backgroundColor = 'white';
         renderArea.style.color = 'black';
-
-        const mermaidPlaceholders = Array.from(renderArea.querySelectorAll('div.mermaid[data-mermaid-code]'));
-        if (mermaidPlaceholders.length > 0 && typeof mermaid !== 'undefined') {
-            statusMessage.textContent = `Rendering ${mermaidPlaceholders.length} diagram(s)...`;
-            await Promise.all(mermaidPlaceholders.map(async (ph) => {
-                const mCode = decodeURIComponent(ph.dataset.mermaidCode);
-                try {
-                    const { svg, bindFunctions } = await mermaid.render(ph.id + '-svg', mCode);
-                    ph.innerHTML = svg;
-                    if (bindFunctions) bindFunctions(ph);
-                } catch (e) { ph.innerHTML = `<pre style="color:red">Mermaid Error: ${e.message}</pre>`; console.error(e); }
-            }));
-        }
+        
+        // Mermaid diagrams are now SVGs directly in the HTML from MarkdownService,
+        // so no separate rendering loop is needed here.
 
         const images = Array.from(renderArea.querySelectorAll('img'));
         await Promise.all(images.filter(img => !img.complete).map(img =>
@@ -367,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         previewModalContent.style.fontFamily = currentFontFamilyCSS;
         previewModalContent.innerHTML = renderArea.innerHTML;
-        fileNameInputModal.value = `md2pdf_v3.8_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.pdf`;
+        fileNameInputModal.value = `md2pdf_core_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.pdf`;
         previewModalOverlay.style.display = 'flex';
 
         statusMessage.textContent = 'Preview ready.';
@@ -389,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('PDF Font Names:', { sans: DEJAVU_SANS_PDF_NAME, serif: DEJAVU_SERIF_PDF_NAME });
 
         let fileName = fileNameInputModal.value.trim();
-        if (!fileName) fileName = "md2pdf_v3.8.pdf";
+        if (!fileName) fileName = "md2pdf_core.pdf";
         if (!fileName.toLowerCase().endsWith('.pdf')) fileName += '.pdf';
 
         savePdfFromModalButton.disabled = true;
@@ -428,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     previewModalOverlay.style.display = 'none';
                 },
                 margin: [marginInPx, marginInPx, marginInPx, marginInPx],
-                autoPaging: 'text',
+                autoPaging: 'text', // Changed from 'slice' to 'text' for better text handling
                 html2canvas: {
                     scale: 1, 
                     useCORS: true,
@@ -441,18 +433,28 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log('html2canvas.onclone fired. Applying styles for PDF.');
                         
                         const style = clonedDoc.createElement('style');
+                        // Retain list styling for PDF, but ensure it's applied correctly
+                        // The MarkdownService should ideally handle semantic list structures.
+                        // This onclone styling might need adjustment based on MarkdownService output.
                         style.textContent = `
+                            body { margin: 0; padding: 0; } /* Ensure no body margin interferes */
                             ul, ol { 
-                                list-style: none !important; 
+                                list-style: initial !important; /* Try to use browser default list styles */
                                 padding-left: 20pt !important; 
                                 margin-left: 0 !important; 
                             }
                             li {
                                 margin-bottom: 5px !important;       
                             }
+                            /* SVG styling removed to let html2canvas use intrinsic/Mermaid-defined styles */
+                            /* svg { max-width: 100%; height: auto; } */ 
                         `;
                         clonedDoc.head.appendChild(style);
-
+                        
+                        // The complex list marker stamping logic might be redundant if MarkdownService
+                        // produces semantic HTML lists that jsPDF/html2canvas can interpret.
+                        // For now, keeping it but commenting out the direct call to see default behavior.
+                        /*
                         (function stampMarkers(root, font) {
                           const glyph = ['● ', '○ ', '▪ ', '▫ ', '– ', '● ']; 
                           function walk(listEl, depth) {
@@ -477,6 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           }
                           root.querySelectorAll('ul,ol').forEach(l => !l.closest('li') && walk(l, 0));
                         })(clonedEl, selectedFontFamilyCSS); 
+                        */
                         
                         clonedEl.style.setProperty('background-color', 'white', 'important');
                         clonedEl.style.setProperty('color', 'black', 'important');
@@ -495,26 +498,30 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                         clonedEl.querySelectorAll('pre').forEach(el => el.style.setProperty('background-color', '#f5f5f5', 'important'));
                         clonedEl.querySelectorAll('code:not(pre code)').forEach(el => el.style.setProperty('background-color', '#f0f0f0', 'important'));
-                        clonedEl.querySelectorAll('pre code').forEach(el => el.style.setProperty('background-color', 'transparent', 'important'));
-                        clonedEl.querySelectorAll('th').forEach(el => el.style.setProperty('background-color', '#f2f2f2', 'important'));
-                        clonedEl.querySelectorAll('strong, b').forEach(el => el.style.setProperty('font-weight', 'bold', 'important'));
-                        clonedEl.querySelectorAll('em, i').forEach(el => el.style.setProperty('font-style', 'italic', 'important'));
-                        clonedEl.querySelectorAll('blockquote').forEach(el => {
-                             el.style.setProperty('border-left', '3px solid #ccc', 'important');
-                             el.style.setProperty('background-color', '#f9f9f9', 'important'); 
-                        });
+                        
+                        // Explicitly set width and height for SVGs if html2canvas has trouble
+                        // This is a more advanced step if simply removing the CSS rule isn't enough.
+                        // For now, we rely on Mermaid's own dimensioning.
+                        // clonedEl.querySelectorAll('svg').forEach(svgEl => {
+                        //     const bbox = svgEl.getBBox(); // May not work reliably in clonedDoc
+                        //     // Or try to parse viewBox
+                        //     const viewBox = svgEl.getAttribute('viewBox');
+                        //     if (viewBox) {
+                        //         const parts = viewBox.split(' ');
+                        //         svgEl.style.width = parts[2] + 'px';
+                        //         svgEl.style.height = parts[3] + 'px';
+                        //     }
+                        // });
                     }
                 }
             });
-
         } catch (error) {
-            statusMessage.textContent = 'Error generating PDF: ' + error.message + '.';
+            console.error('Error generating PDF:', error);
+            statusMessage.textContent = 'Error generating PDF. Check console.';
             statusMessage.style.color = 'red';
-            console.error("PDF Generation Error:", error);
         } finally {
             savePdfFromModalButton.disabled = false;
             savePdfFromModalButton.textContent = 'Save PDF';
         }
-    } // End of savePdfHandler
-
-}); // End of DOMContentLoaded
+    }
+});

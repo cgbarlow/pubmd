@@ -3,9 +3,9 @@ n + 1 = (x)
 *This is a systemwide progressive counter where x = number of current response. This must be displayed at the top of every response.(e.g. 1, 2, ...)*
 
 [LAST_ACTION_STATE]
-last_action: "MarkdownService implementation completed and tested successfully. Task Execution_Task_Core_Impl_MarkdownSvc_20250519_035300.md is complete."
+last_action: "MUP complete for Web UI testing of MarkdownService integration. All associated CRCT files updated (HDTA_Task_WebUIIntegration_20250519_115200.md, activeContext.md, changelog.md, progress.md). Identified issue: SVGs from core MarkdownService not rendering in PDF via local html2canvas."
 current_phase: "Execution"
-next_action: "Update changelog.md, progress.md, and mark Execution_Task_Core_Impl_MarkdownSvc_20250519_035300.md as complete. Then, proceed with Web UI integration (HDTA_Task_WebUIIntegration_20250519_115200.md) or PdfService refactor (Strategy_Task_CoreRefactor_PdfSvc_20250518_095954.md)."
+next_action: "Address SVG rendering in PDF issue, or proceed with PdfService core implementation (Strategy_Task_CoreRefactor_PdfSvc_20250518_095954.md)."
 next_phase: "Execution"
 
 ---
@@ -56,6 +56,9 @@ next_phase: "Execution"
 - Carefully verify relative paths in `tsconfig.json` `extends` clauses, especially after moving packages. The path is relative to the `tsconfig.json` file itself, not the CWD of the `tsc` command.
 - Periodic MUP (Mandatory Update Protocol) is triggered when context window usage reaches thresholds like 20%, 40%, etc., to ensure system stability and accurate state tracking.
 - MarkdownService implementation is complete and tested.
+- MUP for MarkdownService completion performed. File paths for task files need careful verification; they might be at the workspace root's `cline_docs` or within the project's `cline_docs`.
+- Integrating core services (like MarkdownService) into existing UI scripts (`script.js`) requires careful replacement of local logic with service calls, and updating any readiness checks or dependencies.
+- `html2canvas` (used by jsPDF's `html()` method) may have limitations rendering complex SVGs (like those from Mermaid) into PDFs. This needs investigation when SVGs are missing from PDF output.
 
 [Character_Definitions]
 
