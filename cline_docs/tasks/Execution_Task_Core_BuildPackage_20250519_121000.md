@@ -7,20 +7,20 @@
 Build the `@pubmd/core` package by installing its dependencies and executing its defined build script to generate the necessary JavaScript artifacts in the `dist` directory, making it available for import.
 
 ## Context
-- The `@pubmd/core` package is located at `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core`.
-- Its `package.json` (Key `1B1`, path: `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/package.json`) contains a build script: `"build": "tsc -p tsconfig.build.json && tsc -p tsconfig.esm.json"` and lists `devDependencies` such as `typescript`.
-- `tsconfig.build.json` (Key `1B2`, path: `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.build.json`) specifies `outDir: "./dist"`.
-- `tsconfig.esm.json` (Key `1B3`, path: `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.esm.json`) specifies `outDir: "./dist/esm"`.
+- The `@pubmd/core` package is located at `nodejs_projects/core`.
+- Its `package.json` (Key `1B1`, path: `nodejs_projects/core/package.json`) contains a build script: `"build": "tsc -p tsconfig.build.json && tsc -p tsconfig.esm.json"` and lists `devDependencies` such as `typescript`.
+- `tsconfig.build.json` (Key `1B2`, path: `nodejs_projects/core/tsconfig.build.json`) specifies `outDir: "./dist"`.
+- `tsconfig.esm.json` (Key `1B3`, path: `nodejs_projects/core/tsconfig.esm.json`) specifies `outDir: "./dist/esm"`.
 - The previous verification task (`Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md`) confirmed that the `dist` directory and its build artifacts are currently missing.
-- The build command needs to be executed from within the `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core` directory.
+- The build command needs to be executed from within the `nodejs_projects/core` directory.
 - User feedback indicates `npm install` should be run first.
 
 ## Steps & Results
 
 1.  **Navigate to Package Directory**:
-    *   Action: Change the current working directory to `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core`.
-    *   Tool: `execute_command` (`cd Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core`).
-    *   **Result (2025-05-19 12:11:10 PM):** Success. Working directory changed to `c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core`.
+    *   Action: Change the current working directory to `nodejs_projects/core`.
+    *   Tool: `execute_command` (`cd nodejs_projects/core`).
+    *   **Result (2025-05-19 12:11:10 PM):** Success. Working directory changed to `c:/NotBackedUp/pubmd/nodejs_projects/core`.
 
 2.  **Install Dependencies**:
     *   Action: Run `npm install` to install package dependencies, including `devDependencies` like `typescript`.
@@ -46,18 +46,18 @@ Build the `@pubmd/core` package by installing its dependencies and executing its
 
 
 4.  **Verify `dist` Directory Creation**:
-    *   Action: Check if the `dist` directory now exists within `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core`.
-    *   Tool: `list_files` on `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core`.
+    *   Action: Check if the `dist` directory now exists within `nodejs_projects/core`.
+    *   Tool: `list_files` on `nodejs_projects/core`.
     *   **Status:** Pending (Blocked by Step 2 & 3 failure).
 
 5.  **Verify Main Build Artifacts**:
-    *   Action: Check for the existence of `index.js` and `index.d.ts` (if applicable) in `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/dist/`.
-    *   Tool: `list_files` on `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/dist/`.
+    *   Action: Check for the existence of `index.js` and `index.d.ts` (if applicable) in `nodejs_projects/core/dist/`.
+    *   Tool: `list_files` on `nodejs_projects/core/dist/`.
     *   **Status:** Pending (Blocked by Step 2 & 3 failure).
 
 6.  **Verify ESM Build Artifacts**:
-    *   Action: Check for the existence of `index.js` in `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/dist/esm/`.
-    *   Tool: `list_files` on `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/dist/esm/`.
+    *   Action: Check for the existence of `index.js` in `nodejs_projects/core/dist/esm/`.
+    *   Tool: `list_files` on `nodejs_projects/core/dist/esm/`.
     *   **Status:** Pending (Blocked by Step 2 & 3 failure).
 
 7.  **Document Outcome**:
@@ -67,19 +67,19 @@ Build the `@pubmd/core` package by installing its dependencies and executing its
 ## Dependencies
 - Requires:
     - `cline_docs/tasks/Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md` (for confirmation that build is needed).
-    - `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/package.json` (Key `1B1`)
-    - `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.build.json` (Key `1B2`)
-    - `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.esm.json` (Key `1B3`)
+    - `nodejs_projects/core/package.json` (Key `1B1`)
+    - `nodejs_projects/core/tsconfig.build.json` (Key `1B2`)
+    - `nodejs_projects/core/tsconfig.esm.json` (Key `1B3`)
     - (Implicit) Node.js and npm/yarn installed and accessible in PATH.
 - Blocks:
     - `HDTA_Task_WebUIIntegration_20250519_115200.md` - Task 2.1 (Modify `script.js` to Import Core Package)
 
 ## Expected Output
 - `npm install` completes successfully in `packages/core`.
-- The `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/dist` directory is created.
-- `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/dist/index.js` (CommonJS module) exists.
-- `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/dist/index.d.ts` (type definitions) exists.
-- The `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/dist/esm` directory is created.
-- `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/dist/esm/index.js` (ES module) exists.
+- The `nodejs_projects/core/dist` directory is created.
+- `nodejs_projects/core/dist/index.js` (CommonJS module) exists.
+- `nodejs_projects/core/dist/index.d.ts` (type definitions) exists.
+- The `nodejs_projects/core/dist/esm` directory is created.
+- `nodejs_projects/core/dist/esm/index.js` (ES module) exists.
 - The `@pubmd/core` package is successfully built and its artifacts are present, ready for subsequent import and usage.
 - Any build errors are captured for diagnosis.

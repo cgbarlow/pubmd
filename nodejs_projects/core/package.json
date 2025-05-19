@@ -1,0 +1,27 @@
+{
+  "name": "@pubmd/core",
+  "version": "0.1.0",
+  "description": "Core logic for PubMD Markdown to PDF converter.",
+  "main": "dist/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.esm.json",
+    "dev": "tsc -w -p tsconfig.build.json",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "markdown",
+    "pdf",
+    "core"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

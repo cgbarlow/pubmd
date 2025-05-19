@@ -3,9 +3,9 @@ n + 1 = (x)
 *This is a systemwide progressive counter where x = number of current response. This must be displayed at the top of every response.(e.g. 1, 2, ...)*
 
 [LAST_ACTION_STATE]
-last_action: "User responded to npm issue. Task Execution_Task_Core_BuildPackage_20250519_121000.md updated to include npm install. Still blocked by npm not found."
+last_action: "Moved @pubmd/core to /workspaces/pubmd/nodejs_projects/core. Updated .clinerules, Execution_Task_Core_BuildPackage_20250519_121000.md, and activeContext.md to reflect new path. MUP completed."
 current_phase: "Execution"
-next_action: "Await user resolution of npm not found issue, then attempt Step 2 (npm install) of Execution_Task_Core_BuildPackage_20250519_121000.md."
+next_action: "Await user resolution of npm not found issue, then attempt Step 1 (Navigate to Package Directory at new path nodejs_projects/core) and Step 2 (npm install) of Execution_Task_Core_BuildPackage_20250519_121000.md."
 next_phase: "Execution"
 
 ---
@@ -13,7 +13,7 @@ next_phase: "Execution"
 [CODE_ROOT_DIRECTORIES]
 - src
 - ../src
-- packages/core
+- ../nodejs_projects/core
 
 [DOC_DIRECTORIES]
 - docs
@@ -54,7 +54,8 @@ next_phase: "Execution"
 - Step 5.3 of Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md completed: Verified build artifacts alignment. Artifacts missing.
 - Step 5.4 of Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md completed: Build configs appear correct.
 - Created Execution_Task_Core_BuildPackage_20250519_121000.md to build the @pubmd/core package.
-- Attempted to run `npm run build` in `packages/core` but `npm` command was not found. User advised `npm install` should be part of plan. Plan updated, but `npm` still not found.
+- Attempted to run `npm run build` in `packages/core` (old path) but `npm` command was not found. User advised `npm install` should be part of plan. Plan updated, but `npm` still not found.
+- Clarify Node.js project structure preferences early to avoid rework. Node.js projects (including `node_modules`) should be in dedicated top-level directories, not within CRCT documentation folders.
 
 [Character_Definitions]
 
