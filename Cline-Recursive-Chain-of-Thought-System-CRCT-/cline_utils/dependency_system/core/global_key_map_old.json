@@ -1,148 +1,183 @@
 {
-  "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs": {
+  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs": {
     "key_string": "1A",
-    "norm_path": "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs",
+    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs",
     "parent_path": null,
     "tier": 1,
     "is_directory": true
   },
-  "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src": {
+  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core": {
     "key_string": "1B",
-    "norm_path": "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src",
+    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core",
     "parent_path": null,
     "tier": 1,
     "is_directory": true
   },
-  "/workspaces/pubmd/documentation": {
+  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/package.json": {
+    "key_string": "1B1",
+    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/package.json",
+    "parent_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core",
+    "tier": 1,
+    "is_directory": false
+  },
+  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.build.json": {
+    "key_string": "1B2",
+    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.build.json",
+    "parent_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core",
+    "tier": 1,
+    "is_directory": false
+  },
+  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.esm.json": {
+    "key_string": "1B3",
+    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.esm.json",
+    "parent_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core",
+    "tier": 1,
+    "is_directory": false
+  },
+  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src": {
     "key_string": "1C",
-    "norm_path": "/workspaces/pubmd/documentation",
+    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src",
     "parent_path": null,
     "tier": 1,
     "is_directory": true
   },
-  "/workspaces/pubmd/documentation/00_Planning_And_Initiation": {
-    "key_string": "1Ca",
-    "norm_path": "/workspaces/pubmd/documentation/00_Planning_And_Initiation",
-    "parent_path": "/workspaces/pubmd/documentation",
-    "tier": 1,
-    "is_directory": true
-  },
-  "/workspaces/pubmd/documentation/00_Planning_And_Initiation/nextstepsforthisproject.md": {
-    "key_string": "1Ca1",
-    "norm_path": "/workspaces/pubmd/documentation/00_Planning_And_Initiation/nextstepsforthisproject.md",
-    "parent_path": "/workspaces/pubmd/documentation/00_Planning_And_Initiation",
-    "tier": 1,
-    "is_directory": false
-  },
-  "/workspaces/pubmd/documentation/01_Requirements": {
-    "key_string": "1Cb",
-    "norm_path": "/workspaces/pubmd/documentation/01_Requirements",
-    "parent_path": "/workspaces/pubmd/documentation",
-    "tier": 1,
-    "is_directory": true
-  },
-  "/workspaces/pubmd/documentation/01_Requirements/.Business_Requirements.md": {
-    "key_string": "1Cb1",
-    "norm_path": "/workspaces/pubmd/documentation/01_Requirements/.Business_Requirements.md",
-    "parent_path": "/workspaces/pubmd/documentation/01_Requirements",
-    "tier": 1,
-    "is_directory": false
-  },
-  "/workspaces/pubmd/documentation/02_Architecture": {
-    "key_string": "1Cc",
-    "norm_path": "/workspaces/pubmd/documentation/02_Architecture",
-    "parent_path": "/workspaces/pubmd/documentation",
-    "tier": 1,
-    "is_directory": true
-  },
-  "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Log.md": {
-    "key_string": "1Cc1",
-    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Log.md",
-    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
-    "tier": 1,
-    "is_directory": false
-  },
-  "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Pending.md": {
-    "key_string": "1Cc2",
-    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Pending.md",
-    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
-    "tier": 1,
-    "is_directory": false
-  },
-  "/workspaces/pubmd/documentation/02_Architecture/Core_Logic_Componentization_Strategy.md": {
-    "key_string": "1Cc3",
-    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/Core_Logic_Componentization_Strategy.md",
-    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
-    "tier": 1,
-    "is_directory": false
-  },
-  "/workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md": {
-    "key_string": "1Cc4",
-    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md",
-    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
-    "tier": 1,
-    "is_directory": false
-  },
-  "/workspaces/pubmd/documentation/02_Architecture/solution_options_analysis.md": {
-    "key_string": "1Cc5",
-    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/solution_options_analysis.md",
-    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
-    "tier": 1,
-    "is_directory": false
-  },
-  "/workspaces/pubmd/documentation/03_Implementation": {
-    "key_string": "1Cd",
-    "norm_path": "/workspaces/pubmd/documentation/03_Implementation",
-    "parent_path": "/workspaces/pubmd/documentation",
-    "tier": 1,
-    "is_directory": true
-  },
-  "/workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md": {
-    "key_string": "1Cd1",
-    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md",
-    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
-    "tier": 1,
-    "is_directory": false
-  },
-  "/workspaces/pubmd/src": {
+  "c:/NotBackedUp/pubmd/documentation": {
     "key_string": "1D",
-    "norm_path": "/workspaces/pubmd/src",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation",
     "parent_path": null,
     "tier": 1,
     "is_directory": true
   },
-  "/workspaces/pubmd/src/web": {
+  "c:/NotBackedUp/pubmd/documentation/00_Planning_And_Initiation": {
     "key_string": "1Da",
-    "norm_path": "/workspaces/pubmd/src/web",
-    "parent_path": "/workspaces/pubmd/src",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/00_Planning_And_Initiation",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation",
     "tier": 1,
     "is_directory": true
   },
-  "/workspaces/pubmd/src/web/default.md": {
+  "c:/NotBackedUp/pubmd/documentation/00_Planning_And_Initiation/nextstepsforthisproject.md": {
     "key_string": "1Da1",
-    "norm_path": "/workspaces/pubmd/src/web/default.md",
-    "parent_path": "/workspaces/pubmd/src/web",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/00_Planning_And_Initiation/nextstepsforthisproject.md",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation/00_Planning_And_Initiation",
     "tier": 1,
     "is_directory": false
   },
-  "/workspaces/pubmd/src/web/index.html": {
-    "key_string": "1Da2",
-    "norm_path": "/workspaces/pubmd/src/web/index.html",
-    "parent_path": "/workspaces/pubmd/src/web",
+  "c:/NotBackedUp/pubmd/documentation/01_Requirements": {
+    "key_string": "1Db",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/01_Requirements",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation",
+    "tier": 1,
+    "is_directory": true
+  },
+  "c:/NotBackedUp/pubmd/documentation/01_Requirements/.Business_Requirements.md": {
+    "key_string": "1Db1",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/01_Requirements/.Business_Requirements.md",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation/01_Requirements",
     "tier": 1,
     "is_directory": false
   },
-  "/workspaces/pubmd/src/web/script.js": {
-    "key_string": "1Da3",
-    "norm_path": "/workspaces/pubmd/src/web/script.js",
-    "parent_path": "/workspaces/pubmd/src/web",
+  "c:/NotBackedUp/pubmd/documentation/02_Architecture": {
+    "key_string": "1Dc",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation",
+    "tier": 1,
+    "is_directory": true
+  },
+  "c:/NotBackedUp/pubmd/documentation/02_Architecture/.Architectural_Decisions_Log.md": {
+    "key_string": "1Dc1",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture/.Architectural_Decisions_Log.md",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
     "tier": 1,
     "is_directory": false
   },
-  "/workspaces/pubmd/src/web/style.css": {
-    "key_string": "1Da4",
-    "norm_path": "/workspaces/pubmd/src/web/style.css",
-    "parent_path": "/workspaces/pubmd/src/web",
+  "c:/NotBackedUp/pubmd/documentation/02_Architecture/.Architectural_Decisions_Pending.md": {
+    "key_string": "1Dc2",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture/.Architectural_Decisions_Pending.md",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "c:/NotBackedUp/pubmd/documentation/02_Architecture/Core_Logic_Componentization_Strategy.md": {
+    "key_string": "1Dc3",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture/Core_Logic_Componentization_Strategy.md",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "c:/NotBackedUp/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md": {
+    "key_string": "1Dc4",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "c:/NotBackedUp/pubmd/documentation/02_Architecture/solution_options_analysis.md": {
+    "key_string": "1Dc5",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture/solution_options_analysis.md",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "c:/NotBackedUp/pubmd/documentation/03_Implementation": {
+    "key_string": "1Dd",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/03_Implementation",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation",
+    "tier": 1,
+    "is_directory": true
+  },
+  "c:/NotBackedUp/pubmd/documentation/03_Implementation/Implementation_Plan.md": {
+    "key_string": "1Dd1",
+    "norm_path": "c:/NotBackedUp/pubmd/documentation/03_Implementation/Implementation_Plan.md",
+    "parent_path": "c:/NotBackedUp/pubmd/documentation/03_Implementation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "c:/NotBackedUp/pubmd/src": {
+    "key_string": "1E",
+    "norm_path": "c:/NotBackedUp/pubmd/src",
+    "parent_path": null,
+    "tier": 1,
+    "is_directory": true
+  },
+  "c:/NotBackedUp/pubmd/src/cli": {
+    "key_string": "1Ea",
+    "norm_path": "c:/NotBackedUp/pubmd/src/cli",
+    "parent_path": "c:/NotBackedUp/pubmd/src",
+    "tier": 1,
+    "is_directory": true
+  },
+  "c:/NotBackedUp/pubmd/src/web": {
+    "key_string": "1Eb",
+    "norm_path": "c:/NotBackedUp/pubmd/src/web",
+    "parent_path": "c:/NotBackedUp/pubmd/src",
+    "tier": 1,
+    "is_directory": true
+  },
+  "c:/NotBackedUp/pubmd/src/web/default.md": {
+    "key_string": "1Eb1",
+    "norm_path": "c:/NotBackedUp/pubmd/src/web/default.md",
+    "parent_path": "c:/NotBackedUp/pubmd/src/web",
+    "tier": 1,
+    "is_directory": false
+  },
+  "c:/NotBackedUp/pubmd/src/web/index.html": {
+    "key_string": "1Eb2",
+    "norm_path": "c:/NotBackedUp/pubmd/src/web/index.html",
+    "parent_path": "c:/NotBackedUp/pubmd/src/web",
+    "tier": 1,
+    "is_directory": false
+  },
+  "c:/NotBackedUp/pubmd/src/web/script.js": {
+    "key_string": "1Eb3",
+    "norm_path": "c:/NotBackedUp/pubmd/src/web/script.js",
+    "parent_path": "c:/NotBackedUp/pubmd/src/web",
+    "tier": 1,
+    "is_directory": false
+  },
+  "c:/NotBackedUp/pubmd/src/web/style.css": {
+    "key_string": "1Eb4",
+    "norm_path": "c:/NotBackedUp/pubmd/src/web/style.css",
+    "parent_path": "c:/NotBackedUp/pubmd/src/web",
     "tier": 1,
     "is_directory": false
   }

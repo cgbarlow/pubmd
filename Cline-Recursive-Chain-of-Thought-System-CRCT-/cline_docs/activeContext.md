@@ -1,19 +1,19 @@
 # Active Context
 
-**Current Task**: Strategy Phase - Plan Week 1: Foundational Setup & Core Migration.
+**Current Task**: Executing `Execution_Task_Core_BuildPackage_20250519_121000.md`.
 
-**Overall Cycle Goal**: Plan the "Foundational Setup & Core Migration" (Week 1) as defined in the `documentation/03_Implementation/Implementation_Plan.md`.
+**Overall Cycle Goal**: Integrate the `@pubmd/core` package into the existing web UI.
 
-**Last MUP Action**: Updated `.clinerules` on 2025-05-18 10:10:12 AM.
+**Last MUP Action**: Updated `.clinerules` on 2025-05-19 12:29:48 PM. (This will be updated by current MUP)
 
 **Current State**:
-- Strategy phase ongoing.
-- **Current Planning Area**: "Area: Web UI Integration"
-  - **Objectives for "Area: Web UI Integration"**:
-    1. Define/Update the Domain Module for Web UI (e.g., `src/web/web_module.md` or `src/src_module.md`).
-    2. Review the "Week 1 - Web UI Integration" section of `documentation/03_Implementation/Implementation_Plan.md`.
-    3. Decompose the integration work into atomic `Strategy_*` or `Execution_*` Task Instructions, focusing on how the UI will consume the new `@pubmd/core` package.
-  - **Status for "Area: @pubmd/core Package"**: Completed planning for this iteration. Marked as "[x] Planned" in `hierarchical_task_checklist_20250518_090634.md`.
+- Execution phase ongoing.
+- Currently executing: [`Execution_Task_Core_BuildPackage_20250519_121000.md`](cline_docs/tasks/Execution_Task_Core_BuildPackage_20250519_121000.md:1)
+  - Step 1 (Navigate to Package Directory) completed.
+  - Original Step 2 (`npm run build`) FAILED: `npm` command not found.
+  - Task plan updated to include `npm install` as new Step 2, with `npm run build` as Step 3.
+- The task is currently blocked pending resolution of the `npm` command not being found. This prevents both `npm install` and `npm run build`.
 
 **Next Steps**:
-- Proceed with Strategy Plugin Step 2: Focused Dependency Analysis for "Area: Web UI Integration".
+- Re-iterated to the user the need to resolve the `npm` command not found issue (ensure Node.js/npm installed and in PATH, or provide full path to `npm`).
+- Await user response before attempting the new Step 2 (`npm install`) in [`Execution_Task_Core_BuildPackage_20250519_121000.md`](cline_docs/tasks/Execution_Task_Core_BuildPackage_20250519_121000.md:27).

@@ -8,13 +8,13 @@ Key Definitions:
 ---KEY_DEFINITIONS_END---
 
 last_KEY_edit: Assigned keys: 1B, 1C, 1E, 1Ea, 1Eb
-last_GRID_edit: Grid content updated (2025-05-19T11:32:08.503875)
+last_GRID_edit: Grid structure updated (2025-05-19T11:13:40.564808)
 
 ---GRID_START---
 X 1B 1C 1E 1Ea 1Eb
 1B = op4
 1C = pop3
-1E = ppoxx
-1Ea = ppxop
-1Eb = ppxpo
+1E = ppopp
+1Ea = p3op
+1Eb = p4o
 ---GRID_END---

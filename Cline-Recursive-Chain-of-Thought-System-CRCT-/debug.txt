@@ -1,118 +1,41 @@
-2025-05-18 21:01:35,787 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: path_normalization with TTL 600s
-2025-05-18 21:01:35,787 - __main__ - INFO - Attempting to add dependency: 1Ea3 -> ['1B'] (<) in tracker /workspaces/pubmd/src/web/web_module.md
-2025-05-18 21:01:35,787 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: tracker_data with TTL 600s
-2025-05-18 21:01:35,788 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'web_module.md': 7 keys, 7 grid rows
-2025-05-18 21:01:35,788 - __main__ - INFO - Loading global key map...
-2025-05-18 21:01:35,789 - cline_utils.dependency_system.core.key_manager - INFO - Successfully loaded global key map (25 entries) from: /workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_utils/dependency_system/core/global_key_map.json
-2025-05-18 21:01:35,789 - __main__ - INFO - Global key map loaded successfully.
-2025-05-18 21:01:35,789 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: project_root with TTL 600s
-2025-05-18 21:01:35,790 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: code_roots with TTL 600s
-2025-05-18 21:01:35,790 - cline_utils.dependency_system.utils.config_manager - DEBUG - Found and sorted code roots: ['/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core', '/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src', '/workspaces/pubmd/src']
-2025-05-18 21:01:35,790 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: doc_dirs with TTL 600s
-2025-05-18 21:01:35,790 - cline_utils.dependency_system.utils.config_manager - DEBUG - Found and sorted doc dirs: ['/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs', '/workspaces/pubmd/documentation']
-2025-05-18 21:01:35,791 - __main__ - INFO - Target '1B' is valid globally. Queued for foreign key addition to mini-tracker.
-2025-05-18 21:01:35,791 - __main__ - INFO - Calling update_tracker for /workspaces/pubmd/src/web/web_module.md (Force Apply: True)
-2025-05-18 21:01:35,792 - cline_utils.dependency_system.io.tracker_io - DEBUG - Mini Tracker (1Ea): Initial relevant keys (internal): 5
-2025-05-18 21:01:35,792 - cline_utils.dependency_system.io.tracker_io - DEBUG - Scanning existing grid of 'web_module.md' for relevant foreign keys (File-File links only)...
-2025-05-18 21:01:35,792 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: grid_decompress with TTL 600s
-2025-05-18 21:01:35,792 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Adding persisted foreign FILE key '1Dc4' due to link to internal FILE '1Ea2' ('d')
-2025-05-18 21:01:35,792 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Adding persisted foreign FILE key '1Dd1' due to link to internal FILE '1Ea2' ('d')
-2025-05-18 21:01:35,792 - cline_utils.dependency_system.io.tracker_io - DEBUG -  Skipping link (1Ea, 1Ea1): Not a file-file relationship.
-2025-05-18 21:01:35,792 - cline_utils.dependency_system.io.tracker_io - DEBUG -  Skipping link (1Ea, 1Ea2): Not a file-file relationship.
-2025-05-18 21:01:35,793 - cline_utils.dependency_system.io.tracker_io - DEBUG -  Skipping link (1Ea, 1Ea3): Not a file-file relationship.
-2025-05-18 21:01:35,793 - cline_utils.dependency_system.io.tracker_io - DEBUG -  Skipping link (1Ea, 1Ea4): Not a file-file relationship.
-2025-05-18 21:01:35,793 - cline_utils.dependency_system.io.tracker_io - DEBUG -  Skipping link (1Ea1, 1Ea): Not a file-file relationship.
-2025-05-18 21:01:35,793 - cline_utils.dependency_system.io.tracker_io - DEBUG -  Skipping link (1Ea2, 1Ea): Not a file-file relationship.
-2025-05-18 21:01:35,793 - cline_utils.dependency_system.io.tracker_io - DEBUG -  Skipping link (1Ea3, 1Ea): Not a file-file relationship.
-2025-05-18 21:01:35,793 - cline_utils.dependency_system.io.tracker_io - DEBUG -  Skipping link (1Ea4, 1Ea): Not a file-file relationship.
-2025-05-18 21:01:35,793 - cline_utils.dependency_system.io.tracker_io - DEBUG - Mini Tracker (1Ea): Relevant keys after scanning existing grid: 7
-2025-05-18 21:01:35,793 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: excluded_dirs with TTL 600s
-2025-05-18 21:01:35,793 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: config_data with TTL 600s
-2025-05-18 21:01:35,794 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: excluded_paths with TTL 600s
-2025-05-18 21:01:35,805 - cline_utils.dependency_system.io.tracker_io - DEBUG - Processing incoming suggestions to augment relevant keys...
-2025-05-18 21:01:35,805 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Adding suggested foreign key '1B' linked from internal '1Ea3'
-2025-05-18 21:01:35,805 - cline_utils.dependency_system.io.tracker_io - DEBUG - Mini Tracker (1Ea): Relevant keys after processing suggestions: 8
-2025-05-18 21:01:35,805 - cline_utils.dependency_system.io.tracker_io - DEBUG - Validating 8 relevant keys against provided path_to_key_info map...
-2025-05-18 21:01:35,805 - cline_utils.dependency_system.io.tracker_io - INFO - Mini tracker update for module 1Ea (web). Grid keys: 8.
-2025-05-18 21:01:35,805 - cline_utils.dependency_system.io.tracker_io - DEBUG - Filtering mini-tracker suggestions against final valid keys (web_module.md)...
-2025-05-18 21:01:35,805 - cline_utils.dependency_system.io.tracker_io - DEBUG - Mini filter: Adding suggestion 1Ea3 -> 1B ('<')
-2025-05-18 21:01:35,805 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: metadata with TTL 600s
-2025-05-18 21:01:35,806 - cline_utils.dependency_system.io.tracker_io - DEBUG - Read existing tracker web_module.md: 7 keys, 7 grid rows.
-2025-05-18 21:01:35,806 - cline_utils.dependency_system.core.key_manager - INFO - Loaded previous global key map (21 entries) from: /workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_utils/dependency_system/core/global_key_map_old.json
-2025-05-18 21:01:35,806 - cline_utils.dependency_system.io.tracker_io - INFO - Building path migration map based on global key maps...
-2025-05-18 21:01:35,807 - cline_utils.dependency_system.io.tracker_io - DEBUG - Old global map: Found 21 unique paths.
-2025-05-18 21:01:35,807 - cline_utils.dependency_system.io.tracker_io - DEBUG - New global map: Found 25 unique paths.
-2025-05-18 21:01:35,807 - cline_utils.dependency_system.io.tracker_io - INFO - Path comparison: Stable=21, Removed=0, Added=4
-2025-05-18 21:01:35,807 - cline_utils.dependency_system.io.tracker_io - INFO - Path migration map built with 25 total path entries.
-2025-05-18 21:01:35,807 - cline_utils.dependency_system.io.tracker_io - DEBUG - Updating tracker: /workspaces/pubmd/src/web/web_module.md
-2025-05-18 21:01:35,808 - cline_utils.dependency_system.io.tracker_io - INFO - Backed up tracker 'web_module.md' to: web_module.md.20250518_210135_808017.bak
-2025-05-18 21:01:35,809 - cline_utils.dependency_system.io.tracker_io - DEBUG - Cleaning up 1 older backups for 'web_module.md'.
-2025-05-18 21:01:35,810 - cline_utils.dependency_system.io.tracker_io - INFO - Copying old grid values (using path migration map)...
-2025-05-18 21:01:35,810 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy Processing Stable Row: Path '/workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md' (OldKeyFromFile: '1Dc4') -> NewKey '1Dc4' (Idx 1)
-2025-05-18 21:01:35,810 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'x' from stable paths ('/workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md','/workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md') -> ('1Dc4','1Dd1') at index (1,2)
-2025-05-18 21:01:35,810 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'd' from stable paths ('/workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md','/workspaces/pubmd/src/web/index.html') -> ('1Dc4','1Ea2') at index (1,5)
-2025-05-18 21:01:35,810 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'd' from stable paths ('/workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md','/workspaces/pubmd/src/web/script.js') -> ('1Dc4','1Ea3') at index (1,6)
-2025-05-18 21:01:35,810 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy Processing Stable Row: Path '/workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md' (OldKeyFromFile: '1Dd1') -> NewKey '1Dd1' (Idx 2)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied '>' from stable paths ('/workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md','/workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md') -> ('1Dd1','1Dc4') at index (2,1)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'd' from stable paths ('/workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md','/workspaces/pubmd/src/web/index.html') -> ('1Dd1','1Ea2') at index (2,5)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'd' from stable paths ('/workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md','/workspaces/pubmd/src/web/script.js') -> ('1Dd1','1Ea3') at index (2,6)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy Processing Stable Row: Path '/workspaces/pubmd/src/web' (OldKeyFromFile: '1Ea') -> NewKey '1Ea' (Idx 3)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'x' from stable paths ('/workspaces/pubmd/src/web','/workspaces/pubmd/src/web/default.md') -> ('1Ea','1Ea1') at index (3,4)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'x' from stable paths ('/workspaces/pubmd/src/web','/workspaces/pubmd/src/web/index.html') -> ('1Ea','1Ea2') at index (3,5)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'x' from stable paths ('/workspaces/pubmd/src/web','/workspaces/pubmd/src/web/script.js') -> ('1Ea','1Ea3') at index (3,6)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'x' from stable paths ('/workspaces/pubmd/src/web','/workspaces/pubmd/src/web/style.css') -> ('1Ea','1Ea4') at index (3,7)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy Processing Stable Row: Path '/workspaces/pubmd/src/web/default.md' (OldKeyFromFile: '1Ea1') -> NewKey '1Ea1' (Idx 4)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'x' from stable paths ('/workspaces/pubmd/src/web/default.md','/workspaces/pubmd/src/web') -> ('1Ea1','1Ea') at index (4,3)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy Processing Stable Row: Path '/workspaces/pubmd/src/web/index.html' (OldKeyFromFile: '1Ea2') -> NewKey '1Ea2' (Idx 5)
-2025-05-18 21:01:35,811 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'x' from stable paths ('/workspaces/pubmd/src/web/index.html','/workspaces/pubmd/src/web') -> ('1Ea2','1Ea') at index (5,3)
-2025-05-18 21:01:35,812 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy Processing Stable Row: Path '/workspaces/pubmd/src/web/script.js' (OldKeyFromFile: '1Ea3') -> NewKey '1Ea3' (Idx 6)
-2025-05-18 21:01:35,812 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'x' from stable paths ('/workspaces/pubmd/src/web/script.js','/workspaces/pubmd/src/web') -> ('1Ea3','1Ea') at index (6,3)
-2025-05-18 21:01:35,812 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy Processing Stable Row: Path '/workspaces/pubmd/src/web/style.css' (OldKeyFromFile: '1Ea4') -> NewKey '1Ea4' (Idx 7)
-2025-05-18 21:01:35,812 - cline_utils.dependency_system.io.tracker_io - DEBUG -   Grid Copy OK: Copied 'x' from stable paths ('/workspaces/pubmd/src/web/style.css','/workspaces/pubmd/src/web') -> ('1Ea4','1Ea') at index (7,3)
-2025-05-18 21:01:35,812 - cline_utils.dependency_system.io.tracker_io - INFO - Finished copying old grid values. Copied: 14, Skipped (Unstable/Removed Path): 0, Skipped (Target Filled): 0, RowErrors=0
-2025-05-18 21:01:35,812 - cline_utils.dependency_system.io.tracker_io - DEBUG - Calculating structural dependencies for mini tracker...
-2025-05-18 21:01:35,813 - cline_utils.dependency_system.io.tracker_io - DEBUG - Applying structural dependency rules to grid...
-2025-05-18 21:01:35,813 - cline_utils.dependency_system.io.tracker_io - DEBUG - Applied 0 structural rules to placeholder cells.
-2025-05-18 21:01:35,813 - cline_utils.dependency_system.io.tracker_io - DEBUG - Mini Tracker (1Ea): Importing established relationships (Path Based)...
-2025-05-18 21:01:35,813 - cline_utils.dependency_system.io.tracker_io - DEBUG - Checking 5 native against 3 foreign paths.
-2025-05-18 21:01:35,813 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: tracker_paths with TTL 600s
-2025-05-18 21:01:35,814 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'doc_tracker.md': 14 keys, 14 grid rows
-2025-05-18 21:01:35,815 - cline_utils.dependency_system.io.tracker_io - DEBUG - Checking 3 foreign paths against each other.
-2025-05-18 21:01:35,815 - cline_utils.dependency_system.io.tracker_io - DEBUG - Applying 1 suggestions to grid for /workspaces/pubmd/src/web/web_module.md (Force Apply: True)
-2025-05-18 21:01:35,815 - cline_utils.dependency_system.io.tracker_io - DEBUG - Force apply triggered for 1Ea4->1Ea ('<') over ('p')
-2025-05-18 21:01:35,815 - cline_utils.dependency_system.io.tracker_io - DEBUG - Applying to grid: 1Ea3 -> 1B = '<' (Force: True, Sugg: '<', Existed: 'p')
-2025-05-18 21:01:35,816 - cline_utils.dependency_system.io.tracker_io - DEBUG - Applied suggestion: 1Ea3 -> 1B (<) in /workspaces/pubmd/src/web/web_module.md
-2025-05-18 21:01:35,816 - cline_utils.dependency_system.io.tracker_io - DEBUG - Reciprocal Apply: Setting 1B -> 1Ea3  ('>') (Force: True, Existed: 'p')
-2025-05-18 21:01:35,816 - cline_utils.dependency_system.io.tracker_io - INFO - Consolidating grid for 'web_module.md' against global highest-priority relationships...
-2025-05-18 21:01:35,816 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Path Components: project_root='/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-', memory_dir_rel='/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs', calculated memory_dir_abs='/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs'
-2025-05-18 21:01:35,816 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Using main_tracker_abs from config (or default): '/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs/module_relationship_tracker.md'
-2025-05-18 21:01:35,816 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Using doc_tracker_abs from config (or default): '/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs/doc_tracker.md'
-2025-05-18 21:01:35,817 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Found 1 mini trackers under '/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core'.
-2025-05-18 21:01:35,817 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Found 1 mini trackers under '/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src'.
-2025-05-18 21:01:35,817 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Found 2 mini trackers under '/workspaces/pubmd/src'.
-2025-05-18 21:01:35,817 - cline_utils.dependency_system.utils.tracker_utils - INFO - Found 6 total tracker files.
-2025-05-18 21:01:35,817 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: aggregation with TTL 300s
-2025-05-18 21:01:35,818 - cline_utils.dependency_system.utils.tracker_utils - INFO - Aggregating dependencies from 6 trackers using path migration map...
-2025-05-18 21:01:35,818 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: core_module.md
-2025-05-18 21:01:35,818 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'core_module.md': 4 keys, 4 grid rows
-2025-05-18 21:01:35,818 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Aggregation for core_module.md: Skipped 6 cells/rows due to unstable/removed paths.
-2025-05-18 21:01:35,818 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: doc_tracker.md
-2025-05-18 21:01:35,819 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Aggregation for doc_tracker.md: Skipped 50 cells/rows due to unstable/removed paths.
-2025-05-18 21:01:35,819 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: src_module.md
-2025-05-18 21:01:35,819 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'src_module.md': 1 keys, 1 grid rows
-2025-05-18 21:01:35,819 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: src_module.md
-2025-05-18 21:01:35,820 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'src_module.md': 2 keys, 2 grid rows
-2025-05-18 21:01:35,820 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Aggregation for src_module.md: Skipped 2 cells/rows due to unstable/removed paths.
-2025-05-18 21:01:35,820 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: web_module.md
-2025-05-18 21:01:35,820 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Aggregation for web_module.md: Skipped 7 cells/rows due to unstable/removed paths.
-2025-05-18 21:01:35,820 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: module_relationship_tracker.md
-2025-05-18 21:01:35,820 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'module_relationship_tracker.md': 4 keys, 4 grid rows
-2025-05-18 21:01:35,821 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Aggregation for module_relationship_tracker.md: Skipped 6 cells/rows due to unstable/removed paths.
-2025-05-18 21:01:35,821 - cline_utils.dependency_system.utils.tracker_utils - INFO - Aggregation complete. Processed 6 trackers. Found 14 unique directed links (based on current keys for stable paths).
-2025-05-18 21:01:35,821 - cline_utils.dependency_system.io.tracker_io - DEBUG - Retrieved 14 globally authoritative relationships for consolidation.
-2025-05-18 21:01:35,821 - cline_utils.dependency_system.io.tracker_io - DEBUG - No consolidation changes needed based on global relationships.
-2025-05-18 21:01:35,821 - cline_utils.dependency_system.io.tracker_io - DEBUG - Setting last_GRID_edit to detailed manual message: Manual dependency update 1Ea3 -> ['1B'] (<) (2025-05-18T21:01:35.821653)
-2025-05-18 21:01:35,821 - cline_utils.dependency_system.io.tracker_io - WARNING - Mini markers invalid in /workspaces/pubmd/src/web/web_module.md: . Overwriting.
-2025-05-18 21:01:35,822 - cline_utils.dependency_system.io.tracker_io - INFO - Successfully updated tracker: /workspaces/pubmd/src/web/web_module.md
-2025-05-18 21:01:35,823 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: grid_validation with TTL 600s
-2025-05-18 21:01:35,823 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: grid_dependencies with TTL 600s
+2025-05-19 11:48:09,643 - cline_utils.dependency_system.dependency_processor - INFO - Showing dependencies for key string: 1B
+2025-05-19 11:48:09,645 - cline_utils.dependency_system.dependency_processor - INFO - Loading global key map...
+2025-05-19 11:48:09,645 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: path_normalization with TTL 600s
+2025-05-19 11:48:09,648 - cline_utils.dependency_system.core.key_manager - INFO - Successfully loaded global key map (26 entries) from: c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_utils/dependency_system/core/global_key_map.json
+2025-05-19 11:48:09,648 - cline_utils.dependency_system.dependency_processor - INFO - Global key map loaded successfully.
+2025-05-19 11:48:09,648 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: project_root with TTL 600s
+2025-05-19 11:48:09,651 - cline_utils.dependency_system.dependency_processor - DEBUG - Building path migration map for show-dependencies...
+2025-05-19 11:48:09,655 - cline_utils.dependency_system.core.key_manager - INFO - Loaded previous global key map (26 entries) from: c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_utils/dependency_system/core/global_key_map_old.json
+2025-05-19 11:48:09,655 - cline_utils.dependency_system.io.tracker_io - INFO - Building path migration map based on global key maps...
+2025-05-19 11:48:09,655 - cline_utils.dependency_system.io.tracker_io - DEBUG - Old global map: Found 26 unique paths.
+2025-05-19 11:48:09,656 - cline_utils.dependency_system.io.tracker_io - DEBUG - New global map: Found 26 unique paths.
+2025-05-19 11:48:09,656 - cline_utils.dependency_system.io.tracker_io - INFO - Path comparison: Stable=26, Removed=0, Added=0
+2025-05-19 11:48:09,656 - cline_utils.dependency_system.io.tracker_io - INFO - Path migration map built with 26 total path entries.
+2025-05-19 11:48:09,656 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: config_data with TTL 600s
+2025-05-19 11:48:09,656 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Path Components: project_root='c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-', memory_dir_rel='c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs', calculated memory_dir_abs='c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs'
+2025-05-19 11:48:09,657 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Using main_tracker_abs from config (or default): 'c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs/module_relationship_tracker.md'
+2025-05-19 11:48:09,657 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Using doc_tracker_abs from config (or default): 'c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs/doc_tracker.md'
+2025-05-19 11:48:09,657 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: code_roots with TTL 600s
+2025-05-19 11:48:09,657 - cline_utils.dependency_system.utils.config_manager - DEBUG - Found and sorted code roots: ['c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core', 'c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src', 'c:/NotBackedUp/pubmd/src']
+2025-05-19 11:48:09,658 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Found 1 mini trackers under 'c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core'.
+2025-05-19 11:48:09,659 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Found 1 mini trackers under 'c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src'.
+2025-05-19 11:48:09,663 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Found 2 mini trackers under 'c:/NotBackedUp/pubmd/src'.
+2025-05-19 11:48:09,663 - cline_utils.dependency_system.utils.tracker_utils - INFO - Found 6 total tracker files.
+2025-05-19 11:48:09,663 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: aggregation with TTL 300s
+2025-05-19 11:48:09,664 - cline_utils.dependency_system.utils.tracker_utils - INFO - Aggregating dependencies from 6 trackers using path migration map...
+2025-05-19 11:48:09,664 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: core_module.md
+2025-05-19 11:48:09,665 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: tracker_data with TTL 600s
+2025-05-19 11:48:09,665 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'core_module.md': 4 keys, 4 grid rows
+2025-05-19 11:48:09,668 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: grid_decompress with TTL 600s
+2025-05-19 11:48:09,669 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: src_module.md
+2025-05-19 11:48:09,670 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'src_module.md': 1 keys, 1 grid rows
+2025-05-19 11:48:09,670 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: doc_tracker.md
+2025-05-19 11:48:09,674 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'doc_tracker.md': 14 keys, 14 grid rows
+2025-05-19 11:48:09,674 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: src_module.md
+2025-05-19 11:48:09,676 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'src_module.md': 3 keys, 3 grid rows
+2025-05-19 11:48:09,677 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: module_relationship_tracker.md
+2025-05-19 11:48:09,685 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'module_relationship_tracker.md': 5 keys, 5 grid rows
+2025-05-19 11:48:09,685 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: web_module.md
+2025-05-19 11:48:09,690 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'web_module.md': 7 keys, 7 grid rows
+2025-05-19 11:48:09,690 - cline_utils.dependency_system.utils.tracker_utils - INFO - Aggregation complete. Processed 6 trackers. Found 254 unique directed links (based on current keys for stable paths).
+2025-05-19 11:48:09,692 - cline_utils.dependency_system.dependency_processor - DEBUG - Filtering aggregated links for target key display: 1B

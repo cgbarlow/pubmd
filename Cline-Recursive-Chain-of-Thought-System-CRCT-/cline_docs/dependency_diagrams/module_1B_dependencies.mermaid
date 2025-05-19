@@ -8,8 +8,13 @@ flowchart TB
   %% -- Nodes and Subgraphs --
   subgraph sg_1B ["1B<br>core"]
     style sg_1B fill:#282828,stroke:#39FF14,stroke-width:4px
+    1B2["1B2<br>tsconfig.build.json"]
+    class 1B2 file
+    1B3["1B3<br>tsconfig.esm.json"]
+    class 1B3 file
   end
 
   %% -- Fallback Node Definitions --
 
   %% -- Dependencies --
+  1B2 ==>|"semantic (strong)"| 1B3

@@ -6,66 +6,50 @@ flowchart TB
   linkStyle default stroke:#CCCCCC,stroke-width:1px
 
   %% -- Nodes and Subgraphs --
-  subgraph sg_1C ["1C<br>documentation"]
-    style sg_1C fill:#282828,stroke:#39FF14,stroke-width:4px
-    subgraph sg_1Ca ["1Ca<br>00_Planning_And_Initiation"]
-      style sg_1Ca fill:#282828,stroke:#39FF14,stroke-width:4px
-      1Ca1["1Ca1<br>nextstepsforthisproject.md"]
-      class 1Ca1 doc
+  subgraph sg_1B ["1B<br>core"]
+    style sg_1B fill:#282828,stroke:#39FF14,stroke-width:4px
+    1B2["1B2<br>tsconfig.build.json"]
+    class 1B2 file
+    1B3["1B3<br>tsconfig.esm.json"]
+    class 1B3 file
+  end
+  subgraph sg_1D ["1D<br>documentation"]
+    style sg_1D fill:#282828,stroke:#39FF14,stroke-width:4px
+    subgraph sg_1Dc ["1Dc<br>02_Architecture"]
+      style sg_1Dc fill:#282828,stroke:#39FF14,stroke-width:4px
+      1Dc1["1Dc1<br>.Architectural_Decisions_Log.md"]
+      class 1Dc1 doc
+      1Dc4["1Dc4<br>Solution_Architecture_Design_Specification.md"]
+      class 1Dc4 doc
+      1Dc5["1Dc5<br>solution_options_analysis.md"]
+      class 1Dc5 doc
     end
-    subgraph sg_1Cb ["1Cb<br>01_Requirements"]
-      style sg_1Cb fill:#282828,stroke:#39FF14,stroke-width:4px
-      1Cb1["1Cb1<br>.Business_Requirements.md"]
-      class 1Cb1 doc
+    subgraph sg_1Dd ["1Dd<br>03_Implementation"]
+      style sg_1Dd fill:#282828,stroke:#39FF14,stroke-width:4px
+      1Dd1["1Dd1<br>Implementation_Plan.md"]
+      class 1Dd1 doc
     end
-    subgraph sg_1Cc ["1Cc<br>02_Architecture"]
-      style sg_1Cc fill:#282828,stroke:#39FF14,stroke-width:4px
-      1Cc1["1Cc1<br>.Architectural_Decisions_Log.md"]
-      class 1Cc1 doc
-      1Cc2["1Cc2<br>.Architectural_Decisions_Pending.md"]
-      class 1Cc2 doc
-      1Cc3["1Cc3<br>Core_Logic_Componentization_Strategy.md"]
-      class 1Cc3 doc
-      1Cc4["1Cc4<br>Solution_Architecture_Design_Specification.md"]
-      class 1Cc4 doc
-      1Cc5["1Cc5<br>solution_options_analysis.md"]
-      class 1Cc5 doc
-    end
-    subgraph sg_1Cd ["1Cd<br>03_Implementation"]
-      style sg_1Cd fill:#282828,stroke:#39FF14,stroke-width:4px
-      1Cd1["1Cd1<br>Implementation_Plan.md"]
-      class 1Cd1 doc
+  end
+  subgraph sg_1E ["1E<br>src"]
+    style sg_1E fill:#282828,stroke:#39FF14,stroke-width:4px
+    subgraph sg_1Eb ["1Eb<br>web"]
+      style sg_1Eb fill:#282828,stroke:#39FF14,stroke-width:4px
+      1Eb2["1Eb2<br>index.html"]
+      class 1Eb2 file
+      1Eb3["1Eb3<br>script.js"]
+      class 1Eb3 file
     end
   end
 
   %% -- Fallback Node Definitions --
 
   %% -- Dependencies --
-  1Cb1 -->|"relies on"| 1Ca1
-  1Cc1 -->|"relies on"| 1Ca1
-  1Cc1 -->|"relies on"| 1Cb1
-  1Cc1 -->|"relies on"| 1Cc2
-  1Cc1 -->|"relies on"| 1Cc3
-  1Cc1 -->|"relies on"| 1Cc5
-  1Cc1 <-->|"mutual"| 1Cd1
-  1Cc2 -->|"relies on"| 1Ca1
-  1Cc2 -->|"relies on"| 1Cb1
-  1Cc2 <-->|"mutual"| 1Cc3
-  1Cc2 <-->|"mutual"| 1Cc5
-  1Cc3 -->|"relies on"| 1Ca1
-  1Cc3 -->|"relies on"| 1Cb1
-  1Cc3 -->|"relies on"| 1Cc5
-  1Cc4 -->|"relies on"| 1Ca1
-  1Cc4 -->|"relies on"| 1Cb1
-  1Cc4 -->|"relies on"| 1Cc1
-  1Cc4 -->|"relies on"| 1Cc2
-  1Cc4 -->|"relies on"| 1Cc3
-  1Cc4 -->|"relies on"| 1Cc5
-  1Cc4 <-->|"mutual"| 1Cd1
-  1Cc5 -->|"relies on"| 1Ca1
-  1Cc5 -->|"relies on"| 1Cb1
-  1Cd1 -->|"relies on"| 1Ca1
-  1Cd1 -->|"relies on"| 1Cb1
-  1Cd1 -->|"relies on"| 1Cc2
-  1Cd1 -->|"relies on"| 1Cc3
-  1Cd1 -->|"relies on"| 1Cc5
+  1B2 ==>|"semantic (strong)"| 1B3
+  1Dc1 -.->|"docs"| 1Dc5
+  1Dc1 -.->|"docs"| 1Dd1
+  1Dc4 -.->|"docs"| 1Dc5
+  1Dc4 -.->|"docs"| 1Dd1
+  1Dc4 -.->|"docs"| 1Eb2
+  1Dc4 -.->|"docs"| 1Eb3
+  1Dd1 -.->|"docs"| 1Eb2
+  1Dd1 -.->|"docs"| 1Eb3

@@ -81,14 +81,14 @@ Key Definitions:
 ---KEY_DEFINITIONS_END---
 
 last_KEY_edit: Assigned keys: 1B, 1B1, 1B2, 1B3
-last_GRID_edit: Grid content updated (2025-05-19T11:32:08.058870)
+last_GRID_edit: Grid content updated (2025-05-18T21:00:46.410268)
 
 ---GRID_START---
 X 1B 1B1 1B2 1B3
 1B = ox3
 1B1 = xopp
-1B2 = xpoS
-1B3 = xpSo
+1B2 = xpop
+1B3 = xppo
 ---GRID_END---
 
 ---mini_tracker_end---
