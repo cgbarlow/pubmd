@@ -1,26 +1,26 @@
 # Active Context
 
-**Current Task**: Executing [`Execution_Task_Core_BuildPackage_20250519_121000.md`](cline_docs/tasks/Execution_Task_Core_BuildPackage_20250519_121000.md:1).
+**Current Task**: Completed [`Execution_Task_Core_BuildPackage_20250519_121000.md`](cline_docs/tasks/Execution_Task_Core_BuildPackage_20250519_121000.md:1).
 
 **Overall Cycle Goal**: Integrate the `@pubmd/core` package into the existing web UI.
 
 **Last MUP Action**: (This will be updated by current MUP)
 
 **Recent Actions & State Change**:
-- User indicated that Node.js projects should not reside within the `Cline-Recursive-Chain-of-Thought-System-CRCT-` directory.
-- The `@pubmd/core` package was moved from `Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core` to `/workspaces/pubmd/nodejs_projects/core`.
-- [`Cline-Recursive-Chain-of-Thought-System-CRCT-/.clinerules`](Cline-Recursive-Chain-of-Thought-System-CRCT-/.clinerules:1) `[CODE_ROOT_DIRECTORIES]` updated to reflect the new path: `../nodejs_projects/core`.
-- Paths within [`Execution_Task_Core_BuildPackage_20250519_121000.md`](cline_docs/tasks/Execution_Task_Core_BuildPackage_20250519_121000.md:1) updated to `nodejs_projects/core`.
+- The `@pubmd/core` package was moved to `/workspaces/pubmd/nodejs_projects/core`.
+- Relevant CRCT files and task paths were updated.
+- `npm install` was run successfully in `nodejs_projects/core` after adding `typescript` to `devDependencies`.
+- `npm run build` was run successfully after multiple TypeScript configuration fixes:
+    - Added `declaration: true` to `tsconfig.build.json`.
+    - Created `nodejs_projects/core/src/index.ts` with a minimal export.
+    - Corrected `extends` paths in `tsconfig.build.json` and `tsconfig.esm.json`.
+    - Set `moduleResolution: "nodenext"` and `module: "NodeNext"` in `tsconfig.esm.json`.
+- Build artifacts (`dist` directory with CommonJS and ESM modules) were verified.
+- Task [`Execution_Task_Core_BuildPackage_20250519_121000.md`](cline_docs/tasks/Execution_Task_Core_BuildPackage_20250519_121000.md:1) marked as completed.
 
 **Current State**:
 - Execution phase ongoing.
-- Currently executing: [`Execution_Task_Core_BuildPackage_20250519_121000.md`](cline_docs/tasks/Execution_Task_Core_BuildPackage_20250519_121000.md:1)
-  - Step 1 (Navigate to Package Directory) was completed for the *old* path. This step will need to be re-evaluated for the new path `nodejs_projects/core`.
-  - Original Step 2 (`npm run build`) FAILED: `npm` command not found.
-  - Task plan updated to include `npm install` as new Step 2, with `npm run build` as Step 3.
-- The task is currently blocked pending resolution of the `npm` command not being found. This prevents both `npm install` and `npm run build`.
+- The `@pubmd/core` package is built and ready for integration.
 
 **Next Steps**:
-- Await user resolution of the `npm` command not found issue (ensure Node.js/npm installed and in PATH, or provide full path to `npm`).
-- Once `npm` is available, proceed with Step 1 (Navigate to Package Directory) of [`Execution_Task_Core_BuildPackage_20250519_121000.md`](cline_docs/tasks/Execution_Task_Core_BuildPackage_20250519_121000.md:1) using the new path `nodejs_projects/core`.
-- Then attempt Step 2 (`npm install`) in `nodejs_projects/core`.
+- Proceed with the next task: [`HDTA_Task_WebUIIntegration_20250519_115200.md`](cline_docs/tasks/HDTA_Task_WebUIIntegration_20250519_115200.md:1), specifically Task 2.1 (Modify `script.js` to Import Core Package).

@@ -1,3 +1,5 @@
+import { corePackageMessage } from '../../nodejs_projects/core/dist/esm/index.js';
+
 let markdownEditor;
 function setPreference(name, value) { try { localStorage.setItem(name, value); } catch (e) { console.error(e); } }
 function getPreference(name) { try { return localStorage.getItem(name); } catch (e) { console.error(e); return null; } }
@@ -13,6 +15,8 @@ let libsReady = false;
 let fontsReady = false;
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Core Package Message:', corePackageMessage); // Verify import
+
     const markdownInputTextArea = document.getElementById('markdownInputInternal');
     const codeMirrorPlaceholder = document.getElementById('codeMirrorPlaceholder');
     const editorTogglesContainer = document.getElementById('editorTogglesContainer');
@@ -306,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return DOMPurify.sanitize(rawHtml);
             } else {
                 console.error("DOMPurify.sanitize is not available. Code block will not be properly sanitized.");
-                const basicEscapedCode = String(code || '').replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                const basicEscapedCode = String(code || '').replace(/</g, "<").replace(/>/g, ">");
                 return language
                     ? `<pre><code class="language-${language}">${basicEscapedCode}</code></pre>\n`
                     : `<pre><code>${basicEscapedCode}</code></pre>\n`;
