@@ -6,7 +6,8 @@
     "module": "commonjs", // Ensure CommonJS output
     "moduleResolution": "node", // Explicitly set module resolution for CJS
     "declaration": true, // Generate .d.ts files
-    "declarationDir": "./dist/types" // Output directory for declaration files (corrected from ./dist to avoid conflict)
+    "declarationDir": "./dist/types", // Output directory for declaration files (corrected from ./dist to avoid conflict)
+    "types": ["node"] // Explicitly include node types
   },
   "include": ["src/**/*"], // Include all files in the src directory
   "exclude": ["node_modules", "dist", "**/*.test.ts"] // Exclude tests and other non-source files

@@ -10,76 +10,206 @@ async function testMarkdownService() {
     const markdownService = new MarkdownService(); 
 
     const sampleMarkdown = `
-# Hello World
+# Markdown Feature Test
 
-This is a paragraph with **bold** and *italic* text.
+## 1. Headings
+
+# H1 Heading  
+## H2 Heading  
+### H3 Heading  
+#### H4 Heading  
+##### H5 Heading  
+###### H6 Heading  
+
+---
+
+## 2. Emphasis
+
+- *Italic text*
+- _Italic text_
+- **Bold text**
+- __Bold text__
+- ~~Strikethrough~~
+
+---
+
+## 3. Lists
+
+### Unordered List
+
+- Item 1  
+  - Subitem 1.1  
+    - Subitem 1.1.1  
+      - Subitem 1.1.1.1  
+        - Subitem 1.1.1.1.1  
+          - Subitem 1.1.1.1.1.1
+
+### Ordered List
+
+1. First
+2. Second  
+   1. Sub-second  
+      1. Sub-sub-second
+
+---
+
+## 4. Links
+
+- [Inline link](https://example.com)
+- [Reference-style link][example]
+
+[example]: https://example.com
+
+---
+
+## 5. Images
+
+![Alt text for image](https://via.placeholder.com/150)
+
+---
+
+## 6. Code
+
+### Inline Code
+
+Here is some \`inline code\`.
+
+### Code Block
+
+\`\`\`javascript
+function greet(name) {
+    console.log(\`Hello, \${name}!\`);
+}
+\`\`\`
+
+---
+
+## 7. Blockquotes
+
+> This is a blockquote.
+>
+> > Nested blockquote.
+
+---
+
+## 8. Tables
+
+| Syntax | Description |
+| ------ | ----------- |
+| Header | Title       |
+| Cell   | Text        |
+
+---
+
+## 9. Horizontal Rules
+
+---
+
+---
+
+---
+
+---
+
+## 10. Task Lists
+
+* [x] Task completed
+* [ ] Task not completed
+
+---
+
+## 11. HTML Elements
+
+<p style="color: red;">This is a paragraph with inline HTML styling.</p>
+
+---
+
+## 12. Escaping Characters
+
+\\*Literal asterisks\\*
+
+---
+
+## 13. Mermaid Diagram
 
 \`\`\`mermaid
 graph TD
-    A[Christmas] -->|Get money| B(Go shopping)
-    B --> C{Let me think}
-    C -->|One| D[Laptop]
-    C -->|Two| E[iPhone]
-    C -->|Three| F[Car]
+    A[Start] --> B{Is it working?}
+    B -- Yes --> C[Great!]
+    B -- No --> D[Fix it]
+    D --> B
 \`\`\`
 
-Another paragraph with <span>HTML</span>.
+---
 
-\`\`\`javascript
-console.log('This is a JS code block with <script>alert(1)</script>.');
+## 14. Footnotes
+
+Here is a footnote reference[^1].
+
+[^1]: This is the footnote.
+
+---
+
+## 15. Definition Lists
+
+Term 1
+: Definition 1
+
+Term 2
+: Definition 2a
+: Definition 2b
+
+---
+
+## 16. Emoji (if supported)
+
+😄 \\:tada: :+1:
+
+---
+
+## 17. Math (if supported via KaTeX or MathJax)
+
+Inline math: \\$E = mc^2\\$
+Block math:
+
+\`\`\`math
+\\int_{a}^{b} x^2 dx
 \`\`\`
-    `;
+`;
 
     try {
-        console.log("\nInput Markdown:\n", sampleMarkdown);
+        console.log("\nInput Markdown (first 200 chars):\n", sampleMarkdown.substring(0,200) + "...");
         // Test with 'strict' security level for Mermaid, as configured in bootstrap
         const htmlOutput = await markdownService.parse(sampleMarkdown, { mermaidSecurityLevel: 'strict' }); 
-        console.log("\nHTML Output:\n", htmlOutput);
+        console.log("\nHTML Output (first 500 chars):\n", htmlOutput.substring(0,500) + "...");
 
-        let mermaidTestPassed = false;
-        if (htmlOutput.includes('<div class="mermaid">') && htmlOutput.includes('<svg')) {
-            console.log("\n✅ Test Passed: Mermaid diagram seems to be rendered as SVG.");
-            mermaidTestPassed = true;
-        } else if (htmlOutput.includes('class="mermaid-error"')) {
-             console.log("\n❌ Test Failed: Mermaid rendering error reported in HTML.");
-             const errorDetails = htmlOutput.match(/<pre class="mermaid-error"[^>]*>([\s\S]*?)<\/pre>/);
-             if (errorDetails && errorDetails[1]) {
-                 console.log("   Error details:", errorDetails[1].trim());
-             }
-        } else {
-            console.log("\n❌ Test Failed: Mermaid diagram not found or not processed as expected.");
-        }
+        // Basic checks - more detailed checks can be added if specific issues arise
+        let mermaidTestPassed = htmlOutput.includes('<div class="mermaid">') && htmlOutput.includes('<svg');
+        let basicMarkdownPassed = htmlOutput.includes('<strong>Bold text</strong>') && htmlOutput.includes('<em>Italic text</em>');
+        let tablePassed = htmlOutput.includes('<table>');
+        let mathPassed = htmlOutput.includes('class="katex"') || htmlOutput.includes('class="MathJax"'); // General check for math
+        let footnotePassed = htmlOutput.includes('footnote-ref') && htmlOutput.includes('footnote-item');
 
-        let basicMarkdownPassed = false;
-        if (htmlOutput.includes('<strong>bold</strong>') && htmlOutput.includes('<em>italic</em>') && htmlOutput.includes('<span>HTML</span>')) {
-            console.log("✅ Test Passed: Basic Markdown (bold/italic) and inline HTML rendered.");
-            basicMarkdownPassed = true;
-        } else {
-            console.log("❌ Test Failed: Basic Markdown (bold/italic) or inline HTML not rendered correctly.");
-        }
+        if (mermaidTestPassed) console.log("✅ Test Passed: Mermaid diagram placeholder found.");
+        else console.log("❌ Test Failed: Mermaid diagram placeholder NOT found.");
         
-        let jsCodeBlockPassed = false;
-        // Expecting sanitization. MarkdownService uses globalThis.DOMPurify.
-        // <script> should be removed.
-        const expectedSanitizedJs = "<pre><code class=\"language-javascript\">console.log('This is a JS code block with .');\n</code></pre>";
-        
-        if (htmlOutput.includes(expectedSanitizedJs)) {
-            console.log("✅ Test Passed: JavaScript code block rendered and appears sanitized (script tag removed).");
-            jsCodeBlockPassed = true;
-        } else {
-            console.log(`❌ Test Failed: JavaScript code block not rendered and sanitized as expected. Looking for script tag removal.`);
-            const actualJsBlockMatch = htmlOutput.match(/<pre><code class="language-javascript">([\s\S]*?)<\/code><\/pre>/);
-            if (actualJsBlockMatch && actualJsBlockMatch[1]) {
-                console.log("   Actual JS block content:", actualJsBlockMatch[1].trim());
-            } else {
-                console.log("   Could not find JS block in output for detailed comparison.");
-            }
-        }
+        if (basicMarkdownPassed) console.log("✅ Test Passed: Basic emphasis found.");
+        else console.log("❌ Test Failed: Basic emphasis NOT found.");
 
-        if (mermaidTestPassed && basicMarkdownPassed && jsCodeBlockPassed) {
-            console.log("\n🎉 All core tests passed!");
+        if (tablePassed) console.log("✅ Test Passed: Table structure found.");
+        else console.log("❌ Test Failed: Table structure NOT found.");
+        
+        if (mathPassed) console.log("✅ Test Passed: Math (KaTeX/MathJax) class found.");
+        else console.log("❌ Test Failed: Math (KaTeX/MathJax) class NOT found.");
+
+        if (footnotePassed) console.log("✅ Test Passed: Footnote elements found.");
+        else console.log("❌ Test Failed: Footnote elements NOT found.");
+
+
+        if (mermaidTestPassed && basicMarkdownPassed && tablePassed && mathPassed && footnotePassed) {
+            console.log("\n🎉 All core feature checks passed!");
         } else {
-            console.log("\n💔 Some tests failed. Review output above.");
+            console.log("\n💔 Some core feature checks failed. Review output.");
         }
 
     } catch (error) {

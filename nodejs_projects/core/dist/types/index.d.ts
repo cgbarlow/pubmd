@@ -5,4 +5,4 @@
 export { MarkdownService } from './services/markdown/markdown.service.js';
 export { IMarkdownService, MarkdownParseOptions, MermaidTheme, MermaidSecurityLevel } from './services/markdown/markdown-types.js';
 export { PdfService } from './services/pdf/pdf.service.js';
-export { IPdfService, PdfOptions } from './services/pdf/pdf.types.js';
+export { IPdfService, PdfGenerationOptions } from './services/pdf/pdf.types.js';

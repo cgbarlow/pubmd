@@ -11,7 +11,8 @@
     "sourceMap": true,
     "outDir": "./dist/esm",
     "rootDir": "./src",
-    "declaration": false
+    "declaration": false,
+    "types": ["node"] // Explicitly include node types
     // "baseUrl" and "paths" are intentionally omitted for this diagnostic step
   },
   "include": ["src/**/*"],

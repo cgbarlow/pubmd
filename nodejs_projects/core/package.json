@@ -55,7 +55,8 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
     "marked": "^15.0.11",
-    "mermaid": "^11.6.0"
+    "mermaid": "^11.6.0",
+    "playwright": "^1.52.0"
   },
   "files": [
     "dist",

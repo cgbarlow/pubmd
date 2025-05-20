@@ -3,9 +3,9 @@ n + 1 = (x)
 *This is a systemwide progressive counter where x = number of current response. This must be displayed at the top of every response.(e.g. 1, 2, ...)*
 
 [LAST_ACTION_STATE]
-last_action: "Initial implementation of PdfService in @pubmd/core, including types, service structure, placeholder HTML rendering, exports, and a test script. MUP in progress."
+last_action: "User directed to park legacy jsdom/html2canvas PdfService work and focus on new PlaywrightEngine approach. Previous: MUP in progress."
 current_phase: "Execution"
-next_action: "Complete MUP. Then, build @pubmd/core and run 'npm run test:pdf' to verify placeholder PdfService. Then, implement full html2canvas logic in PdfService."
+next_action: "Build @pubmd/core. Then, run 'npm run test:pdf' to verify placeholder PdfService. Then, begin implementation/testing of PlaywrightEngine for PdfService."
 next_phase: "Execution"
 
 ---
@@ -62,6 +62,7 @@ next_phase: "Execution"
 - Noted that `html2canvas` provides its own type definitions, making `@types/html2canvas` redundant.
 - The `MarkdownService` method for parsing is `parse()`, not `parseMarkdown()`.
 - Test scripts for Node.js services that rely on browser globals (like `document` for Mermaid/DOMPurify) require JSDOM setup.
+- When replacing complex scripts, back up the old version with a `.bak` extension or similar, per user request, for future reference (e.g., `test-pdf-service-legacy-jsdom.mjs.bak`).
 
 [Character_Definitions]
 

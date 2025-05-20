@@ -1,8 +1,10 @@
 import { MarkdownService } from '../markdown/markdown.service.js';
-import { IPdfService, PdfOptions } from './pdf.types.js';
+import { IPdfService, PdfGenerationOptions } from './pdf.types.js';
+import { IPdfEngine } from './pdf-engine.interface.js';
 export declare class PdfService implements IPdfService {
     private markdownService;
-    constructor(markdownService?: MarkdownService);
-    generatePdfFromHtml(htmlContent: string, options?: PdfOptions): Promise<Blob>;
-    generatePdfFromMarkdown(markdownContent: string, options?: PdfOptions): Promise<Blob>;
+    private pdfEngine;
+    constructor(markdownService?: MarkdownService, pdfEngine?: IPdfEngine);
+    generatePdfFromHtml(htmlContent: string, options?: PdfGenerationOptions): Promise<Blob>;
+    generatePdfFromMarkdown(markdownContent: string, options?: PdfGenerationOptions): Promise<Blob>;
 }
