@@ -8,7 +8,7 @@ export { MarkdownService } from './services/markdown/markdown.service.js'; // Up
 export { IMarkdownService, MarkdownParseOptions, MermaidTheme, MermaidSecurityLevel } from './services/markdown/markdown-types.js'; // Updated import with .js
 
 export { PdfService } from './services/pdf/pdf.service.js';
-export { IPdfService, PdfOptions } from './services/pdf/pdf.types.js'; // Corrected exported types
+export { IPdfService, PdfGenerationOptions } from './services/pdf/pdf.types.js'; // Changed PdfOptions to PdfGenerationOptions
 
 
 // Add other exports here as the library grows, for example:

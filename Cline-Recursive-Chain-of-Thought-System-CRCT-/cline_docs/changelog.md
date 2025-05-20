@@ -1,8 +1,23 @@
 # Changelog
 **The Changelog is for tracking changes to the *project's* files, not CRCT operations. CRCT operations are tracked in the HDTA documents.**
 
+- **2025-05-20:** Aligned architectural documents and `PdfService` types.
+    - Updated `documentation/02_Architecture/Solution_Architecture_Design_Specification.md` (v1.1) to reflect Playwright-first `PdfService` and `docx`/`html-to-docx` engine-based `DocxService`.
+    - Updated `documentation/02_Architecture/.Architectural_Decisions_Log.md` to log new PDF/DOCX strategies and align implementation plan summary.
+    - Updated `documentation/03_Implementation/Implementation_Plan.md` (Week 4 & Phase 3) for `DocxService` strategy.
+    - Refactored `PdfOptions` to `PdfGenerationOptions` in `nodejs_projects/core/src/services/pdf/pdf.types.ts` (implicitly, as this type is defined there and used by the service).
+    - Updated `nodejs_projects/core/src/services/pdf/pdf.service.ts` to use `PdfGenerationOptions`.
+    - Updated `nodejs_projects/core/src/index.ts` to export `PdfGenerationOptions`.
+    - Files modified:
+        - `documentation/02_Architecture/Solution_Architecture_Design_Specification.md`
+        - `documentation/02_Architecture/.Architectural_Decisions_Log.md`
+        - `documentation/03_Implementation/Implementation_Plan.md`
+        - `nodejs_projects/core/src/services/pdf/pdf.service.ts`
+        - `nodejs_projects/core/src/index.ts`
+        - (Implicitly) `nodejs_projects/core/src/services/pdf/pdf.types.ts` (where `PdfGenerationOptions` is defined)
+
 - **2025-05-20:** Initial implementation of `PdfService` in `@pubmd/core`.
-    - Created `nodejs_projects/core/src/services/pdf/pdf.types.ts` with `IPdfService` and `PdfOptions`.
+    - Created `nodejs_projects/core/src/services/pdf/pdf.types.ts` with `IPdfService` and `PdfOptions` (now `PdfGenerationOptions`).
     - Created `nodejs_projects/core/src/services/pdf/pdf.service.ts` with basic class structure and placeholder PDF generation logic (using `pdf.text()`).
     - Updated `nodejs_projects/core/src/index.ts` to export `PdfService` and related types.
     - Created `nodejs_projects/core/scripts/test-pdf-service.mjs` for basic testing.

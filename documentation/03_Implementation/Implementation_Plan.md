@@ -12,17 +12,17 @@ This document outlines the implementation plan for the Markdown to PDF Converter
 *   **Objectives:**
     *   Establish the monorepo structure.
     *   Configure TypeScript for the project.
-    *   Migrate existing core JavaScript logic into a new reusable TypeScript package: `@pubmd/core`.
+    *   Migrate existing core JavaScript logic into a new reusable TypeScript package: `@pubmd/core`. This includes the `PdfService` refactor to use a Playwright-based engine.
     *   Integrate the existing web UI ([`index.html`](../../src/web/index.html)) to consume logic from the new `@pubmd/core`.
 *   **Key Activities:**
     *   Initialize `pnpm` workspace.
     *   Set up `tsconfig.json` and necessary TypeScript build tooling.
     *   Create `/packages/core` directory.
-    *   Refactor [`script.js`](../../src/web/script.js) into modules within `@pubmd/core`.
+    *   Refactor [`script.js`](../../src/web/script.js) into modules within `@pubmd/core`, including the new `PdfService` implementation.
     *   Update [`index.html`](../../src/web/index.html) and its associated scripts to import and use `@pubmd/core`.
 *   **Deliverables:**
     *   Functional `pnpm` monorepo.
-    *   `@pubmd/core` package created with initial refactored logic.
+    *   `@pubmd/core` package created with initial refactored logic, including Playwright-based `PdfService`.
     *   Web UI ([`index.html`](../../src/web/index.html)) successfully using `@pubmd/core` for its primary functions.
 
 ---
@@ -63,19 +63,19 @@ This document outlines the implementation plan for the Markdown to PDF Converter
 
 ---
 
-### Week 4: Early .docx Integration & Expanded Testing
+### Week 4: .docx Service Implementation & Expanded Testing
 *   **Objectives:**
-    *   Integrate `mammoth.js` for an initial proof-of-concept of .docx export.
-    *   Expand unit and integration test coverage.
+    *   Begin implementation of `DocxService` using `docx` and `html-to-docx` libraries via an engine pattern.
+    *   Expand unit and integration test coverage for PDF and DOCX services.
 *   **Key Activities:**
-    *   Add `mammoth.js` as a dependency to `@pubmd/core`.
-    *   Implement an experimental function in `@pubmd/core` for HTML to .docx conversion.
+    *   Add `docx` and `html-to-docx` as dependencies to `@pubmd/core`.
+    *   Implement initial structure for `DocxService` and its engines (`DocxJsEngine`, `HtmlToDocxEngine`) in `@pubmd/core`.
     *   Optionally, add an experimental flag to `pubmd-cli` to test .docx output.
-    *   Write more unit tests for `@pubmd/core` and new CLI features.
-    *   Develop basic integration tests for the CLI (e.g., shell scripts asserting file output).
+    *   Write more unit tests for `@pubmd/core` and new CLI features, including `PdfService` and `DocxService`.
+    *   Develop basic integration tests for the CLI (e.g., shell scripts asserting file output for PDF and DOCX).
 *   **Deliverables:**
-    *   Proof-of-concept for .docx export integrated into `@pubmd/core`.
-    *   Increased test coverage for core and CLI.
+    *   Initial implementation of `DocxService` with basic HTML to .docx conversion capabilities using one of the engines.
+    *   Increased test coverage for core PDF and DOCX services, and CLI.
 
 ---
 
@@ -103,9 +103,9 @@ This document outlines the implementation plan for the Markdown to PDF Converter
 ---
 
 **Expected Overall Outcomes by End of 5-Week Cycle:**
-*   `@pubmd/core@1.0.0` (or similar initial version) is structured, well-tested, and internally usable.
+*   `@pubmd/core@1.0.0` (or similar initial version) is structured, well-tested (including Playwright-based `PdfService`), and internally usable.
 *   The web UI ([`index.html`](../../src/web/index.html)) operates reliably using the refactored `@pubmd/core`, confirmed by automated tests.
-*   `pubmd-cli` is installable (e.g., via `npm i -g pubmd-cli` or downloadable binary) and functional for basic PDF conversions (and experimental .docx).
+*   `pubmd-cli` is installable (e.g., via `npm i -g pubmd-cli` or downloadable binary) and functional for basic PDF conversions (and initial .docx).
 *   A robust automated test suite (unit, integration, E2E smoke) is in place with foundational coverage.
 *   Modern DevOps practices (CI/CD, automated dependency updates, semantic versioning) are established.
 
@@ -116,7 +116,7 @@ This document outlines the implementation plan for the Markdown to PDF Converter
 This section outlines the planned work following the initial 5-week architectural sprint. The exact timing and sprint allocation will be determined based on the outcomes of Part 1.
 
 ### Phase 2: Core PDF Functionality & Bug Fixes
-*   **Focus:** Enhancing the quality and features of PDF output.
+*   **Focus:** Enhancing the quality and features of PDF output (primarily via Playwright engine).
 *   **Key Initiatives:**
     *   **Resolve PDF List Rendering Issues:**
         *   Address the outstanding issue of missing hyphens for unordered list items in generated PDFs.
@@ -132,7 +132,7 @@ This section outlines the planned work following the initial 5-week architectura
 *   **Focus:** Expanding capabilities and improving the overall user and developer experience.
 *   **Key Initiatives:**
     *   **Finalize .docx Export:**
-        *   Fully develop and refine the Microsoft Word (.docx) export option based on the `mammoth.js` proof-of-concept.
+        *   Fully develop and refine the Microsoft Word (.docx) export option using the `DocxService` (with its `docx` and `html-to-docx` engines).
         *   Ensure good fidelity for common Markdown structures in .docx format.
         *   Provide clear options for .docx export in both web UI and CLI.
     *   **Add GitHub Repository Link:**

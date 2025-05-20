@@ -1,112 +1,143 @@
-The bulk of the crashes you have been chasing stem from three facts: **(1)** JSDOM still offers only a partial SVG implementation, so calls such as `getBBox()` simply do not exist by default ([GitHub][1]); **(2)** DOMPurify’s ESM build exports a *factory* function, not a ready-to-use singleton, so `addHook` is absent unless you create the instance yourself ([GitHub][2], [Stack Overflow][3]); and **(3)** `html2canvas` needs a real browser and is explicitly *not* supported in pure Node.js ([npm][4]).  The huge bootstrap block you pasted works around each gap piecemeal, but it leaves you maintaining a fragile mini-browser.  A leaner, more reliable path is to **swap in libraries that already ship server-side SVG & canvas shims, create DOMPurify correctly, and let a headless browser handle the PDF snapshot**.  Below are the concrete steps that have proven to be the least painful in production.
+Below is an updated, component-friendly strategy that keeps the **Markdown → HTML pipeline you already have intact**, but swaps in better-fitting “last-mile” generators for **PDF** and **DOCX** so the same, sanitised HTML can be reused everywhere.  The plan preserves the clean service boundaries in **`core_module.md`** and makes it easy to slot in alternative engines later.
 
 ---
 
-## 1  Fix the DOMPurify import once and throw the rest away
+## Key take-aways (one-paragraph summary)
 
-```ts
-import createDOMPurify from "dompurify";
-import { JSDOM }        from "jsdom";
-
-const { window } = new JSDOM("");
-const DOMPurify  = createDOMPurify(window);   // ← now has addHook/sanitize
-```
-
-*Why?*
-DOMPurify’s default export is *the factory*, not the instance ([GitHub][2], [Stack Overflow][3]).  Initialising it with JSDOM’s `window` immediately gives you a fully-featured object; no monkey-patching is required.
+A reusable `PdfService` is easiest to maintain if it *prints* the final HTML with a headless-browser driver (Playwright/Puppeteer) instead of emulating a browser with JSDOM + html2canvas; this gives full CSS, SVG and MathJax support out-of-the-box and removes the brittle `getBBox` and font polyfills.  For `.docx` export, map the *same* HTML tree to Word paragraphs using the well-typed `docx` library, falling back to `html-docx-js` when absolute fidelity isn’t required.  The Markdown and Font services stay untouched: they still produce sanitised HTML (via DOMPurify) and load the fonts once for both preview and file export.
 
 ---
 
-## 2  Give mermaid a real SVG DOM instead of faking `getBBox()`
+## 1 – Why keep the HTML-first approach?
 
-### Option A – headless Chromium (simplest)
+* **Single source of truth** – every output (preview, PDF, DOCX) begins with the identical sanitised HTML string returned by `MarkdownService`.
+* **Mermaid & MathJax already work in the browser**; printing that exact DOM guarantees the PDF looks the same, without fake `getBBox()` hacks. ([GitHub][1])
+* **Component reuse** – callers only need to know `MarkdownService.parse()` and `PdfService.generatePdf()`; they never care which engine does the work.
 
-1. `npm i -D playwright`
-2. Replace the entire polyfill block with a single browser call:
+---
+
+## 2 – Re-designing `PdfService`
+
+### 2.1  Strategy pattern
 
 ```ts
-import { chromium } from "playwright";
+export interface IPdfEngine {
+  generate(html: string, opts: PdfGenerationOptions): Promise<Blob>;
+}
 
-async function renderMermaid(code: string): Promise<string> {
-  const browser = await chromium.launch();
-  const page    = await browser.newPage();
-  await page.setContent(`<script src="https://cdn.jsdelivr.net/npm/mermaid@${mermaidVersion}/dist/mermaid.min.js"></script>
-                         <div class="mermaid">${code}</div>`);
-  await page.waitForSelector(".mermaid > svg");
-  const svg = await page.$eval(".mermaid", el => el.innerHTML);
-  await browser.close();
-  return svg;          // ready for pdf-lib / pdfmake / pdfkit
+export class PdfService implements IPdfService {
+  constructor(private engine: IPdfEngine = new PlaywrightEngine()) {}
+  generatePdf(html: string, opts: PdfGenerationOptions) {
+    return this.engine.generate(html, opts);
+  }
 }
 ```
 
-Mermaid will run exactly as in a browser, because it **is** a browser under the hood, and `getBBox()` is fully implemented ([GitHub][5]).
+Switch engines with one line when you need a browser-less build or lower memory footprint.
 
-### Option B – svgdom + canvg (pure Node, no browser)
+### 2.2  Recommended default: **PlaywrightEngine**
 
-If you must stay headless, swap JSDOM for `@svgdotjs/svgdom`, which ships a real layouted SVG implementation, then feed that window to mermaid:
+* Uses Chromium’s native `Page.pdf()` – full CSS 3, Flexbox, SVG and web-fonts.  No html2canvas, no JSDOM. ([Paperplane][2])
+* Playwright is actively maintained and supports both Node and browsers; spawning a persistent browser reduces cold-start time. ([Stack Overflow][3])
+* Works in CI or AWS Lambda via `playwright-core` with a pre-installed Chrome.
+
+### 2.3  Fallback engines
+
+| Engine                                | When to use                                    | Trade-offs                                                                            |
+| ------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **jsPDFEngine** (jsPDF + html2canvas) | Pure in-browser export; no server code allowed | Still needs the DOM; SVG filters & paged media often fail. ([GitHub][4], [Reddit][5]) |
+| **PdfLibEngine** (pdf-lib)            | Programmatic PDF assembly (e.g., invoices)     | You hand-place every element; not a drop-in for arbitrary HTML. ([docraptor.com][6])  |
+| **PagedJsEngine**                     | Perfect typography / running headers           | Beta software; heavier CSS requirements. ([Reddit][7])                                |
+
+The engine interface keeps all of them swappable without touching upstream code.
+
+---
+
+## 3 – Re-designing `DocxService`
+
+### 3.1  Prefer **`docx`** library
+
+`docx` lets you create a Word document from typed objects (`Paragraph`, `ImageRun`, etc.) and is well supported. ([npm Compare][8], [npm Compare][9])
 
 ```ts
-import { createSVGWindow } from "@svgdotjs/svgdom";
-const window = createSVGWindow();              // includes getBBox()
-global.document = window.document;
+import { Document, Packer, Paragraph } from "docx";
+
+export class DocxService implements IDocxService {
+  async generateDocx(html: string, opts: DocxGenerationOptions) {
+    const doc = new Document();
+    // map HTML → docx elements (small utility)
+    htmlToDocx(domParser(html)).forEach(p => doc.addSection({ children:[p] }));
+    return Packer.toBlob(doc);
+  }
+}
 ```
 
-This eliminates the need for your hand-written `fakeBBox` shim ([Stack Overflow][6]).
+### 3.2  Simpler fallback: **`html-docx-js`**
+
+If perfect styling is less important, fall back to `html-docx-js`, which converts raw HTML straight to a `.docx` blob.  It has fewer options but no manual mapping code. ([npm Compare][9])
+
+### 3.3  Keep service swap-able
+
+Same strategy interface pattern as PDF so your CLI, Web UI and future Electron app all reuse the *same* high-level `DocxService`.
 
 ---
 
-## 3  Retire `html2canvas` in Node – use a PDF-first library instead
+## 4 – Implications for existing services
 
-Because `html2canvas` depends on the browser’s rendering engine ([npm][4]), replace it with one of:
-
-| Task                         | Recommended Library        | Rationale                                                         |
-| ---------------------------- | -------------------------- | ----------------------------------------------------------------- |
-| Build pages programmatically | **pdf-lib**                | Works in Node & browsers; active maintenance ([DEV Community][7]) |
-| Rasterise full HTML/CSS      | **Playwright / Puppeteer** | Leverages Chromium’s print-to-PDF; fewer quirks ([Reddit][8])     |
-
-With either, your `PdfService` collapses to “render HTML in headless Chrome → `page.pdf()`” and you can delete 90 % of the bootstrap.
+| Service                                                        | Change                                     | Reason                                                                       |
+| -------------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------- |
+| **MarkdownService**                                            | *No code changes*                          | Still produces sanitised HTML with DOMPurify factory:                        |
+| `const DOMPurify = createDOMPurify(window)` ([npm Compare][8]) |                                            |                                                                              |
+| **FontService**                                                | Expose `getFontFaceCSS()` & `getPdfFont()` | The Playwright engine just injects CSS, while pdf-lib embeds base64 buffers. |
+| **PreferenceService**                                          | Allow injection of a storage adapter       | Keeps CLI compatibility (e.g., in-memory map).                               |
 
 ---
 
-## 4  Version sanity-check
+## 5 – Refactor order (updates to §5 in your plan)
 
-| Package     | Tested stable           | Notes                                                               |
-| ----------- | ----------------------- | ------------------------------------------------------------------- |
-| `mermaid`   | **10.9.3** (latest v10) | v11 is still RC; stick to 10.x for CLI compatibility ([Mermaid][9]) |
-| `dompurify` | **3.4.3**               | No breaking changes; safe drop-in                                   |
-| `jsdom`     | **24.1.0**              | Adds many missing SVG prototypes                                    |
-| `pdf-lib`   | **1.19.0**              | Modern ESM build                                                    |
+1. **Add engine interfaces** (`pdf-engine.interface.ts`, `docx-engine.interface.ts`).
+2. Build **PlaywrightEngine** inside `PdfService`.
+3. Replace current html2canvas path behind this engine flag; keep jsPDFEngine for browser-only builds.
+4. Implement `DocxService` with `docx` default and `html-docx-js` fallback.
+5. Update **unit tests** to spin up Playwright once per test file (≈ 400 ms).
+6. Delete the 600-line bootstrap polyfill; keep only:
 
-Upgrade first; many hand-rolled polyfills vanish after the jump.
-
----
-
-## 5  Step-by-step migration plan
-
-1. **Strip** the giant polyfill section; keep only the DOMPurify instance.
-2. **Upgrade** to the package versions above.
-3. **Choose** rendering path:
-   *If you are allowed a browser on the build server, use Playwright; otherwise use svgdom.*
-4. Replace `html2canvas` calls with either direct SVG insertion (mermaid output) or Playwright’s `page.pdf()`.
-5. Run your current `generatePdfFromMarkdown()` test – the DOMPurify and getBBox errors should be gone.
-6. Add any extra sanitisation hooks (`beforeSanitizeElements`, etc.) **after** the new DOMPurify instance is created.
+```ts
+import { JSDOM } from "jsdom";
+import createDOMPurify from "dompurify";
+global.window = new JSDOM("").window;
+global.DOMPurify = createDOMPurify(window);
+```
 
 ---
 
-### Why this works more reliably
+## 6 – Risks & mitigations
 
-* JSDOM’s maintainers still consider full SVG layout *out of scope* ([GitHub][1]); your fake getters can fail on text nodes, rotated elements and foreignObject.
-* Headless Chromium and svgdom both implement the real SVG spec, so mermaid and MathJax run unmodified.
-* Creating DOMPurify the canonical way avoids the long-standing “`addHook is not a function`” ESM pitfall ([GitHub][2]).
+* **Cold start**: Launching Chrome adds \~100 MB RSS.  Mitigate by re-using a browser instance and queueing jobs. ([Reddit][10])
+* **Lambda size limit**: Bundle Playwright with Chrome-AWS-Lambda layer or choose `pdf-lib` engine for server-less.
+* **DOCX fidelity**: CSS → Word mapping is inherently lossy; provide both `docx` (manual, precise) and `html-docx-js` (automatic) to balance quality vs. dev effort.
 
-You end up with **less code to maintain**, no mysterious polyfill corners, and an upgrade path that tracks upstream libraries instead of fighting them.
+---
 
-[1]: https://github.com/jsdom/jsdom/issues/3159?utm_source=chatgpt.com "Implementing getBBox for SVG · Issue #3159 · jsdom/jsdom - GitHub"
-[2]: https://github.com/mermaid-js/mermaid/issues/5204?utm_source=chatgpt.com "Trying to use programmatically, getting errors about DOMPurify #5204"
-[3]: https://stackoverflow.com/questions/65646007/next-js-dompurify-sanitize-shows-typeerror-dompurify-webpack-imported-module?utm_source=chatgpt.com "Next.js DOMPurify.sanitize() shows TypeError - Stack Overflow"
-[4]: https://www.npmjs.com/package/html2canvas/v/1.4.1?utm_source=chatgpt.com "html2canvas - NPM"
-[5]: https://github.com/mermaid-js/mermaid/issues/3886?utm_source=chatgpt.com "using mermaid.js from node.js without headless web browser? #3886"
-[6]: https://stackoverflow.com/questions/67209367/typeerror-r-node-getbbox-is-not-a-function-code-err-unhandled-rejection?utm_source=chatgpt.com "TypeError: r.node.getBBox is not a function\".] { code - Stack Overflow"
-[7]: https://dev.to/handdot/generate-a-pdf-in-js-summary-and-comparison-of-libraries-3k0p?utm_source=chatgpt.com "A full comparison of 6 JS libraries for generating PDFs"
-[8]: https://www.reddit.com/r/node/comments/10avyxb/is_node_the_right_choice_for_html_to_pdf/?utm_source=chatgpt.com "Is node the right choice for HTML to PDF conversion? - Reddit"
-[9]: https://mermaid.js.org/config/usage.html?utm_source=chatgpt.com "Usage - Mermaid"
+## 7 – What stays exactly the same
+
+* **Architecture docs** (`core_module.md`, `implementation_plan_core_script_refactor.md`) – only the *inside* of `PdfService` / `DocxService` changes.
+* **Public API** – callers still import `{ MarkdownService, PdfService }` from `@pubmd/core`.
+* **Website preview** – continues to render the HTML directly; now the PDF looks identical because it really *is* printed from that DOM.
+
+---
+
+### In short
+
+Keep the reusable Markdown pipeline you already nailed, but let **Chromium (via Playwright) do the heavy lifting** instead of maintaining an ever-growing pile of JSDOM polyfills.  Wrap it behind a clean engine interface so you can still fall back to jsPDF in strict browser-only environments.  Use the same pattern for DOCX.  The result is a thinner, more maintainable core library that callers can use in the browser, the CLI, or future desktop apps with no changes at all.
+
+[1]: https://github.com/jsdom/jsdom/issues/918?utm_source=chatgpt.com "SVG implementation? getBBox()? · Issue #918 · jsdom/jsdom - GitHub"
+[2]: https://www.paperplane.app/post/modern-html-to-pdf-conversion-2019?utm_source=chatgpt.com "Modern HTML to PDF conversion - Paperplane"
+[3]: https://stackoverflow.com/questions/54965045/which-is-the-best-practice-using-puppeteer-to-create-pdf?utm_source=chatgpt.com "Which is the best practice using puppeteer to create pdf?"
+[4]: https://github.com/parallax/jsPDF/issues/2805?utm_source=chatgpt.com "jsPDF Server Side html() function generates empty pdf #2805 - GitHub"
+[5]: https://www.reddit.com/r/Frontend/comments/irym7a/anyone_with_jspdf_experience_having_issue_with/?utm_source=chatgpt.com "Anyone with jsPDF experience? Having issue with resizing content ..."
+[6]: https://docraptor.com/node-html-to-pdf?utm_source=chatgpt.com "Top Node.js and JavaScript HTML-to-PDF Conversion Libraries"
+[7]: https://www.reddit.com/r/javascript/comments/f5syqi/pagedjs_a_free_and_open_source_javascript_library/?utm_source=chatgpt.com "Paged.js - a free and open source JavaScript library that paginates ..."
+[8]: https://npm-compare.com/docx%2Chtml-docx-js%2Cmammoth?utm_source=chatgpt.com "mammoth vs docx vs html-docx-js - NPM Compare"
+[9]: https://npm-compare.com/docx%2Chtml-docx-js%2Chtml-to-docx?utm_source=chatgpt.com "docx vs html-to-docx vs html-docx-js - NPM Compare"
+[10]: https://www.reddit.com/r/node/comments/10avyxb/is_node_the_right_choice_for_html_to_pdf/?utm_source=chatgpt.com "Is node the right choice for HTML to PDF conversion? - Reddit"

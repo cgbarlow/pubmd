@@ -11,8 +11,10 @@
 - [ ] **PdfService**:
     - [x] Initial Strategy and Planning ([`Strategy_Task_CoreRefactor_PdfSvc_20250518_095954.md`](../tasks/Strategy_Task_CoreRefactor_PdfSvc_20250518_095954.md))
     - [x] Initial Implementation (Types, Service structure, placeholder HTML rendering, Test script) ([`Execution_Task_Core_Impl_PdfSvc_20250519_215432.md`](../tasks/Execution_Task_Core_Impl_PdfSvc_20250519_215432.md))
-    - [ ] Full HTML rendering (html2canvas, jsdom, onclone logic)
-    - [ ] Testing and verification (SVG rendering)
+        - [x] Refactored `PdfOptions` to `PdfGenerationOptions` and updated exports.
+        - [x] Aligned architectural documents (`Solution_Architecture_Design_Specification.md`, `.Architectural_Decisions_Log.md`) and `Implementation_Plan.md` with current PDF/DOCX strategies.
+    - [ ] Full HTML rendering (Playwright engine primary, jsPDF/html2canvas fallback)
+    - [ ] Testing and verification (SVG rendering, Playwright engine)
 - [ ] **FontService**:
     - [ ] Initial Strategy and Planning ([`Strategy_Task_CoreRefactor_FontSvc_20250518_095458.md`](../tasks/Strategy_Task_CoreRefactor_FontSvc_20250518_095458.md))
     - [ ] Implementation
@@ -21,10 +23,14 @@
     - [ ] Initial Strategy and Planning ([`Strategy_Task_CoreRefactor_PreferenceSvc_20250518_095259.md`](../tasks/Strategy_Task_CoreRefactor_PreferenceSvc_20250518_095259.md))
     - [ ] Implementation
     - [ ] Testing and verification
+- [ ] **DocxService**:
+    - [ ] Initial Strategy and Planning (`plan_docx_service_implementation.md`)
+    - [ ] Implementation (Engines: `DocxJsEngine`, `HtmlToDocxEngine`)
+    - [ ] Testing and verification
 - [x] API Index File (`index.ts` for service exports)
     - [x] Initial Strategy and Planning ([`Strategy_Task_CoreSetup_IndexTs_20250518_094656.md`](../tasks/Strategy_Task_CoreSetup_IndexTs_20250518_094656.md))
     - [x] Basic implementation (exports MarkdownService)
-    - [x] Updated with PdfService exports
+    - [x] Updated with PdfService exports (including `PdfGenerationOptions`)
     - [ ] Update with other services
 - [x] Package README ([`Strategy_Task_CoreSetup_Readme_20250518_094841.md`](../tasks/Strategy_Task_CoreSetup_Readme_20250518_094841.md))
 
@@ -39,5 +45,5 @@
 ## Overall Project
 - [x] Initial Project Setup (CRCT, linters, basic structure)
 - [ ] Full End-to-End Testing
-- [ ] Documentation Review and Updates
+- [x] Documentation Review and Updates (Architectural docs, Implementation Plan for PDF/DOCX strategies)
 - [ ] Final Review and Cleanup
