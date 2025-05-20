@@ -1,0 +1,29 @@
+# Node.js
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+**/dist/
+
+# Generated PDFs (if these are build artifacts and not source material)
+# If they are generated during a build/test, they should be ignored.
+# If they are manually created source documents, then don't ignore them.
+# Example if generated:
+# nodejs_projects/core/scripts/test_html_output.pdf
+# nodejs_projects/core/scripts/test_html_playwright_output.pdf
+# nodejs_projects/core/scripts/test_markdown_output.pdf
+# nodejs_projects/core/scripts/test_markdown_playwright_output.pdf
+# problem_statement-MermaidDiagramRenderingFailureInPlaywrightPDFOutput_20250520.md # (If this is a generated report)
+
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor specific (optional, but good practice)
+.vscode/
+.idea/
+*.swp
+*~
