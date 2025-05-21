@@ -1,4 +1,7 @@
-import { MarkdownService } from '../../nodejs_projects/core/dist/esm/index.js';
+// Only MarkdownService and its types are needed from core for client-side preview
+import { MarkdownService, MarkdownParseOptions } from '../../nodejs_projects/core/dist/esm/index.js';
+// PdfGenerationOptions might still be useful if we want to send structured options to the server
+// For now, we'll define options directly in the fetch call.
 
 let markdownEditor;
 function setPreference(name, value) { try { localStorage.setItem(name, value); } catch (e) { console.error(e); } }
@@ -6,24 +9,30 @@ function getPreference(name) { try { return localStorage.getItem(name); } catch 
 
 const DEJAVU_SANS_URL = 'https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSans.ttf';
 const DEJAVU_SERIF_URL = 'https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSerif.ttf';
-const DEJAVU_SANS_VFS_NAME = 'DejaVuSans.ttf';
-const DEJAVU_SERIF_VFS_NAME = 'DejaVuSerif.ttf';
-const DEJAVU_SANS_PDF_NAME = 'DejaVuSans'; // Name for jsPDF registration
-const DEJAVU_SERIF_PDF_NAME = 'DejaVuSerif'; // Name for jsPDF registration
 
-let libsReady = false;
-let fontsReady = false;
-let markdownServiceInstance; // Instance of the core MarkdownService
+let libsReady = false; // Now primarily for MarkdownService and preview fonts
+let fontsReady = false; // For preview styling
+let markdownServiceInstance;
 
 document.addEventListener('DOMContentLoaded', () => {
-    markdownServiceInstance = new MarkdownService(); // Instantiate the service
-    console.log('Core MarkdownService instantiated.');
+    try {
+        markdownServiceInstance = new MarkdownService();
+        console.log('Core MarkdownService instantiated.');
+    } catch (e) {
+        console.error('Failed to instantiate Core MarkdownService:', e);
+        statusMessage.textContent = 'Error: MarkdownService failed. Preview/PDF will not work.';
+        statusMessage.style.color = 'red';
+        if(convertToPdfButton) convertToPdfButton.disabled = true;
+        // Abort further UI setup that depends on markdownServiceInstance
+        return;
+    }
+
 
     const markdownInputTextArea = document.getElementById('markdownInputInternal');
     const codeMirrorPlaceholder = document.getElementById('codeMirrorPlaceholder');
     const editorTogglesContainer = document.getElementById('editorTogglesContainer');
     const convertToPdfButton = document.getElementById('convertToPdfButton');
-    const renderArea = document.getElementById('renderArea');
+    const renderArea = document.getElementById('renderArea'); // Used for preview modal content prep
     const statusMessage = document.getElementById('statusMessage');
     const fontToggle = document.getElementById('fontToggle');
     const darkModeToggle = document.getElementById('darkModeToggle');
@@ -37,30 +46,29 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const markdownFileInput = document.getElementById('markdownFile');
 
-    // Define initial UI state variables early so they are available for CodeMirror theme
     const initialDarkMode = getPreference('darkMode') === 'enabled';
     const initialSerifFont = getPreference('fontPreference') === 'serif';
     let cmTheme = initialDarkMode ? 'material-darker' : 'default';
 
     function updateMainButtonState() {
-        if (libsReady && fontsReady) {
+        if (markdownServiceInstance && fontsReady) { // Depends on MarkdownService for preview and fonts for preview
             if (convertToPdfButton) {
                 convertToPdfButton.disabled = false;
                 convertToPdfButton.textContent = 'Preview PDF';
             }
             statusMessage.textContent = 'Ready.'; statusMessage.style.color = 'green';
-        } else if (!libsReady) {
+        } else if (!markdownServiceInstance) {
             if (convertToPdfButton) {
                 convertToPdfButton.disabled = true;
-                convertToPdfButton.textContent = 'Libs Missing';
+                convertToPdfButton.textContent = 'Service Error';
             }
-            statusMessage.textContent = 'Error: Core libraries missing. Check console.'; statusMessage.style.color = 'red';
-        } else { // Libs ready, but fonts not
+            statusMessage.textContent = 'Error: MarkdownService not ready. Check console.'; statusMessage.style.color = 'red';
+        } else { // MarkdownService ready, but fonts for preview not
              if (convertToPdfButton) {
                 convertToPdfButton.disabled = true;
                 convertToPdfButton.textContent = 'Loading Fonts...';
             }
-            statusMessage.textContent = 'Please wait, loading fonts...'; statusMessage.style.color = '#333';
+            statusMessage.textContent = 'Please wait, loading fonts for preview...'; statusMessage.style.color = '#333';
         }
     }
     
@@ -77,28 +85,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let fontBase64Sans = null;
     let fontBase64Serif = null;
 
-    async function loadFontAsBase64(fontUrl, pdfFontName) {
+    async function loadFontAsBase64ForPreview(fontUrl, fontNameForLog) {
         try {
             const response = await fetch(fontUrl);
             if (!response.ok) throw new Error(`Failed to fetch ${fontUrl}: ${response.statusText}`);
             const fontBlob = await response.arrayBuffer();
             const fontBase64 = await arrayBufferToBase64(fontBlob);
-            console.log(`${pdfFontName} font fetched and converted to base64 from ${fontUrl}.`);
+            console.log(`${fontNameForLog} font fetched and converted to base64 from ${fontUrl} for preview.`);
             return fontBase64;
         } catch (error) {
-            console.error(`Error loading font ${pdfFontName} from ${fontUrl}:`, error);
-            statusMessage.textContent = `Error loading font: ${pdfFontName}. PDF generation may have issues.`;
+            console.error(`Error loading font ${fontNameForLog} from ${fontUrl} for preview:`, error);
+            statusMessage.textContent = `Error loading font for preview: ${fontNameForLog}.`;
             statusMessage.style.color = 'red';
             return null;
         }
     }
 
-    async function initializeFonts() {
-        statusMessage.textContent = 'Loading fonts...';
-        fontBase64Sans = await loadFontAsBase64(DEJAVU_SANS_URL, DEJAVU_SANS_PDF_NAME);
-        fontBase64Serif = await loadFontAsBase64(DEJAVU_SERIF_URL, DEJAVU_SERIF_PDF_NAME);
-        console.log('initializeFonts - fontBase64Sans (first 50):', fontBase64Sans ? fontBase64Sans.substring(0, 50) : 'null');
-        console.log('initializeFonts - fontBase64Serif (first 50):', fontBase64Serif ? fontBase64Serif.substring(0, 50) : 'null');
+    async function initializeFontsForPreview() {
+        statusMessage.textContent = 'Loading fonts for preview...';
+        fontBase64Sans = await loadFontAsBase64ForPreview(DEJAVU_SANS_URL, 'DejaVuSans');
+        fontBase64Serif = await loadFontAsBase64ForPreview(DEJAVU_SERIF_URL, 'DejaVuSerif');
 
         if (fontBase64Sans && fontBase64Serif) {
             const fontFaceStyle = document.createElement('style');
@@ -112,17 +118,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 src:url(data:font/ttf;base64,${fontBase64Serif}) format('truetype');
               }`;
             document.head.appendChild(fontFaceStyle);
-            console.log("DejaVu @font-face rules injected into document head.");
-
+            console.log("DejaVu @font-face rules injected into document head for preview.");
             fontsReady = true;
-            console.log("All DejaVu fonts fetched, converted to base64, and @font-face rules applied.");
         } else {
-            console.error("One or more DejaVu fonts failed to be fetched or converted. Cannot inject @font-face.");
-            statusMessage.textContent = 'Error loading custom fonts. PDF output may be affected.';
+            console.error("One or more DejaVu fonts failed to be fetched for preview.");
+            statusMessage.textContent = 'Error loading custom fonts for preview.';
             statusMessage.style.color = 'red';
-            fontsReady = false;
+            fontsReady = false; 
         }
-        updateMainButtonState();
+        updateMainButtonState(); // Update button state after fonts attempt
+        libsReady = !!markdownServiceInstance; // Libs are ready if markdown service is.
+        if(libsReady && fontsReady) {
+             statusMessage.textContent = 'Ready.'; statusMessage.style.color = 'green';
+        }
     }
 
     const updateUIStates = (isDarkModeActive, isSerifFontActive) => {
@@ -138,16 +146,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fontToggle) fontToggle.checked = isSerifFontActive;
 
         const currentFontFamily = isSerifFontActive ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
-        if (renderArea) renderArea.style.fontFamily = currentFontFamily;
+        // renderArea is not directly styled here anymore, previewModalContent is key
         if (previewModalContent) previewModalContent.style.fontFamily = currentFontFamily;
     };
 
-    // Fetch default markdown content and then initialize editor and the rest of the app
     fetch('default.md')
         .then(response => {
             if (!response.ok) {
                 console.warn(`Could not load default.md: ${response.statusText}. Editor will be empty or show an error.`);
-                return "# Error: Could not load default example content."; // Fallback content
+                return "# Error: Could not load default example content.";
             }
             return response.text();
         })
@@ -159,8 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
             markdownInputTextArea.value = "# Error: Failed to fetch default example content.";
         })
         .finally(() => {
-            // Initialize CodeMirror or fallback editor
-            // cmTheme is already defined from the outer scope
             if (typeof CodeMirror !== 'undefined') {
                  markdownEditor = CodeMirror.fromTextArea(markdownInputTextArea, {
                     mode: 'markdown', lineNumbers: true, lineWrapping: true, theme: cmTheme
@@ -174,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("CodeMirror not loaded");
                 if (codeMirrorPlaceholder) codeMirrorPlaceholder.textContent = "CodeMirror failed to load.";
                 markdownInputTextArea.style.display = 'block';
-                markdownEditor = { // Basic fallback
+                markdownEditor = { 
                     getValue: () => markdownInputTextArea.value,
                     setValue: (v) => markdownInputTextArea.value = v,
                     focus: () => markdownInputTextArea.focus(),
@@ -184,33 +189,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (editorTogglesContainer) editorTogglesContainer.style.opacity = '1';
             }
             
-            // Apply initial UI states after editor setup
             updateUIStates(initialDarkMode, initialSerifFont);
+            initializeFontsForPreview(); // Load fonts for preview styling
 
-            // Check for external libraries and initialize fonts
-            const checkLibsInterval = setInterval(() => {
-                if (/*typeof window.marked?.parse === 'function' &&*/ // Marked is now in core
-                    typeof window.html2canvas === 'function' &&
-                    typeof window.jspdf?.jsPDF === 'function' && 
-                    /*typeof window.mermaid?.render === 'function' &&*/ // Mermaid is now in core
-                    /*typeof window.DOMPurify?.sanitize === 'function' &&*/ // DOMPurify is now in core
-                    markdownServiceInstance) { // Check if core service is ready
-                    clearInterval(checkLibsInterval);
-                    libsReady = true;
-                    console.log("External libraries (html2canvas, jspdf) and Core MarkdownService are ready.");
-                    initializeFonts(); 
-                } else {
-                    console.log("Waiting for core libraries and/or MarkdownService instance...");
-                }
-            }, 100);
-
-            // --- Event Listeners ---
             if (convertToPdfButton) convertToPdfButton.addEventListener('click', prepareContentForPreviewAndPdf);
 
             if (cancelModalButton) {
                 cancelModalButton.addEventListener('click', () => {
                     previewModalOverlay.style.display = 'none';
-                    renderArea.innerHTML = '';
+                    // renderArea.innerHTML = ''; // renderArea is temporary
                     previewModalContent.innerHTML = '';
                     statusMessage.textContent = 'PDF generation cancelled.';
                 });
@@ -220,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (darkModeToggle) darkModeToggle.addEventListener('change', () => {
                 const isChecked = darkModeToggle.checked;
-                cmTheme = isChecked ? 'material-darker' : 'default'; // Update cmTheme for future editor re-init or reference
+                cmTheme = isChecked ? 'material-darker' : 'default';
                 setPreference('darkMode', isChecked ? 'enabled' : 'disabled');
                 updateUIStates(isChecked, fontToggle ? fontToggle.checked : false);
             });
@@ -229,11 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isChecked = fontToggle.checked;
                 setPreference('fontPreference', isChecked ? 'serif' : 'sans-serif');
                 updateUIStates(darkModeToggle ? darkModeToggle.checked : false, isChecked);
-                if (previewModalOverlay.style.display === 'flex' && fontsReady) {
-                    const currentFontFamilyCSS = isChecked ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
-                    renderArea.style.fontFamily = currentFontFamilyCSS; 
-                    previewModalContent.style.fontFamily = currentFontFamilyCSS;
-                }
             });
             
             if (clearButton) clearButton.addEventListener('click', () => {
@@ -269,18 +251,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             }
-        }); // End of .finally() for fetch default.md
+        }); 
 
     async function prepareContentForPreviewAndPdf() {
-        if (!fontsReady) {
-            statusMessage.textContent = 'Fonts are still loading. Please wait.';
+        if (!fontsReady) { 
+            statusMessage.textContent = 'Fonts for preview are still loading. Please wait.';
             statusMessage.style.color = 'orange';
             return false;
         }
         if (!markdownServiceInstance) {
-            statusMessage.textContent = 'MarkdownService not ready. Please wait.';
+            statusMessage.textContent = 'Core MarkdownService not ready. Please wait.';
             statusMessage.style.color = 'red';
-            console.error('MarkdownService instance not available for prepareContentForPreviewAndPdf');
+            console.error('Core MarkdownService instance not available for prepareContentForPreviewAndPdf');
             return false;
         }
 
@@ -301,30 +283,24 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
 
+        let htmlContentToPreview;
         try {
-            // Options for MarkdownService.parse()
-            // Based on previous local settings:
-            // mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
-            // DOMPurify.sanitize was used.
-            // marked.use({ renderer: customRenderer, gfm: true, breaks: true, mangle: false, headerIds: true });
             const parseOptions = {
-                mermaidTheme: 'default', // Matches previous 'default'
-                mermaidSecurityLevel: 'loose', // Matches previous 'loose'
-                sanitizeHtml: true, // DOMPurify was used
-                gfm: true, // Matches previous
-                breaks: true, // Matches previous
-                headerIds: true // Matches previous
+                mermaidTheme: 'default', 
+                mermaidSecurityLevel: 'loose',
+                sanitizeHtml: true, 
+                gfm: true, 
+                breaks: true, 
+                headerIds: true 
             };
-
             console.log("Calling core MarkdownService.parse with options:", parseOptions);
-            const htmlContent = await markdownServiceInstance.parse(mdText, parseOptions);
-            renderArea.innerHTML = htmlContent;
-            console.log("Content rendered by core MarkdownService.");
-
+            htmlContentToPreview = await markdownServiceInstance.parse(mdText, parseOptions);
+            console.log("Content parsed by core MarkdownService for preview.");
         } catch (error) {
-            console.error("Error during MarkdownService.parse:", error);
-            renderArea.innerHTML = `<p style="color:red;">Error processing Markdown: ${error.message}</p>`;
-            statusMessage.textContent = "Error processing Markdown. Check console.";
+            console.error("Error during MarkdownService.parse for preview:", error);
+            previewModalContent.innerHTML = `<p style="color:red;">Error processing Markdown for preview: ${error.message}</p>`;
+            previewModalOverlay.style.display = 'flex'; 
+            statusMessage.textContent = "Error processing Markdown for preview. Check console.";
             statusMessage.style.color = 'red';
             if (convertToPdfButton) {
                 convertToPdfButton.disabled = false;
@@ -335,31 +311,27 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const isSerif = fontToggle && fontToggle.checked;
         const currentFontFamilyCSS = isSerif ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
-        renderArea.style.fontFamily = currentFontFamilyCSS;
-
+        
+        previewModalContent.style.fontFamily = currentFontFamilyCSS;
+        previewModalContent.style.fontSize = '12pt'; 
+        previewModalContent.style.backgroundColor = 'white';
+        previewModalContent.style.color = 'black';
         const dpi = 96;
         const a4WidthInPx = Math.floor(210 * dpi / 25.4);
-        const marginInPxPdf = Math.floor(10 * dpi / 25.4);
-        const contentWidthInPx = a4WidthInPx - (2 * marginInPxPdf);
+        const marginInPxModal = Math.floor(10 * dpi / 25.4); 
+        previewModalContent.style.width = (a4WidthInPx - 2 * marginInPxModal) + 'px';
+        previewModalContent.style.padding = marginInPxModal + 'px';
 
-        renderArea.style.width = contentWidthInPx + 'px';
-        renderArea.style.fontSize = '12pt';
-        renderArea.style.backgroundColor = 'white';
-        renderArea.style.color = 'black';
-        
-        // Mermaid diagrams are now SVGs directly in the HTML from MarkdownService,
-        // so no separate rendering loop is needed here.
-
-        const images = Array.from(renderArea.querySelectorAll('img'));
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlContentToPreview;
+        const images = Array.from(tempDiv.querySelectorAll('img'));
         await Promise.all(images.filter(img => !img.complete).map(img =>
             new Promise(resolve => { img.onload = img.onerror = resolve; })
         ));
-
         await new Promise(resolve => setTimeout(resolve, 100)); 
         
-        previewModalContent.style.fontFamily = currentFontFamilyCSS;
-        previewModalContent.innerHTML = renderArea.innerHTML;
-        fileNameInputModal.value = `md2pdf_core_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.pdf`;
+        previewModalContent.innerHTML = tempDiv.innerHTML; 
+        fileNameInputModal.value = `pubmd_doc_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.pdf`;
         previewModalOverlay.style.display = 'flex';
 
         statusMessage.textContent = 'Preview ready.';
@@ -371,153 +343,102 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function savePdfHandler() {
-        if (!fontsReady || !fontBase64Sans || !fontBase64Serif) {
-            statusMessage.textContent = 'Fonts are not loaded. Cannot generate PDF.';
-            statusMessage.style.color = 'red';
-            console.error('Attempted to save PDF, but fonts are not ready or base64 data is missing.');
-            return;
-        }
-        console.log('Save PDF clicked. Font status:', { fontsReady, fontBase64Sans: fontBase64Sans ? fontBase64Sans.substring(0,30) : null, fontBase64Serif: fontBase64Serif ? fontBase64Serif.substring(0,30) : null });
-        console.log('PDF Font Names:', { sans: DEJAVU_SANS_PDF_NAME, serif: DEJAVU_SERIF_PDF_NAME });
-
         let fileName = fileNameInputModal.value.trim();
-        if (!fileName) fileName = "md2pdf_core.pdf";
+        if (!fileName) fileName = "pubmd_document.pdf";
         if (!fileName.toLowerCase().endsWith('.pdf')) fileName += '.pdf';
 
         savePdfFromModalButton.disabled = true;
         savePdfFromModalButton.textContent = 'Generating PDF...';
-        statusMessage.textContent = 'Processing PDF... please wait.';
+        statusMessage.textContent = 'Sending to server for PDF generation... please wait.';
         statusMessage.style.color = '#333';
         
-        const sourceElementForPdf = previewModalContent;
+        const htmlToConvert = previewModalContent.innerHTML;
+
+        // Base64 font data is available from fontBase64Sans and fontBase64Serif
+        const fontFaceRules = (fontBase64Sans && fontBase64Serif) ? `
+            <style>
+              @font-face {
+                font-family: 'DejaVu Sans';
+                src: url(data:font/ttf;base64,${fontBase64Sans}) format('truetype');
+              }
+              @font-face {
+                font-family: 'DejaVu Serif';
+                src: url(data:font/ttf;base64,${fontBase64Serif}) format('truetype');
+              }
+              body {
+                font-family: ${fontToggle && fontToggle.checked ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif"};
+                /* Margins will be controlled by PdfGenerationOptions sent to server */
+              }
+              /* Add any other global styles needed for PDF rendering by Playwright */
+              table { border-collapse: collapse; width: 100%; margin-bottom: 1em; }
+              th, td { border: 1px solid #ccc; padding: 0.5em; text-align: left; }
+              th { background-color: #f0f0f0; }
+              pre { background-color: #f5f5f5; padding: 1em; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; }
+              code:not(pre code) { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; }
+              blockquote { border-left: 3px solid #ccc; padding-left: 1em; margin-left: 0; }
+              img { max-width: 100%; height: auto; }
+              /* Ensure lists are styled for PDF */
+              ul, ol { padding-left: 20pt; margin-left: 0; }
+              li { margin-bottom: 5px; }
+            </style>
+        ` : '<style>/* Fonts for PDF not available */</style>';
+
+        const fullHtmlForPdf = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <title>PDF Document</title>
+                ${fontFaceRules}
+            </head>
+            <body>
+                ${htmlToConvert}
+            </body>
+            </html>
+        `;
+
+        const pdfOptions = {
+            pageFormat: 'a4',
+            orientation: 'portrait',
+            margins: { top: 15, right: 15, bottom: 15, left: 15 }, // in mm
+            printBackground: true
+        };
 
         try {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4', hotfixes: ['px_scaling'] });
+            console.log("Sending PDF generation request to server with options:", pdfOptions);
+            // console.log("HTML for PDF (first 500 chars):", fullHtmlForPdf.substring(0, 500));
 
-            pdf.addFileToVFS(DEJAVU_SANS_VFS_NAME, fontBase64Sans);
-            pdf.addFont(DEJAVU_SANS_VFS_NAME, DEJAVU_SANS_PDF_NAME, 'normal');
-            pdf.addFileToVFS(DEJAVU_SERIF_VFS_NAME, fontBase64Serif);
-            pdf.addFont(DEJAVU_SERIF_VFS_NAME, DEJAVU_SERIF_PDF_NAME, 'normal');
-
-            const isSerif = fontToggle && fontToggle.checked;
-            const selectedPdfFontName = isSerif ? DEJAVU_SERIF_PDF_NAME : DEJAVU_SANS_PDF_NAME;
-            const selectedFontFamilyCSS = isSerif ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
-            
-            pdf.setFont(selectedPdfFontName);
-            console.log(`jsPDF font set to: ${selectedPdfFontName}`);
-            console.log(`CSS font-family for html2canvas.onclone: ${selectedFontFamilyCSS}`);
-
-            const dpi = 96;
-            const marginInPx = Math.floor(10 * dpi / 25.4); 
-            const contentWidthForCanvas = Math.floor((210 - 20) * dpi / 25.4); 
-
-            await pdf.html(sourceElementForPdf, {
-                callback: function (doc) {
-                    doc.save(fileName);
-                    statusMessage.textContent = 'PDF generated successfully: ' + fileName;
-                    statusMessage.style.color = 'green';
-                    previewModalOverlay.style.display = 'none';
+            const response = await fetch('http://localhost:3001/api/generate-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-                margin: [marginInPx, marginInPx, marginInPx, marginInPx],
-                autoPaging: 'text', // Changed from 'slice' to 'text' for better text handling
-                html2canvas: {
-                    scale: 1, 
-                    useCORS: true,
-                    logging: true,
-                    backgroundColor: '#ffffff', 
-                    dpi: dpi, 
-                    width: contentWidthForCanvas, 
-                    windowWidth: contentWidthForCanvas, 
-                    onclone: (clonedDoc, clonedEl) => {
-                        console.log('html2canvas.onclone fired. Applying styles for PDF.');
-                        
-                        const style = clonedDoc.createElement('style');
-                        // Retain list styling for PDF, but ensure it's applied correctly
-                        // The MarkdownService should ideally handle semantic list structures.
-                        // This onclone styling might need adjustment based on MarkdownService output.
-                        style.textContent = `
-                            body { margin: 0; padding: 0; } /* Ensure no body margin interferes */
-                            ul, ol { 
-                                list-style: initial !important; /* Try to use browser default list styles */
-                                padding-left: 20pt !important; 
-                                margin-left: 0 !important; 
-                            }
-                            li {
-                                margin-bottom: 5px !important;       
-                            }
-                            /* SVG styling removed to let html2canvas use intrinsic/Mermaid-defined styles */
-                            /* svg { max-width: 100%; height: auto; } */ 
-                        `;
-                        clonedDoc.head.appendChild(style);
-                        
-                        // The complex list marker stamping logic might be redundant if MarkdownService
-                        // produces semantic HTML lists that jsPDF/html2canvas can interpret.
-                        // For now, keeping it but commenting out the direct call to see default behavior.
-                        /*
-                        (function stampMarkers(root, font) {
-                          const glyph = ['● ', '○ ', '▪ ', '▫ ', '– ', '● ']; 
-                          function walk(listEl, depth) {
-                            const ordered = listEl.tagName === 'OL';
-                            let n = Number(listEl.getAttribute('start')) || 1;
-                            listEl.style.listStyle = 'none';    
-                            listEl.querySelectorAll(':scope > li').forEach(li => {
-                              if (li.dataset.mk) return;        
-                              li.dataset.mk = '✓';
-                              const span = root.ownerDocument.createElement('span');
-                              span.textContent = ordered ? `${n++}. ` : glyph[depth % glyph.length];
-                              span.style.fontFamily = font; 
-                              span.style.position = 'absolute';
-                              span.style.left = '0'; 
-                              span.style.lineHeight = '1.2'; 
-                              li.style.position = 'relative'; 
-                              li.style.paddingLeft = '1.6em'; 
-                              li.insertBefore(span, li.firstChild);
-                              li.querySelectorAll(':scope > ul, :scope > ol')
-                                .forEach(child => walk(child, depth + 1));
-                            });
-                          }
-                          root.querySelectorAll('ul,ol').forEach(l => !l.closest('li') && walk(l, 0));
-                        })(clonedEl, selectedFontFamilyCSS); 
-                        */
-                        
-                        clonedEl.style.setProperty('background-color', 'white', 'important');
-                        clonedEl.style.setProperty('color', 'black', 'important');
-                        clonedEl.style.setProperty('font-family', selectedFontFamilyCSS, 'important');
-                        clonedEl.style.setProperty('width', contentWidthForCanvas + 'px', 'important'); 
-                        clonedEl.style.setProperty('box-sizing', 'border-box', 'important');
-
-                        const allDescendants = clonedEl.querySelectorAll('*');
-                        allDescendants.forEach(el => {
-                            el.style.setProperty('font-family', selectedFontFamilyCSS, 'important');
-                            el.style.setProperty('color', 'black', 'important');
-                            if (!el.matches('pre') && !el.matches('code:not(pre code)') && !el.matches('th') && 
-                                !(el.tagName === 'SPAN' && el.parentElement.tagName === 'LI' && el.style.position === 'absolute')) { 
-                               el.style.setProperty('background-color', '#ffffff', 'important');
-                            }
-                        });
-                        clonedEl.querySelectorAll('pre').forEach(el => el.style.setProperty('background-color', '#f5f5f5', 'important'));
-                        clonedEl.querySelectorAll('code:not(pre code)').forEach(el => el.style.setProperty('background-color', '#f0f0f0', 'important'));
-                        
-                        // Explicitly set width and height for SVGs if html2canvas has trouble
-                        // This is a more advanced step if simply removing the CSS rule isn't enough.
-                        // For now, we rely on Mermaid's own dimensioning.
-                        // clonedEl.querySelectorAll('svg').forEach(svgEl => {
-                        //     const bbox = svgEl.getBBox(); // May not work reliably in clonedDoc
-                        //     // Or try to parse viewBox
-                        //     const viewBox = svgEl.getAttribute('viewBox');
-                        //     if (viewBox) {
-                        //         const parts = viewBox.split(' ');
-                        //         svgEl.style.width = parts[2] + 'px';
-                        //         svgEl.style.height = parts[3] + 'px';
-                        //     }
-                        // });
-                    }
-                }
+                body: JSON.stringify({ html: fullHtmlForPdf, options: pdfOptions }),
             });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Server error: ${response.status} ${response.statusText}. ${errorText}`);
+            }
+
+            const pdfBlob = await response.blob();
+
+            const url = URL.createObjectURL(pdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            statusMessage.textContent = 'PDF generated successfully: ' + fileName;
+            statusMessage.style.color = 'green';
+            previewModalOverlay.style.display = 'none';
+
         } catch (error) {
-            console.error('Error generating PDF:', error);
-            statusMessage.textContent = 'Error generating PDF. Check console.';
+            console.error("Error generating PDF via server:", error);
+            statusMessage.textContent = `Error generating PDF: ${error.message}. Check console.`;
             statusMessage.style.color = 'red';
         } finally {
             savePdfFromModalButton.disabled = false;
