@@ -1,9 +1,7 @@
 import { marked, Renderer, Tokens } from 'marked';
 import mermaid from 'mermaid';
 import { MermaidTheme, MermaidSecurityLevel, MarkdownParseOptions, IMarkdownService } from './markdown.types.js';
-import { chromium, Browser, Page } from 'playwright'; // Added Playwright import
-
-// DOMPurify is no longer imported directly. It's expected to be on globalThis.
+import { chromium, Browser, Page } from 'playwright'; 
 
 const DEFAULT_MARKDOWN_PARSE_OPTIONS: Required<Omit<MarkdownParseOptions, 'mermaidTheme' | 'mermaidSecurityLevel'>> & Pick<MarkdownParseOptions, 'mermaidTheme' | 'mermaidSecurityLevel'> = {
     gfm: true,
@@ -24,19 +22,15 @@ const escape = (html: string, encode?: boolean): string => {
 };
 
 // Helper function to render Mermaid diagram using Playwright
-async function renderMermaidWithPlaywright(mermaidCode: string, diagramId: string, mermaidInitializeConfig: any): Promise<string> {
-    let browser: Browser | null = null;
+async function renderMermaidPage(browser: Browser, mermaidCode: string, diagramId: string, mermaidInitializeConfig: any): Promise<string> {
+    let page: Page | null = null;
     try {
-        browser = await chromium.launch();
         const context = await browser.newContext();
-        const page = await context.newPage();
+        page = await context.newPage();
 
         const mermaidContainerId = `mermaid-container-${diagramId}`;
-        const mermaidVersion = '11.6.0'; // Hardcoded based on package.json
+        const mermaidVersion = '11.6.0'; 
 
-        // Minimal HTML to render the diagram
-        // Note: Mermaid.js source needs to be accessible. Using a CDN for simplicity here.
-        // In a production environment, consider bundling or serving it locally.
         const htmlContent = `
             <!DOCTYPE html>
             <html>
@@ -49,24 +43,28 @@ async function renderMermaidWithPlaywright(mermaidCode: string, diagramId: strin
                     ${escape(mermaidCode)}
                 </div>
                 <script>
-                    mermaid.initialize(${JSON.stringify({ ...mermaidInitializeConfig, startOnLoad: true })});
-                    // The 'startOnLoad: true' with a specific container might trigger rendering.
-                    // We might need to explicitly call mermaid.run() or mermaid.render() if auto-render fails.
-                    // Example:
-                    // document.addEventListener('DOMContentLoaded', function () {
-                    //    mermaid.run({ nodes: [document.getElementById('${mermaidContainerId}')] });
-                    // });
+                    // Ensure mermaid is available before initializing
+                    if (typeof mermaid !== 'undefined') {
+                        mermaid.initialize(${JSON.stringify({ ...mermaidInitializeConfig, startOnLoad: true })});
+                    } else {
+                        console.error('Mermaid library not loaded on page.');
+                    }
                 </script>
             </body>
             </html>
         `;
 
-        await page.setContent(htmlContent, { waitUntil: 'networkidle' }); // Wait for mermaid to load and render
+        await page.setContent(htmlContent, { waitUntil: 'networkidle' });
+        
+        // More robust wait for SVG rendering
+        await page.waitForFunction((containerId) => {
+            const container = document.getElementById(containerId);
+            const svg = container?.querySelector('svg');
+            // Check if SVG exists and has some dimensions (simple check)
+            return svg && svg.clientWidth > 0 && svg.clientHeight > 0;
+        }, mermaidContainerId, { timeout: 10000 }); // 10 second timeout
 
-        // Add a slight delay to ensure Mermaid has finished rendering, especially if startOnLoad is asynchronous
-        await page.waitForTimeout(500); // 500ms, adjust as needed or use a more robust check
 
-        // Extract the SVG
         const svgOutput = await page.evaluate((containerId) => {
             const container = document.getElementById(containerId);
             const svgElement = container?.querySelector('svg');
@@ -77,16 +75,14 @@ async function renderMermaidWithPlaywright(mermaidCode: string, diagramId: strin
             return svgElement.outerHTML;
         }, mermaidContainerId);
         
-        await browser.close();
-        browser = null;
+        await page.close();
         return svgOutput;
 
     } catch (error) {
-        console.error(`Playwright Mermaid rendering error for diagram ${diagramId}:`, error);
-        if (browser) {
-            await browser.close();
+        console.error(`Playwright Mermaid page rendering error for diagram ${diagramId}:`, error);
+        if (page && !page.isClosed()) {
+            await page.close();
         }
-        // Return a placeholder or error message SVG
         return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><text x="0" y="25" fill="red">Error rendering diagram ${diagramId} with Playwright.</text></svg>`;
     }
 }
@@ -96,21 +92,17 @@ export class MarkdownService implements IMarkdownService {
     private mermaidGlobalConfig: any;
 
     constructor() {
-        // Store default mermaid config to pass to Playwright
         this.mermaidGlobalConfig = {
-            // startOnLoad: false, // This will be true in Playwright context
             theme: DEFAULT_MARKDOWN_PARSE_OPTIONS.mermaidTheme,
             securityLevel: DEFAULT_MARKDOWN_PARSE_OPTIONS.mermaidSecurityLevel,
             dompurifyConfig: { 
                 USE_PROFILES: { html: true, svg: true },
             },
-            flowchart: { htmlLabels: false }, // Keep this, as it's good practice even for browser
+            flowchart: { htmlLabels: false }, 
             sequence: { htmlLabels: false } as any, 
             state: { htmlLabels: false } as any,
         };
         
-        // Initialize Mermaid for any potential JSDOM-based operations (e.g. if mermaid.parse is ever used)
-        // This is less critical now.
         if (typeof mermaid.initialize === 'function') {
             mermaid.initialize({ ...this.mermaidGlobalConfig, startOnLoad: false });
         }
@@ -170,21 +162,35 @@ export class MarkdownService implements IMarkdownService {
         }
 
         if (mermaidPlaceholders.length > 0) {
-            const currentMermaidConfig = { ...this.mermaidGlobalConfig };
-            if (options?.mermaidTheme) currentMermaidConfig.theme = options.mermaidTheme;
-            if (options?.mermaidSecurityLevel) currentMermaidConfig.securityLevel = options.mermaidSecurityLevel;
-            
-            for (const item of mermaidPlaceholders) {
-                try {
-                    console.log(`Rendering Mermaid diagram ${item.id} with Playwright... (Code: ${item.code.substring(0,50)}...)`);
-                    // Ensure the mermaid code itself is properly escaped if it's directly injected into a template literal for HTML
-                    // The current approach injects it into a <div class="mermaid"> which should be fine.
-                    const svg = await renderMermaidWithPlaywright(item.code, item.id, currentMermaidConfig);
-                    html = html.replace(item.placeholderRegex, `<div class="mermaid">${svg}</div>`);
-                } catch (e: any) {
-                    console.error(`Mermaid rendering error (Playwright path) for diagram ${item.id}:`, e);
-                    const errorHtml = `<pre class="mermaid-error" data-mermaid-id="${item.id}">Mermaid Error (Playwright): ${escape(e.message || String(e))}</pre>`;
+            let playwrightBrowser: Browser | null = null;
+            try {
+                playwrightBrowser = await chromium.launch();
+                
+                const currentMermaidConfig = { ...this.mermaidGlobalConfig };
+                if (options?.mermaidTheme) currentMermaidConfig.theme = options.mermaidTheme;
+                if (options?.mermaidSecurityLevel) currentMermaidConfig.securityLevel = options.mermaidSecurityLevel;
+                
+                for (const item of mermaidPlaceholders) {
+                    try {
+                        console.log(`Rendering Mermaid diagram ${item.id} with Playwright... (Code: ${item.code.substring(0,50)}...)`);
+                        const svg = await renderMermaidPage(playwrightBrowser, item.code, item.id, currentMermaidConfig);
+                        html = html.replace(item.placeholderRegex, `<div class="mermaid">${svg}</div>`);
+                    } catch (e: any) { // Catch errors from renderMermaidPage specifically for this item
+                        console.error(`Mermaid rendering error (Playwright path) for diagram ${item.id}:`, e);
+                        const errorHtml = `<pre class="mermaid-error" data-mermaid-id="${item.id}">Mermaid Error (Playwright): ${escape(e.message || String(e))}</pre>`;
+                        html = html.replace(item.placeholderRegex, errorHtml);
+                    }
+                }
+            } catch (browserLaunchError) { // Catch errors from chromium.launch()
+                console.error("Failed to launch Playwright browser for Mermaid rendering:", browserLaunchError);
+                // Replace all mermaid placeholders with a general browser error message
+                for (const item of mermaidPlaceholders) {
+                    const errorHtml = `<pre class="mermaid-error" data-mermaid-id="${item.id}">Mermaid Error: Could not initialize Playwright browser for rendering.</pre>`;
                     html = html.replace(item.placeholderRegex, errorHtml);
+                }
+            } finally {
+                if (playwrightBrowser) {
+                    await playwrightBrowser.close();
                 }
             }
         }
