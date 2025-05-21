@@ -1,79 +1,25 @@
-# Changelog
-**The Changelog is for tracking changes to the *project's* files, not CRCT operations. CRCT operations are tracked in the HDTA documents.**
+## 2025-05-21
 
-- **2025-05-20:** Transitioned to Strategy Phase to address Playwright PDF engine issues.
-    - User initiated a new task to resolve issues based on `documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_gemini.md`.
-    - CRCT system loaded Strategy plugin and core files.
-    - MUP initiated due to context window usage and phase transition.
-    - No project code/document files were modified by this transition itself.
+*   **Pivoted Mermaid Diagram Rendering Strategy for PDF Export:**
+    *   **Previous Approach (SVG Patching):** Focused on post-processing JSDOM-generated Mermaid SVGs within Playwright to correct `<foreignObject>` sizing, `NaN` transforms, and `viewBox` issues. This made diagrams legible but still contended with the complexities of `<foreignObject>` rendering in Chromium.
+    *   **New Approach (Text-Only Mermaid Rendering):** Will modify `MarkdownService` to configure Mermaid (v11.6.0) with `htmlLabels: false`. This instructs Mermaid to render diagrams using standard SVG `<text>` elements instead of `<foreignObject>`, aiming for simpler, more robust PDF output.
+    *   **Reason for Pivot:** To avoid inherent issues with `<foreignObject>` in PDF generation and simplify the rendering pipeline.
+    *   **Affected Files (Primary):**
+        *   `nodejs_projects/core/src/services/markdown/markdown.service.ts` (for Mermaid configuration)
+        *   `nodejs_projects/core/src/services/pdf/playwright.engine.ts` (potential changes to how/if the DOM correction script is applied)
+        *   `nodejs_projects/core/src/services/pdf/playwright-dom-correction.js` (may be simplified or parts made redundant)
+    *   **Reference:** `documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_take8_pivot_o3_mermaid_text_only.md`
+*   Backed up key files related to the previous SVG patching approach:
+    *   `playwright.engine.ts`
+    *   `markdown.service.ts`
+    *   `playwright-dom-correction.js`
+*   Investigated and confirmed that the "Is it working?" text in the test Mermaid diagram is part of a node label, not an edge label, and was being correctly processed by the SVG patching script.
+*   Applied various iterations of the `playwright-dom-correction.js` script, including universal temporary width for `foreignObject`s and `textAlign: center` for node labels.
 
-- **2025-05-20:** Aligned architectural documents and `PdfService` types.
-    - Updated `documentation/02_Architecture/Solution_Architecture_Design_Specification.md` (v1.1) to reflect Playwright-first `PdfService` and `docx`/`html-to-docx` engine-based `DocxService`.
-    - Updated `documentation/02_Architecture/.Architectural_Decisions_Log.md` to log new PDF/DOCX strategies and align implementation plan summary.
-    - Updated `documentation/03_Implementation/Implementation_Plan.md` (Week 4 & Phase 3) for `DocxService` strategy.
-    - Refactored `PdfOptions` to `PdfGenerationOptions` in `nodejs_projects/core/src/services/pdf/pdf.types.ts` (implicitly, as this type is defined there and used by the service).
-    - Updated `nodejs_projects/core/src/services/pdf/pdf.service.ts` to use `PdfGenerationOptions`.
-    - Updated `nodejs_projects/core/src/index.ts` to export `PdfGenerationOptions`.
-    - Files modified:
-        - `documentation/02_Architecture/Solution_Architecture_Design_Specification.md`
-        - `documentation/02_Architecture/.Architectural_Decisions_Log.md`
-        - `documentation/03_Implementation/Implementation_Plan.md`
-        - `nodejs_projects/core/src/services/pdf/pdf.service.ts`
-        - `nodejs_projects/core/src/index.ts`
-        - (Implicitly) `nodejs_projects/core/src/services/pdf/pdf.types.ts` (where `PdfGenerationOptions` is defined)
+## 2025-05-20
 
-- **2025-05-20:** Initial implementation of `PdfService` in `@pubmd/core`.
-    - Created `nodejs_projects/core/src/services/pdf/pdf.types.ts` with `IPdfService` and `PdfOptions` (now `PdfGenerationOptions`).
-    - Created `nodejs_projects/core/src/services/pdf/pdf.service.ts` with basic class structure and placeholder PDF generation logic (using `pdf.text()`).
-    - Updated `nodejs_projects/core/src/index.ts` to export `PdfService` and related types.
-    - Created `nodejs_projects/core/scripts/test-pdf-service.mjs` for basic testing.
-    - Added `test:pdf` script to `nodejs_projects/core/package.json`.
-    - Files created/modified:
-        - `nodejs_projects/core/src/services/pdf/pdf.types.ts`
-        - `nodejs_projects/core/src/services/pdf/pdf.service.ts`
-        - `nodejs_projects/core/src/index.ts`
-        - `nodejs_projects/core/scripts/test-pdf-service.mjs`
-        - `nodejs_projects/core/package.json`
-
-- **2025-05-20:** Ran `npm install` in `nodejs_projects/core/`.
-    - Removed `@types/html2canvas` from `devDependencies` in `nodejs_projects/core/package.json` as it's deprecated and `html2canvas` provides its own types.
-    - Files modified: `nodejs_projects/core/package.json`, `nodejs_projects/core/package-lock.json`.
-
-- **2025-05-20:** Tested Web UI integration of `@pubmd/core` `MarkdownService`.
-    - `src/web/index.html` updated with an import map for `marked`, `dompurify`, `mermaid` ESM modules from CDN. Corresponding script tags removed.
-    - **Result**: HTML preview of Markdown (including Mermaid SVGs) via core `MarkdownService` works flawlessly.
-    - **New Issue**: Mermaid SVGs are NOT rendered in PDFs generated by the current local `savePdfHandler` in `script.js` (which uses `html2canvas`). Other PDF content is correct.
-    - Files modified: `src/web/index.html`.
-
-- **2025-05-20:** Integrated `@pubmd/core` `MarkdownService` into `src/web/script.js`.
-    - The web UI now uses the core service for Markdown parsing and Mermaid diagram rendering.
-    - Removed local `marked.js` and Mermaid rendering logic from `script.js`.
-    - File modified: `src/web/script.js`.
-
-- **2025-05-20:** Marked `Execution_Task_Core_Impl_MarkdownSvc_20250519_035300.md` as complete.
-    - This signifies the finalization and successful testing of the `MarkdownService` implementation within the `@pubmd/core` package.
-    - All associated sub-tasks and verifications for the MarkdownService are now considered done.
-
-- **2025-05-19:** Successfully implemented and tested `MarkdownService` within the `@pubmd/core` package.
-    - Service located at `nodejs_projects/core/src/services/markdown/markdown.service.ts`.
-    - Handles Markdown parsing, including Mermaid diagram rendering (to SVG) and DOMPurify sanitization in a Node.js environment.
-    - Test script `nodejs_projects/core/scripts/test-markdown-service.mjs` confirms functionality.
-    - Key files created/modified:
-        - `nodejs_projects/core/src/services/markdown/markdown.service.ts` (implementation)
-        - `nodejs_projects/core/src/services/markdown/markdown.types.ts` (type definitions)
-        - `nodejs_projects/core/scripts/test-markdown-service.mjs` (test script)
-        - `nodejs_projects/core/scripts/bootstrap-mermaid.mjs` (Mermaid initialization for Node.js)
-        - `documentation/03_Implementation/learnings_mermaid_dompurify_nodejs.md` (learnings documented)
-        - `nodejs_projects/core/src/index.ts` (updated to export MarkdownService)
-
-- **2025-05-19:** Successfully built the `@pubmd/core` package (version 0.1.0).
-    - Package located at `nodejs_projects/core/`.
-    - Output artifacts (CommonJS and ESM modules, type definitions) generated in `nodejs_projects/core/dist/`.
-    - Key files created/modified:
-        - `nodejs_projects/core/package.json` (added `typescript` devDependency)
-        - `nodejs_projects/core/tsconfig.build.json` (configuration adjustments)
-        - `nodejs_projects/core/tsconfig.esm.json` (configuration adjustments)
-        - `nodejs_projects/core/src/index.ts` (initial export added)
-        - `nodejs_projects/core/dist/` (and subdirectories/files)
-
-[Log significant codebase changes]
+*   Initial investigation into Mermaid diagram rendering issues in Playwright PDF output.
+*   Identified `foreignObject` zero-sizing, `NaN` transforms, and incorrect `viewBox` as primary causes.
+*   Started developing `playwright-dom-correction.js` to address these issues by manipulating the SVG DOM within Playwright.
+*   Set up `test-pdf-service.mjs` to use Playwright for PDF generation and test Mermaid rendering.
+*   Configured JSDOM environment with `fakeBBox` for server-side Markdown to HTML conversion.
