@@ -6,6 +6,7 @@
 - [x] **MarkdownService**:
     - [x] Initial Strategy and Planning ([`Strategy_Task_CoreRefactor_MarkdownSvc_20250518_095730.md`](../tasks/Strategy_Task_CoreRefactor_MarkdownSvc_20250518_095730.md))
     - [x] Implementation including Mermaid rendering and DOMPurify sanitization ([`Execution_Task_Core_Impl_MarkdownSvc_20250519_035300.md`](../tasks/Execution_Task_Core_Impl_MarkdownSvc_20250519_035300.md))
+        - [x] Resolved Mermaid diagram rendering issues by pivoting to Playwright-based SVG generation within MarkdownService.
     - [x] Testing and verification
     - [x] Task Finalized and Marked Complete
 - [ ] **PdfService**:
@@ -13,8 +14,9 @@
     - [x] Initial Implementation (Types, Service structure, placeholder HTML rendering, Test script) ([`Execution_Task_Core_Impl_PdfSvc_20250519_215432.md`](../tasks/Execution_Task_Core_Impl_PdfSvc_20250519_215432.md))
         - [x] Refactored `PdfOptions` to `PdfGenerationOptions` and updated exports.
         - [x] Aligned architectural documents (`Solution_Architecture_Design_Specification.md`, `.Architectural_Decisions_Log.md`) and `Implementation_Plan.md` with current PDF/DOCX strategies.
-    - [ ] Full HTML rendering (Playwright engine primary, jsPDF/html2canvas fallback)
-    - [ ] Testing and verification (SVG rendering, Playwright engine)
+    - [x] Full HTML rendering (Playwright engine primary for HTML from MarkdownService, including Mermaid SVGs)
+    - [x] Testing and verification (Mermaid SVG rendering via MarkdownService + Playwright, PDF generation via Playwright engine)
+    - [ ] Implement jsPDF/html2canvas fallback rendering path (if deemed necessary)
 - [ ] **FontService**:
     - [ ] Initial Strategy and Planning ([`Strategy_Task_CoreRefactor_FontSvc_20250518_095458.md`](../tasks/Strategy_Task_CoreRefactor_FontSvc_20250518_095458.md))
     - [ ] Implementation
@@ -45,5 +47,5 @@
 ## Overall Project
 - [x] Initial Project Setup (CRCT, linters, basic structure)
 - [ ] Full End-to-End Testing
-- [x] Documentation Review and Updates (Architectural docs, Implementation Plan for PDF/DOCX strategies)
+- [x] Documentation Review and Updates (Architectural docs, Implementation Plan for PDF/DOCX strategies, Mermaid rendering learnings)
 - [ ] Final Review and Cleanup

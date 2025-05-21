@@ -1,5 +1,17 @@
 ## 2025-05-21
 
+*   **Resolved Mermaid Diagram Rendering in PDFs via Playwright in MarkdownService:**
+    *   Pivoted the Mermaid rendering strategy to use Playwright directly within `MarkdownService` to generate SVGs.
+    *   `MarkdownService` now launches a Playwright browser instance per `parse()` call.
+    *   A helper function (`renderMermaidPage`) creates a minimal HTML page with the Mermaid diagram code and uses a Playwright page to render it, loading Mermaid.js from a CDN.
+    *   `page.waitForFunction()` is used to robustly wait for rendering completion before extracting the SVG.
+    *   This approach produces well-formed SVGs with all text correctly rendered, resolving previous issues with missing node labels in PDFs.
+    *   **Affected Files:**
+        *   `nodejs_projects/core/src/services/markdown/markdown.service.ts` (major update)
+        *   `nodejs_projects/core/src/services/pdf/playwright.engine.ts` (updated `page.evaluate` script to skip viewBox correction for these new SVGs)
+    *   **Supporting Documentation:**
+        *   `documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_take11_pivot_to_playwright.md` (details the successful plan)
+        *   `documentation/03_Implementation/learnings_mermaid_dompurify_nodejs.md` (updated with this new approach)
 *   **Refined Playwright PDF Engine DOM Corrections:**
     *   Commented out the `<foreignObject>` dimension correction block within the `page.evaluate()` script in `nodejs_projects/core/src/services/pdf/playwright.engine.ts`.
     *   This change was made because the `htmlLabels: false` setting in `MarkdownService` (for Mermaid rendering) is expected to prevent the use of `<foreignObject>` for labels, making this specific correction redundant.
