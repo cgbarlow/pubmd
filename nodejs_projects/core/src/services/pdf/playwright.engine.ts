@@ -1,45 +1,13 @@
-/// <reference types="node" />
-
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
-
 // Buffer is expected to be a global type from @types/node
 import { IPdfEngine } from './pdf-engine.interface.js';
 import { PdfGenerationOptions } from './pdf.types.js';
 import { chromium, Browser, Page, errors as PlaywrightErrors } from 'playwright';
-
-// Determine __dirname in an ES module context
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Path to the DOM correction script
-const domCorrectionScriptPath = path.resolve(__dirname, 'playwright-dom-correction.js');
-let domCorrectionScriptContent: string | null = null;
-
-async function getDomCorrectionScript(): Promise<string> {
-  if (domCorrectionScriptContent === null) {
-    try {
-      domCorrectionScriptContent = await fs.readFile(domCorrectionScriptPath, 'utf-8');
-    } catch (error) {
-      console.error('Failed to read DOM correction script:', error);
-      throw new Error(`Could not load DOM correction script from ${domCorrectionScriptPath}`);
-    }
-  }
-  return domCorrectionScriptContent;
-}
-
 
 export class PlaywrightPdfEngine implements IPdfEngine {
   public async generate(html: string, options: PdfGenerationOptions): Promise<Blob> {
     console.log('PlaywrightPdfEngine.generate called with options:', options);
     let browser: Browser | null = null;
     try {
-      const scriptToEvaluate = await getDomCorrectionScript();
-      if (!scriptToEvaluate) {
-        throw new Error("DOM correction script could not be loaded.");
-      }
-      
       browser = await chromium.launch();
       const context = await browser.newContext();
       const page: Page = await context.newPage();
@@ -58,7 +26,113 @@ export class PlaywrightPdfEngine implements IPdfEngine {
       await page.setContent(html, { waitUntil: 'domcontentloaded' });
 
       // Inject script to correct SVG issues before PDF generation
-      await page.evaluate(scriptToEvaluate);
+      await page.evaluate(() => {
+        const logPrefix = '[Playwright DOM Correction]';
+
+        // 1. Correct <foreignObject> dimensions
+        // This section is currently SKIPPED because Mermaid is configured with htmlLabels: false,
+        // which should prevent the use of <foreignObject> for labels.
+        // If issues with <foreignObject> reappear, this section may need to be re-enabled.
+        console.log(`${logPrefix} Skipping <foreignObject> correction due to htmlLabels:false pivot.`);
+        /*
+        const foreignObjects = document.querySelectorAll('.mermaid svg foreignObject');
+        console.log(`${logPrefix} Found ${foreignObjects.length} foreignObject elements.`);
+        foreignObjects.forEach((el: Element, index: number) => {
+          const fo = el as SVGForeignObjectElement; // Cast to SVGForeignObjectElement
+          const currentWidth = fo.getAttribute('width');
+          const currentHeight = fo.getAttribute('height');
+
+          if (currentWidth === '0' || currentHeight === '0' || !currentWidth || !currentHeight) {
+            const foChild = fo.firstElementChild as HTMLElement;
+            if (foChild) {
+              // Ensure styles are applied and element is in a state to be measured
+              // Reading a property like offsetWidth can force a reflow if needed.
+              foChild.offsetWidth; 
+
+              const newWidth = Math.max(foChild.scrollWidth, 1);
+              const newHeight = Math.max(foChild.scrollHeight, 1);
+
+              if (newWidth > 0 && newHeight > 0) {
+                fo.setAttribute('width', String(newWidth));
+                fo.setAttribute('height', String(newHeight));
+                console.log(`${logPrefix} Resized foreignObject #${index} (ID: ${fo.id || 'N/A'}) from ${currentWidth}x${currentHeight} to ${newWidth}x${newHeight}`);
+              } else {
+                console.warn(`${logPrefix} Could not determine valid dimensions for foreignObject child of #${index} (ID: ${fo.id || 'N/A'}). Child:`, foChild);
+              }
+            } else {
+              console.warn(`${logPrefix} ForeignObject #${index} (ID: ${fo.id || 'N/A'}) has no child element to measure.`);
+            }
+          }
+        });
+        */
+
+        // 2. Correct NaN transforms
+        const elementsWithNanTransform = document.querySelectorAll('.mermaid svg [transform*="NaN"]');
+        console.log(`${logPrefix} Found ${elementsWithNanTransform.length} elements with NaN in transform.`);
+        elementsWithNanTransform.forEach((element: Element) => {
+          const el = element as SVGElement; // Cast to SVGElement
+          const currentTransform = el.getAttribute('transform');
+          console.warn(`${logPrefix} Fixing NaN transform "${currentTransform}" for element:`, el.id || el.tagName);
+          if (currentTransform && currentTransform.toLowerCase().startsWith('translate(')) {
+            el.setAttribute('transform', 'translate(0,0)');
+          } else {
+            el.removeAttribute('transform');
+          }
+        });
+
+        // 3. Adjust SVG viewBox
+        const mermaidSvgs = document.querySelectorAll('.mermaid svg');
+        console.log(`${logPrefix} Found ${mermaidSvgs.length} Mermaid SVG elements to check viewBox.`);
+        mermaidSvgs.forEach((element: Element) => {
+          const svg = element as SVGSVGElement; // Cast to SVGSVGElement
+          try {
+            // Ensure all previous DOM manipulations are processed by the renderer
+            svg.getBoundingClientRect(); // Reading a property can trigger layout updates
+
+            const bbox = svg.getBBox(); // Get bounding box from browser's rendering engine
+
+            if (bbox && bbox.width > 0 && bbox.height > 0) {
+              const currentViewBoxAttr = svg.getAttribute('viewBox');
+              let initialMinX = bbox.x, initialMinY = bbox.y;
+
+              if (currentViewBoxAttr) {
+                  const parts = currentViewBoxAttr.split(' ').map(Number);
+                  if (parts.length === 4) {
+                      // Prefer existing viewBox origin if it provides padding
+                      initialMinX = Math.min(parts[0], bbox.x);
+                      initialMinY = Math.min(parts[1], bbox.y);
+                  }
+              }
+              
+              const padding = 5; // Add 5 units of padding around the content
+              const finalMinX = bbox.x - padding;
+              const finalMinY = bbox.y - padding;
+              const finalWidth = bbox.width + (padding * 2);
+              const finalHeight = bbox.height + (padding * 2);
+
+              const newViewBox = `${finalMinX} ${finalMinY} ${finalWidth} ${finalHeight}`;
+              
+              // Only update if it's meaningfully different or fixes a clearly invalid viewBox
+              let oldHeight = 0;
+              if(currentViewBoxAttr) {
+                const oldParts = currentViewBoxAttr.split(' ').map(Number);
+                if(oldParts.length === 4) oldHeight = oldParts[3];
+              }
+
+              if (newViewBox !== currentViewBoxAttr && (finalHeight > oldHeight || oldHeight < 16 /* arbitrary small number */)) {
+                svg.setAttribute('viewBox', newViewBox);
+                console.log(`${logPrefix} Corrected SVG viewBox for ${svg.id || 'svg'}. Old: "${currentViewBoxAttr}". New: "${newViewBox}". BBox was: x:${bbox.x}, y:${bbox.y}, w:${bbox.width}, h:${bbox.height}`);
+              }
+            } else {
+                 const currentViewBoxAttr = svg.getAttribute('viewBox');
+                 console.warn(`${logPrefix} SVG ${svg.id || 'svg'} has zero or invalid bbox (w:${bbox.width}, h:${bbox.height}) after fixes. Original viewBox: ${currentViewBoxAttr}`);
+            }
+          } catch (e: any) {
+            console.error(`${logPrefix} Error processing SVG viewBox for ${svg.id || 'svg'}: ${e.message}`, e);
+          }
+        });
+        console.log(`${logPrefix} DOM corrections applied (foreignObject part skipped).`);
+      });
 
       // Add a small delay if needed for any asynchronous updates post-evaluate, though usually not necessary
       // await page.waitForTimeout(100); 

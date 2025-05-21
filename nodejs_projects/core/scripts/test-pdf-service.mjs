@@ -18,6 +18,7 @@ async function setupMarkdownServiceDependencies() {
     resources: "usable"
   });
   const window = dom.window; // JSDOM window
+  const document = window.document; // Use this for creating elements
   
   // Globalize JSDOM properties
   globalThis.window = window;
@@ -37,25 +38,94 @@ async function setupMarkdownServiceDependencies() {
   if (typeof window.SVGSVGElement !== 'undefined') globalThis.SVGSVGElement = window.SVGSVGElement;
   if (typeof window.SVGTextElement !== 'undefined') globalThis.SVGTextElement = window.SVGTextElement;
   if (typeof window.SVGTextContentElement !== 'undefined') globalThis.SVGTextContentElement = window.SVGTextContentElement;
+  if (typeof window.SVGTSpanElement !== 'undefined') globalThis.SVGTSpanElement = window.SVGTSpanElement; // For getComputedTextLength
 
-
-  // `fakeBBox` Polyfill, aligned with bootstrap-mermaid.mjs
+  // `fakeBBox` Polyfill (refined to handle CSS in textContent)
   function fakeBBox() {
-    const len = (this.textContent || '').length;
-    const w = Math.max(8 * len, 40); 
-    const h = 16; 
+    const textContent = this.textContent || '';
+    let len = textContent.length;
+    let isCSSBlock = false;
+
+    // Heuristic: If textContent is very long and looks like CSS, don't use its length for sizing.
+    if (len > 500 && (textContent.includes('@keyframes') || textContent.includes('font-family') || textContent.includes('stroke-dasharray'))) {
+      console.log(`fakeBBox for ${this.tagName || 'unknown'}: Detected CSS-like content in textContent. Length ${len} will be treated as 0 for sizing.`);
+      len = 0; // Calculate bbox as if there's no text.
+      isCSSBlock = true;
+    }
+
+    const estimatedCharWidth = 8; 
+    const padding = 10; 
+    const w = Math.max(estimatedCharWidth * len + padding, 40); // Min width 40
+    const h = Math.max(18, 18); // Min height 18
+    
+    const logText = isCSSBlock ? "[CSS Block]" : textContent.substring(0,70); // Increased substring for better context
+
+    console.log(`fakeBBox for ${this.tagName || 'unknown'}: text: "${logText}..." (orig length: ${textContent.length}, used length: ${len}) -> width: ${w}, height: ${h}`);
     return { x: 0, y: 0, width: w, height: h, top: 0, left: 0, right: w, bottom: h };
   }
 
   // Apply fakeBBox to JSDOM's window SVG element prototypes
-  const svgElementClassesForBBox = ['SVGElement', 'SVGGraphicsElement', 'SVGSVGElement', 'SVGTextElement', 'SVGTextContentElement'];
+  const svgElementClassesForBBox = ['SVGElement', 'SVGGraphicsElement', 'SVGSVGElement', 'SVGTextElement', 'SVGTextContentElement', 'SVGTSpanElement'];
   svgElementClassesForBBox.forEach(className => {
     if (window[className] && window[className].prototype && !window[className].prototype.getBBox) {
       window[className].prototype.getBBox = fakeBBox;
       console.log(`Applied fakeBBox to window.${className}.prototype`);
+    } else if (window[className] && window[className].prototype && window[className].prototype.getBBox && window[className].prototype.getBBox !== fakeBBox) {
+      // console.log(`window.${className}.prototype.getBBox already exists. Overwriting with fakeBBox.`);
+      // window[className].prototype.getBBox = fakeBBox; // Uncomment to force overwrite if JSDOM's version is problematic
     }
   });
-  // Note: SVGRectElement was not explicitly polyfilled in bootstrap-mermaid.mjs, observing if needed.
+
+  // `getComputedTextLength` Polyfill
+  function fakeGetComputedTextLength() {
+    const text = this.textContent || '';
+    const charCount = text.length;
+    const estimatedCharWidth = 8; 
+    const computedLength = charCount * estimatedCharWidth;
+    // Truncate long text in log
+    const logText = text.length > 70 ? text.substring(0,70) + "..." : text;
+    console.log(`fakeGetComputedTextLength for text: "${logText}" (charCount: ${charCount}) -> computedLength: ${computedLength}`);
+    return computedLength;
+  }
+
+  // More robustly apply getComputedTextLength to relevant SVG element prototypes
+  console.log("Attempting to polyfill getComputedTextLength...");
+
+  try {
+    const svgTextElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    const svgTSpanElement = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+
+    const textElementProto = Object.getPrototypeOf(svgTextElement);
+    const tspanElementProto = Object.getPrototypeOf(svgTSpanElement);
+    
+    if (textElementProto && typeof textElementProto.getComputedTextLength !== 'function') {
+      textElementProto.getComputedTextLength = fakeGetComputedTextLength;
+      console.log("Polyfilled getComputedTextLength on SVGTextElement prototype.");
+    } else if (textElementProto && textElementProto.getComputedTextLength !== fakeGetComputedTextLength) {
+      console.log("Overwriting existing getComputedTextLength on SVGTextElement prototype.");
+      textElementProto.getComputedTextLength = fakeGetComputedTextLength;
+    } else if (textElementProto) {
+      console.log("getComputedTextLength already exists and matches polyfill on SVGTextElement prototype (or was already polyfilled).");
+    } else {
+      console.warn("Could not get SVGTextElement prototype to polyfill getComputedTextLength.");
+    }
+
+    if (tspanElementProto && typeof tspanElementProto.getComputedTextLength !== 'function') {
+      tspanElementProto.getComputedTextLength = fakeGetComputedTextLength;
+      console.log("Polyfilled getComputedTextLength on SVGTSpanElement prototype.");
+    } else if (tspanElementProto && tspanElementProto.getComputedTextLength !== fakeGetComputedTextLength) {
+      console.log("Overwriting existing getComputedTextLength on SVGTSpanElement prototype.");
+      tspanElementProto.getComputedTextLength = fakeGetComputedTextLength;
+    } else if (tspanElementProto) {
+      console.log("getComputedTextLength already exists and matches polyfill on SVGTSpanElement prototype (or was already polyfilled).");
+    } else {
+      console.warn("Could not get SVGTSpanElement prototype to polyfill getComputedTextLength.");
+    }
+
+  } catch (e) {
+    console.error("Error during getComputedTextLength polyfill application:", e);
+  }
+
 
   // Unified DOMPurify Instance and Patching (consistent with bootstrap-mermaid.mjs logic)
   let actualCreateDOMPurifyFactory;
@@ -83,7 +153,6 @@ async function setupMarkdownServiceDependencies() {
   };
 
   globalThis.DOMPurify = globalDOMPurifyShim;
-  // window.DOMPurify = globalDOMPurifyShim; // Not strictly needed if globalThis is primary
 
   // Patch the imported module itself to ensure consistency if Mermaid imports 'dompurify' directly.
   if (DOMPurifyModule.default && typeof DOMPurifyModule.default === 'function') {
@@ -108,128 +177,17 @@ async function main() {
     const markdownService = new MarkdownService(); 
     const pdfService = new PdfService(markdownService);
 
+    // Using the more complex diagram to test robustness
     const comprehensiveMarkdown = `
 # Markdown Feature Test
 
 ## 1. Headings
-
 # H1 Heading  
 ## H2 Heading  
-### H3 Heading  
-#### H4 Heading  
-##### H5 Heading  
-###### H6 Heading  
 
 ---
 
-## 2. Emphasis
-
-- *Italic text*
-- _Italic text_
-- **Bold text**
-- __Bold text__
-- ~~Strikethrough~~
-
----
-
-## 3. Lists
-
-### Unordered List
-
-- Item 1  
-  - Subitem 1.1  
-    - Subitem 1.1.1  
-      - Subitem 1.1.1.1  
-        - Subitem 1.1.1.1.1  
-          - Subitem 1.1.1.1.1.1
-
-### Ordered List
-
-1. First
-2. Second  
-   1. Sub-second  
-      1. Sub-sub-second
-
----
-
-## 4. Links
-
-- [Inline link](https://example.com)
-- [Reference-style link][example]
-
-[example]: https://example.com
-
----
-
-## 5. Images
-
-![Alt text for image](https://via.placeholder.com/150)
-
----
-
-## 6. Code
-
-### Inline Code
-
-Here is some \`inline code\`.
-
-### Code Block
-
-\`\`\`javascript
-function greet(name) {
-    console.log(\`Hello, \${name}!\`);
-}
-\`\`\`
-
----
-
-## 7. Blockquotes
-
-> This is a blockquote.
->
-> > Nested blockquote.
-
----
-
-## 8. Tables
-
-| Syntax | Description |
-| ------ | ----------- |
-| Header | Title       |
-| Cell   | Text        |
-
----
-
-## 9. Horizontal Rules
-
----
-
----
-
----
-
----
-
-## 10. Task Lists
-
-* [x] Task completed
-* [ ] Task not completed
-
----
-
-## 11. HTML Elements
-
-<p style="color: red;">This is a paragraph with inline HTML styling.</p>
-
----
-
-## 12. Escaping Characters
-
-\\*Literal asterisks\\*
-
----
-
-## 13. Mermaid Diagram
+## 13. Mermaid Diagram (Original)
 
 \`\`\`mermaid
 graph TD
@@ -240,41 +198,15 @@ graph TD
 \`\`\`
 
 ---
+## Simplified Mermaid Diagram (for comparison if needed)
 
-## 14. Footnotes
-
-Here is a footnote reference[^1].
-
-[^1]: This is the footnote.
-
----
-
-## 15. Definition Lists
-
-Term 1
-: Definition 1
-
-Term 2
-: Definition 2a
-: Definition 2b
-
----
-
-## 16. Emoji (if supported)
-
-😄 \\:tada: :+1:
-
----
-
-## 17. Math (if supported via KaTeX or MathJax)
-
-Inline math: \\$E = mc^2\\$
-Block math:
-
-\`\`\`math
-\\int_{a}^{b} x^2 dx
+\`\`\`mermaid
+graph TD
+    S[Simple Start] --> E[Simple End]
 \`\`\`
+
 `;
+
 
     const testHtml = `
 <h1>Test HTML PDF (Playwright)</h1>
