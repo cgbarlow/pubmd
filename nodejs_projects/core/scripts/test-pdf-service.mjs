@@ -179,32 +179,55 @@ async function main() {
 
     // Using the more complex diagram to test robustness
     const comprehensiveMarkdown = `
-# Markdown Feature Test
+# Test Markdown Document
 
-## 1. Headings
-# H1 Heading  
-## H2 Heading  
+This is a test document to verify our markdown and mermaid implementation.
 
----
+## Features Being Tested
 
-## 13. Mermaid Diagram (Original)
+1.  **Basic Markdown**
+    -   Headers
+    -   Lists
+    -   **Bold** and *italic* text
+    -   [Links](#)
+    -   Code blocks
 
-\`\`\`mermaid
+## Code Example
+
+```typescript
+function hello(name: string) {
+  console.log(`Hello, ${name}!`);
+}
+```
+
+## Mermaid Diagram Test
+
+```mermaid
 graph TD
-    A[Start] --> B{Is it working?}
-    B -- Yes --> C[Great!]
-    B -- No --> D[Fix it]
-    D --> B
-\`\`\`
+    A[Start] -->|Initialize| B(Load Config)
+    B --> C{Check Type}
+    C -->|Markdown| D[Process MD]
+    C -->|Regular| E[Process Text]
+    D --> F[Display Result]
+    E --> F
+```
 
----
-## Simplified Mermaid Diagram (for comparison if needed)
+## Tables
 
-\`\`\`mermaid
-graph TD
-    S[Simple Start] --> E[Simple End]
-\`\`\`
+| Feature    | Status |
+| :--------- | :----- |
+| Markdown   | ✅     |
+| Mermaid    | ✅     |
+| Dark Mode  | ✅     |
 
+## Task Lists
+
+-   [x] Implement markdown support
+-   [x] Add mermaid diagrams
+-   [x] Support dark mode
+
+> This is a quote
+> This is another quote
 `;
 
 
