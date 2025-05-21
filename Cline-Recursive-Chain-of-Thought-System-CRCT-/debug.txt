@@ -1,41 +1,4 @@
-2025-05-20 08:03:42,099 - __main__ - INFO - Showing dependencies for key string: 1Eb3
-2025-05-20 08:03:42,100 - __main__ - INFO - Loading global key map...
-2025-05-20 08:03:42,100 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: path_normalization with TTL 600s
-2025-05-20 08:03:42,136 - cline_utils.dependency_system.core.key_manager - INFO - Successfully loaded global key map (26 entries) from: c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_utils/dependency_system/core/global_key_map.json
-2025-05-20 08:03:42,138 - __main__ - INFO - Global key map loaded successfully.
-2025-05-20 08:03:42,139 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: project_root with TTL 600s
-2025-05-20 08:03:42,184 - __main__ - DEBUG - Building path migration map for show-dependencies...
-2025-05-20 08:03:42,187 - cline_utils.dependency_system.core.key_manager - INFO - Loaded previous global key map (26 entries) from: c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_utils/dependency_system/core/global_key_map_old.json
-2025-05-20 08:03:42,190 - cline_utils.dependency_system.io.tracker_io - INFO - Building path migration map based on global key maps...
-2025-05-20 08:03:42,193 - cline_utils.dependency_system.io.tracker_io - DEBUG - Old global map: Found 26 unique paths.
-2025-05-20 08:03:42,195 - cline_utils.dependency_system.io.tracker_io - DEBUG - New global map: Found 26 unique paths.
-2025-05-20 08:03:42,195 - cline_utils.dependency_system.io.tracker_io - INFO - Path comparison: Stable=26, Removed=0, Added=0
-2025-05-20 08:03:42,197 - cline_utils.dependency_system.io.tracker_io - INFO - Path migration map built with 26 total path entries.
-2025-05-20 08:03:42,198 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: config_data with TTL 600s
-2025-05-20 08:03:42,198 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Path Components: project_root='c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-', memory_dir_rel='c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs', calculated memory_dir_abs='c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs'
-2025-05-20 08:03:42,198 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Using main_tracker_abs from config (or default): 'c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs/module_relationship_tracker.md'
-2025-05-20 08:03:42,198 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Using doc_tracker_abs from config (or default): 'c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs/doc_tracker.md'
-2025-05-20 08:03:42,198 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: code_roots with TTL 600s
-2025-05-20 08:03:42,200 - cline_utils.dependency_system.utils.config_manager - DEBUG - Found and sorted code roots: ['c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src', 'c:/NotBackedUp/pubmd/nodejs_projects/core', 'c:/NotBackedUp/pubmd/src']
-2025-05-20 08:03:42,200 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Found 1 mini trackers under 'c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src'.
-2025-05-20 08:03:42,900 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Found 1 mini trackers under 'c:/NotBackedUp/pubmd/nodejs_projects/core'.
-2025-05-20 08:03:42,902 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Found 2 mini trackers under 'c:/NotBackedUp/pubmd/src'.
-2025-05-20 08:03:42,903 - cline_utils.dependency_system.utils.tracker_utils - INFO - Found 6 total tracker files.
-2025-05-20 08:03:42,903 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: aggregation with TTL 300s
-2025-05-20 08:03:42,903 - cline_utils.dependency_system.utils.tracker_utils - INFO - Aggregating dependencies from 6 trackers using path migration map...
-2025-05-20 08:03:42,905 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: core_module.md
-2025-05-20 08:03:42,907 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: tracker_data with TTL 600s
-2025-05-20 08:03:42,955 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'core_module.md': 4 keys, 4 grid rows
-2025-05-20 08:03:42,955 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: grid_decompress with TTL 600s
-2025-05-20 08:03:42,955 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: src_module.md
-2025-05-20 08:03:42,998 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'src_module.md': 1 keys, 1 grid rows
-2025-05-20 08:03:42,999 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: doc_tracker.md
-2025-05-20 08:03:43,040 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'doc_tracker.md': 14 keys, 14 grid rows
-2025-05-20 08:03:43,042 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: web_module.md
-2025-05-20 08:03:43,075 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'web_module.md': 7 keys, 7 grid rows
-2025-05-20 08:03:43,075 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: module_relationship_tracker.md
-2025-05-20 08:03:43,108 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'module_relationship_tracker.md': 5 keys, 5 grid rows
-2025-05-20 08:03:43,108 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Processing tracker for aggregation: src_module.md
-2025-05-20 08:03:43,138 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'src_module.md': 3 keys, 3 grid rows
-2025-05-20 08:03:43,138 - cline_utils.dependency_system.utils.tracker_utils - INFO - Aggregation complete. Processed 6 trackers. Found 254 unique directed links (based on current keys for stable paths).
-2025-05-20 08:03:43,140 - __main__ - DEBUG - Filtering aggregated links for target key display: 1Eb3
+2025-05-20 23:24:40,597 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: path_normalization with TTL 600s
+2025-05-20 23:24:40,598 - __main__ - INFO - Attempting to show keys and check status (p, s, S) from tracker: /workspaces/pubmd/nodejs_projects/core/core_module.md
+2025-05-20 23:24:40,598 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: tracker_data with TTL 600s
+2025-05-20 23:24:40,599 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'core_module.md': 4 keys, 4 grid rows

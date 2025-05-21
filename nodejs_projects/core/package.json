@@ -19,7 +19,7 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.esm.json",
+    "build": "rimraf ./dist && tsc -p tsconfig.build.json && tsc -p tsconfig.esm.json && node ./scripts/copy-assets.mjs",
     "build:watch": "npm run build -- --watch",
     "test": "echo \"Error: no test specified\" && exit 0",
     "test:markdown": "npm run build && node ./scripts/test-markdown-service.mjs",

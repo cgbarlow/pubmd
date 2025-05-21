@@ -1,6 +1,12 @@
 # Changelog
 **The Changelog is for tracking changes to the *project's* files, not CRCT operations. CRCT operations are tracked in the HDTA documents.**
 
+- **2025-05-20:** Transitioned to Strategy Phase to address Playwright PDF engine issues.
+    - User initiated a new task to resolve issues based on `documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_gemini.md`.
+    - CRCT system loaded Strategy plugin and core files.
+    - MUP initiated due to context window usage and phase transition.
+    - No project code/document files were modified by this transition itself.
+
 - **2025-05-20:** Aligned architectural documents and `PdfService` types.
     - Updated `documentation/02_Architecture/Solution_Architecture_Design_Specification.md` (v1.1) to reflect Playwright-first `PdfService` and `docx`/`html-to-docx` engine-based `DocxService`.
     - Updated `documentation/02_Architecture/.Architectural_Decisions_Log.md` to log new PDF/DOCX strategies and align implementation plan summary.

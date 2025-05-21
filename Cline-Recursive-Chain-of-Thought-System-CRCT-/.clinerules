@@ -1,11 +1,11 @@
 [COUNT]
-1
+5
 
 [LAST_ACTION_STATE]
-last_action: "Updated problem_statement-MermaidDiagramRenderingFailureInPlaywrightPDFOutput_20250520.md with prior research summaries."
-current_phase: "Execution"
-next_action: "Awaiting further instructions from the user."
-next_phase: "Strategy"
+last_action: "Strategy Phase Concluded (Streamlined): Playwright PDF engine fix to be executed directly."
+current_phase: "Strategy"
+next_action: "Execute direct replacement of playwright.engine.ts content."
+next_phase: "Execution"
 
 ---
 
@@ -55,13 +55,15 @@ next_phase: "Strategy"
 - Carefully verify relative paths in `tsconfig.json` `extends` clauses, especially after moving packages. The path is relative to the `tsconfig.json` file itself, not the CWD of the `tsc` command.
 - Periodic MUP (Mandatory Update Protocol) is triggered when context window usage reaches thresholds like 20%, 40%, etc., to ensure system stability and accurate state tracking.
 - MarkdownService implementation is complete and tested.
-- MUP for MarkdownService completion performed. File paths for task files need careful verification; they might be at the workspace root's `cline_docs` or within the project's `cline_docs`.
+- MUP for MarkdownService completion performed. File paths for task files need
 - Integrating core services (like MarkdownService) into existing UI scripts (`script.js`) requires careful replacement of local logic with service calls, and updating any readiness checks or dependencies.
 - `html2canvas` (used by jsPDF's `html()` method) may have limitations rendering complex SVGs (like those from Mermaid) into PDFs. This needs investigation when SVGs are missing from PDF output.
 - Noted that `html2canvas` provides its own type definitions, making `@types/html2canvas` redundant.
 - The `MarkdownService` method for parsing is `parse()`, not `parseMarkdown()`.
 - Test scripts for Node.js services that rely on browser globals (like `document` for Mermaid/DOMPurify) require JSDOM setup.
 - When replacing complex scripts, back up the old version with a `.bak` extension or similar, per user request, for future reference (e.g., `test-pdf-service-legacy-jsdom.mjs.bak`).
+- MUP performed for context window management and transition to Strategy phase for Playwright PDF engine issues.
+- Streamlined Strategy phase for Playwright PDF engine fix based on user feedback; proceeding directly to Execution.
 
 [Character_Definitions]
 

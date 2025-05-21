@@ -1,12 +1,12 @@
 {
   "extends": "../../Cline-Recursive-Chain-of-Thought-System-CRCT-/tsconfig.json", // Extends the root tsconfig
   "compilerOptions": {
-    "outDir": "./dist", // Output directory for CommonJS files
+    "outDir": "./dist/cjs", // Output directory for CommonJS files
     "rootDir": "./src", // Source files directory
-    "module": "commonjs", // Ensure CommonJS output
-    "moduleResolution": "node", // Explicitly set module resolution for CJS
+    "module": "nodenext", // Allow import.meta.url, Node.js handles CJS/ESM output resolution
+    "moduleResolution": "nodenext", // Align with module setting
     "declaration": true, // Generate .d.ts files
-    "declarationDir": "./dist/types", // Output directory for declaration files (corrected from ./dist to avoid conflict)
+    "declarationDir": "./dist/types", // Output directory for declaration files
     "types": ["node"] // Explicitly include node types
   },
   "include": ["src/**/*"], // Include all files in the src directory
