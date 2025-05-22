@@ -1,9 +1,4 @@
-# Vision for modular component architecture
-Tying all my ideas together.
-
-```mermaid
 graph TD;
-    %% Non-Pubmd nodes
     Eve1["EVE 1.0"]
     SparxConv["SparxEA conversion functionality"]
     BaseReact["Base React website"]
@@ -17,18 +12,18 @@ graph TD;
         PubmdCore["Pubmd (core)"]
         PubmdLite["Pubmd Lite"]
         PubmdCLI["Pubmd CLI"]
-        PubmdW["Pubmd Wiki"]
         PubmdLive["Pubmd Live"]
 
-        subgraph "Modules"
-            SparxMod["SparxEA Module"]
-            RagMod["RAG Module"]
+        subgraph "PubmdW" ["Pubmd Wiki"]
+            subgraph "Modules"
+                SparxMod["SparxEA Module"]
+                RagMod["RAG Module"]
+            end
         end
     end
 
-    %% links
     Eve1 --> SparxConv
-    SparxConv --> SparxMod 
+    SparxConv --> SparxMod
     Eve1 --> BaseReact
     BaseReact --> WikiPlat
     WikiPlat --> PubmdW
@@ -38,7 +33,7 @@ graph TD;
     PubmdCore --> PubmdLive
     RagApp --> DoView
     DoViewAg --> DoView
-    PubmdW --> RagMod 
-    RagMod --> RagApp 
+    PubmdW --> RagMod
+    RagMod --> RagApp
     PubmdW --> Eve2
-    SparxMod --> Eve2 
+    SparxMod --> Eve2
