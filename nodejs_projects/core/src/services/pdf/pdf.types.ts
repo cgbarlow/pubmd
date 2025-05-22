@@ -2,6 +2,8 @@
  * Defines the comprehensive options for PDF generation,
  * accommodating various engines like Playwright or jsPDF.
  */
+import { MermaidTheme } from '../markdown/markdown.types.js'; // Import MermaidTheme
+
 export interface PdfGenerationOptions {
   /** Suggested filename for the generated PDF. */
   filename?: string;
@@ -79,6 +81,20 @@ export interface PdfGenerationOptions {
    * but the service itself returns a Blob.
    */
   path?: string;
+
+  // --- Options for Markdown processing step, when generating PDF from Markdown ---
+  /** 
+   * Specifies the Mermaid theme to apply during Markdown parsing for PDF output.
+   * This will be used to select CSS classes and potentially theme variables.
+   */
+  mermaidTheme?: MermaidTheme;
+
+  /** 
+   * Specifies the font preference (sans-serif or serif) for Mermaid diagrams
+   * during Markdown parsing for PDF output.
+   */
+  fontPreference?: 'sans' | 'serif';
+
 
   // --- Options potentially more relevant to jsPDF/html2canvas engine ---
   /**

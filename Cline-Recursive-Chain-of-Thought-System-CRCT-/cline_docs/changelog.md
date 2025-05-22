@@ -1,5 +1,25 @@
 ## 2025-05-22 (Continued)
 
+*   **CRCT Summary Update:**
+    *   Created `documentation/crct_summary_20250522_mermaid_theming_status.md` to capture the end-of-day status for the Mermaid theming PDF generation task.
+    *   Updated `Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs/activeContext.md` to reflect the current state, including the PDF styling issue and next steps.
+*   **Client-Side UI Bug Fix (Preview Modal):**
+    *   Resolved a JavaScript error "One or more critical UI elements for PDF preview are missing" in `src/web/script.js`.
+    *   The error was due to a mismatch between the variable name `pdfFileNameInput` used in the script and the actual HTML ID `fileNameInputModal` for the PDF filename input field in the preview modal.
+    *   Corrected the script to use `fileNameInputModal` when referencing this element.
+*   **Server-Side PDF Theming (Implementation & Current Issue):**
+    *   **Core Library (`@pubmd/core`):**
+        *   `MarkdownParseOptions` in `markdown.types.ts` updated with `fontPreference` and expanded `MermaidTheme`.
+        *   `PdfGenerationOptions` in `pdf.types.ts` updated with `mermaidTheme` and `fontPreference`.
+        *   `MarkdownService.parse()` and `renderMermaidPage()` in `markdown.service.ts` updated to accept `mermaidRenderTheme` and `fontPreference`, inject `mermaid-themes.css`, wrap diagrams with theme/font classes, and initialize Mermaid with `theme: 'base'` and dynamic `themeVariables`.
+        *   `PdfService.generatePdfFromMarkdown()` in `pdf.service.ts` updated to pass theme/font options to `MarkdownService`.
+        *   `copy-assets.mjs` script updated to copy `mermaid-themes.css` to `dist/assets/`.
+    *   **Server (`nodejs_projects/server`):**
+        *   `/api/generate-pdf-from-markdown` endpoint in `index.ts` updated to expect `mermaidTheme` and `fontPreference` in `pdfOptions` from the client, and to pass these to `markdownService.parse()` (as `mermaidRenderTheme` and `fontPreference`).
+        *   **Build Issue & Workaround:** Encountered TypeScript build errors where the server project did not recognize updated types from `@pubmd/core`. Temporary `any` casts were added to `index.ts` to allow the server to build, which may be impacting correct option passing.
+    *   **Client (`src/web`):**
+        *   `script.js`'s `savePdfHandler` updated to send `mermaidTheme` and `fontPreference` within the `pdfOptions` object to the server.
+    *   **Current Issue:** User reports that selected Mermaid themes and fonts are not respected in the generated PDF. This is likely due to the server-side TypeScript build issues and the temporary workarounds.
 *   **Filename Display Fix (Task 2 from `next_steps_20250522_server_pdf_fixes.md`):**
     *   Resolved an issue where the filename was not displaying on initial load (showing "No file chosen" instead of "default.md").
     *   The `fileNameDisplaySpan` element was missing its ID in `src/web/index.html`.

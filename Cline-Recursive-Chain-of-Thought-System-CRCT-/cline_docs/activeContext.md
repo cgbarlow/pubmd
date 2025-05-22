@@ -7,33 +7,39 @@ Currently focusing on: **Task 4: Fix Mermaid Theme Styling Inconsistencies (Prev
 1.  **[COMPLETED]** Fix Mermaid preview rendering issues.
 2.  **[COMPLETED & VERIFIED]** Implement a working Mermaid theme selector for client-side preview.
 3.  **[COMPLETED & VERIFIED]** Refine Mermaid theme styles (Light, Dark, Grey).
-4.  **[PARTIALLY COMPLETED - SERVER CRASHING]** Implement theme selection and high-quality PDF generation for server-side PDF output (ADR_003).
-    *   Client-side `savePdfHandler` updated to call server.
-    *   Server currently crashes (`ERR_EMPTY_RESPONSE`) with `default.md`. Server-side investigation pending user.
+4.  **[PARTIALLY COMPLETED - PDF STYLING ISSUE]** Implement theme selection and high-quality PDF generation for server-side PDF output (ADR_003).
+    *   Client-side `savePdfHandler` updated to call server with theme/font options.
+    *   Server-side `index.ts` updated to receive options and pass to core services.
+    *   Core `MarkdownService` and `PdfService` updated to handle theme/font options.
+    *   **Current Issue:** User reports Mermaid theme/font selections from preview are not respected in the generated PDF. This is likely due to TypeScript build/linking issues in the server project preventing correct option propagation. Temporary `any` casts were added to `server/src/index.ts` to allow it to build, which might be masking or causing the issue.
+
 5.  **[NEW TASKS - IN PROGRESS]** Address issues and enhancements from `next_steps_20250522_server_pdf_fixes.md`.
 
 **`current_planning_area`**: "PDF Gen Follow-up & UI Enhancements (next_steps_20250522)"
 
-**Current State & Next Steps (from `documentation/03_Implementation/next_steps_20250522_server_pdf_fixes.md`):**
+**Current State & Next Steps (from `documentation/crct_summary_20250522_mermaid_theming_status.md`):**
 
 1.  **[COMPLETED] Add Client-Side API Server Check:**
     *   Implemented a check in `src/web/script.js` at startup to verify API server responsiveness.
     *   UI (status message, save PDF button) updated based on server status.
 
 2.  **[COMPLETED & VERIFIED] Refactor Default Markdown Loading and Filename Generation:**
-    *   **Default Content Loading & Display:** Modified `src/web/script.js` to load `default.md`. The `fileNameDisplay` span now correctly shows "default.md" on initial load, "No file chosen" after clearing text, and the actual filename when a user uploads a file. The internal `currentFileName` variable is managed consistently for PDF generation. This was verified after a direct assignment approach was implemented.
-    *   **Output Filename Enhancement:**
-        *   Dynamically generate PDF output filename using `currentFileName` and a timestamp (e.g., `originalfilename_YYYYMMDD_HHMMSS.pdf`) via `generatePdfFilename()` helper.
-        *   Pre-fill `fileNameInputModal` with this name, allowing user modification.
+    *   **Default Content Loading & Display:** `src/web/script.js` loads `default.md`. `fileNameDisplay` span behavior is correct.
+    *   **Output Filename Enhancement:** PDF output filename uses `currentFileName` and timestamp. `fileNameInputModal` is pre-filled.
 
 3.  **[COMPLETED] Remove Broken Image Link from Default Content:**
-    *   Edited `src/web/default.md` to replace the `https://via.placeholder.com/150` image link with `https://placehold.co/150x150.png`.
+    *   `src/web/default.md` updated with a working placeholder image.
 
-4.  **[PENDING] Fix Mermaid Theme Styling Inconsistencies (Preview vs. PDF):**
-    *   **Dark Theme Preview:** Address unreadable text (black on near-black) in client-side preview.
-    *   **Grey Theme PDF:** Ensure "Grey" theme in PDF is distinct and not appearing as "Light".
-    *   **Consistency Check:** Verify all themes (Light, Dark, Grey) are consistent between preview and PDF, aligning with `src/web/reference/github_css_research.css`.
+4.  **[IN PROGRESS - PDF STYLING ISSUE] Fix Mermaid Theme Styling Inconsistencies (Preview vs. PDF):**
+    *   **Client-side Preview:** Appears to be working correctly with theme/font selectors.
+    *   **PDF Output:** User reports selected Mermaid themes and fonts are not applied in the generated PDF.
+    *   **Next Steps (User):**
+        1.  Resolve TypeScript environment issues in `nodejs_projects/server` (rebuild core, reinstall server deps, restart TS server).
+    *   **Next Steps (AI - after user confirms TS env fix):**
+        1.  Revert temporary `any` casts in `nodejs_projects/server/src/index.ts`.
+        2.  Ensure correct option passing (`mermaidRenderTheme`, `fontPreference`) to `markdownService.parse()`.
+        3.  If issue persists, debug option flow and Playwright rendering in `MarkdownService`.
 
-**Server-Side Issue (Ongoing):**
-*   The server (`http://localhost:3001/api/generate-pdf-from-markdown`) is crashing with an `ERR_EMPTY_RESPONSE` when processing the `default.md` content.
-*   **User Action Required:** Investigate server-side logs (Node.js, Playwright `DEBUG=pw:api`) to identify the cause of the crash. Recommendations provided previously.
+**Server-Side Build Issue (Ongoing):**
+*   The server (`nodejs_projects/server/src/index.ts`) was failing to build due to TypeScript not recognizing updated types from `@pubmd/core`.
+*   Temporary `any` casts were added to allow the build to proceed. This needs to be resolved by the user fixing their local workspace linking/build state.

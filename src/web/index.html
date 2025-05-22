@@ -32,20 +32,21 @@
 </head>
 <body>
     <div class="container">
-        <h1>Markdown to PDF Converter v3.9 (Core Integration)</h1>
+        <h1>Markdown to PDF Converter</h1>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <div>
                 <input type="file" id="markdownFile" accept=".md,.txt" style="margin-bottom: 0;">
-                <span id="fileNameDisplay" class="file-name-display">No file chosen</span>
             </div>
             <div class="dark-mode-toggle">
                 <label class="switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label>
                 <span class="toggle-label">Dark Mode</span>
             </div>
         </div>
-        <label for="markdownInputInternal" class="label">Markdown Text:</label>
-        <div id="codeMirrorPlaceholder" class="code-mirror-placeholder">Loading Editor...</div>
-        <textarea id="markdownInputInternal"></textarea>
+        <div class="editor-area-wrapper">
+            <label for="markdownInputInternal" class="label editor-title-bar"><span id="fileNameDisplay" class="file-name-display"></span></label>
+            <div id="codeMirrorPlaceholder" class="code-mirror-placeholder">Loading Editor...</div>
+            <textarea id="markdownInputInternal"></textarea>
+        </div>
         <div class="controls-row">
             <div class="controls-left">
                 <button id="clearButton" class="secondary">Clear Text</button>
@@ -95,7 +96,7 @@
     <div id="renderArea"></div>
 
     <div class="footer">
-        <p>Powered by @pubmd/core, html2canvas, jsPDF, CodeMirror.</p>
+        <p>Powered by @pubmd/core (utilizing Playwright), CodeMirror, marked, Mermaid, and DOMPurify,</p>
         <p>Discover more widgets at <a href="https://cgee.nz/widgets" target="_blank">Chris Barlow's Widget Workshop</a>!</p>
     </div>
 

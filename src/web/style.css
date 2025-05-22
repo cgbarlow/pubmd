@@ -22,23 +22,69 @@ html.dark-mode h1 { color: #58a6ff; }
 .label { display: block; font-weight: 600; margin-bottom: 8px; color: #333; font-size: 1.1em; transition: color 0.3s; }
 html.dark-mode .label { color: #dadce1; }
 
+.editor-area-wrapper {
+    margin-top: 20px; /* Added spacing above the editor block */
+    margin-bottom: 20px; /* Spacing below the editor block */
+    border: 1px solid #ccd0d5; /* Shared border */
+    border-radius: 6px; /* Overall rounding */
+    overflow: hidden; /* To ensure child border-radius works as expected */
+    transition: border-color 0.3s;
+}
+html.dark-mode .editor-area-wrapper {
+    border-color: #555;
+}
+
+.editor-title-bar {
+    background-color: #e9ecef; /* Light grey title bar */
+    color: #495057; /* Darker text for title bar */
+    padding: 8px 12px;
+    font-size: 0.9em; /* Slightly smaller font for title bar */
+    font-weight: 600;
+    text-align: left; /* Align text to the left for title bar */
+    margin-bottom: 0; /* Remove margin from generic label style */
+    border-bottom: 1px solid #ccd0d5; /* Separator line */
+    /* border-top-left-radius: 6px; /* Match wrapper */
+    /* border-top-right-radius: 6px; /* Match wrapper */
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+html.dark-mode .editor-title-bar {
+    background-color: #3a3b3c; /* Darker title bar for dark mode */
+    color: #adb5bd; /* Lighter text for dark mode title bar */
+    border-bottom-color: #555;
+}
+
+
 textarea#markdownInputInternal { display: none; }
 .code-mirror-placeholder {
-    min-height: 400px; border: 1px solid #ccd0d5; border-radius: 6px; margin-bottom: 20px;
+    min-height: 400px; 
+    /* border removed, handled by wrapper */
+    /* border-radius removed, handled by wrapper/title bar logic */
+    /* margin-bottom removed, handled by wrapper */
     background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;
     color: #6c757d; font-style: italic; box-sizing: border-box;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
+    border-top-left-radius: 0; /* No rounding at top where title bar is */
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 5px; /* Keep bottom rounding if wrapper has it */
+    border-bottom-right-radius: 5px;
 }
-html.dark-mode .code-mirror-placeholder { background-color: #3a3b3c; border-color: #555; color: #adb5bd; }
+html.dark-mode .code-mirror-placeholder { background-color: #3a3b3c; color: #adb5bd; }
 
 .CodeMirror {
-    border: 1px solid #ccd0d5; border-radius: 6px; min-height: 400px; font-size: 1em;
+    /* border removed, handled by wrapper */
+    min-height: 400px; font-size: 1em;
     line-height: 1.5; font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-    margin-bottom: 20px; opacity: 0; /* Initial opacity for transition */
-    transition: border-color 0.3s, opacity 0.2s ease-in-out;
+    /* margin-bottom removed, handled by wrapper */
+    opacity: 0; /* Initial opacity for transition */
+    transition: opacity 0.2s ease-in-out;
+    border-top-left-radius: 0; /* No rounding at top */
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 5px; /* Match wrapper's bottom rounding */
+    border-bottom-right-radius: 5px;
 }
 html.dark-mode .CodeMirror.cm-s-material-darker {
-    border-color: #555 !important; background-color: #1E1E1E !important; color: #D4D4D4 !important;
+    /* border-color removed, handled by wrapper */
+    background-color: #1E1E1E !important; color: #D4D4D4 !important;
 }
 html.dark-mode .CodeMirror.cm-s-material-darker .CodeMirror-gutters {
     background-color: #1E1E1E !important; border-right: 1px solid #444 !important; color: #858585 !important;

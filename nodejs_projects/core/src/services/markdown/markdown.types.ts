@@ -1,4 +1,4 @@
-export type MermaidTheme = 'default' | 'base' | 'dark' | 'forest' | 'neutral' | 'null'; // Changed null to "null"
+export type MermaidTheme = 'default' | 'base' | 'dark' | 'forest' | 'neutral' | 'null' | 'light' | 'grey'; // Added light and grey
 export type MermaidSecurityLevel = 'strict' | 'loose' | 'antiscript' | 'sandbox';
 
 export interface MarkdownParseOptions {
@@ -8,10 +8,12 @@ export interface MarkdownParseOptions {
   gfm?: boolean; // marked option
   breaks?: boolean; // marked option
   headerIds?: boolean; // marked option
+  fontPreference?: 'sans' | 'serif'; // Added font preference
 
   /** 
    * Specifies the rendering strategy for Mermaid on the server.
    * If 'base', mermaidThemeVariables should be provided.
+   * If a theme name (e.g., 'light', 'dark'), the service will attempt to apply it.
    */
   mermaidRenderTheme?: 'base' | MermaidTheme; 
   /**
