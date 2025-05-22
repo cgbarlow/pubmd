@@ -51,14 +51,12 @@ graph TD;
     RagApp --> DoView
 
     %% Styling
-    style PubmdCore fill:#ccffcc,stroke:#333,stroke-width:2px
-    style PubmdLite fill:#ccffcc,stroke:#333,stroke-width:2px
-    style PubmdCLI fill:#ccffcc,stroke:#333,stroke-width:2px
-    style PubmdW fill:#ccffcc,stroke:#333,stroke-width:2px
-    style RagMod fill:#ccffcc,stroke:#333,stroke-width:2px
-    style PubmdLive fill:#ccffcc,stroke:#333,stroke-width:2px
-    style RagApp fill:#ccffcc,stroke:#333,stroke-width:2px
-    style DoView fill:#ccffcc,stroke:#333,stroke-width:2px
-    style Eve2 fill:#ccffcc,stroke:#333,stroke-width:2px
-
-    style SparxMod fill:#cceeff,stroke:#333,stroke-width:2px
+    style PubmdCore fill:#53af53,stroke:#333,stroke-width:2px,color:#333
+    style PubmdLite fill:#53af53,stroke:#333,stroke-width:2px,color:#333
+    style PubmdCLI fill:#53af53,stroke:#333,stroke-width:2px,color:#333
+    style PubmdW fill:#53af53,stroke:#333,stroke-width:2px,color:#333
+    style RagMod fill:#53af53,stroke:#333,stroke-width:2px,color:#333
+    style PubmdLive fill:#53af53,stroke:#333,stroke-width:2px,color:#333
+    style RagApp fill:#53af53,stroke:#333,stroke-width:2px,color:#333
+    style DoView fill:#53af53,stroke:#333,stroke-width:2px,color:#333
+    style Eve2 fill:#53af53,stroke:#333,stroke-width:2px,color:#333
