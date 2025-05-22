@@ -39,7 +39,7 @@ graph TD;
 
     %% Connections
     Eve1 --> BaseReact
-    Eve1 --> SparxConv %% This connection will be long due to SparxConv's rank.
+    Eve1 --> SparxConv 
 
     BaseReact --> WikiPlat
     
