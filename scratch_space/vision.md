@@ -29,16 +29,16 @@ graph TD;
     %% links
     Eve1 --> SparxConv
     SparxConv --> SparxMod 
-    SparxMod --> Eve2 
     Eve1 --> BaseReact
     BaseReact --> WikiPlat
     WikiPlat --> PubmdW
+    PubmdCore --> PubmdW
     PubmdCore --> PubmdLite
     PubmdCore --> PubmdCLI
-    PubmdCore --> PubmdW
     PubmdCore --> PubmdLive
     RagApp --> DoView
     DoViewAg --> DoView
     PubmdW --> RagMod 
     RagMod --> RagApp 
     PubmdW --> Eve2
+    SparxMod --> Eve2 
