@@ -1,3 +1,163 @@
+# Client-Side Mermaid Rendering Error: "Could not find a suitable point for the given distance"
+
+## Problem Statement
+
+The web application fails to render Mermaid diagrams in the client-side preview modal. Despite successfully loading Mermaid.js (v11.6.0), `marked`, and `DOMPurify` via an import map, and correctly identifying Mermaid code blocks, the `mermaid.run()` command throws an error: "Could not find a suitable point for the given distance". This results in a "Syntax error in text" message being displayed in the preview area where the diagram should be. The issue persists even with simple diagrams and after ensuring custom fonts ('DejaVu Sans', 'DejaVu Serif') are loaded and applied.
+
+## Table of Contents
+
+* [Background](#background)
+* [Attempted Fixes](#attempted-fixes)
+* [Hypothesis](#hypothesis)
+* [Prior Research](#prior-research)
+  * [src/web/default.md](#srcwebdefaultmd)
+* [Dependencies](#dependencies)
+  * [src/web/index.html](#srcwebindexhtml)
+  * [src/web/script.js](#srcwebscriptjs)
+  * [src/web/style.css](#srcwebstylecss)
+
+## Background
+
+The project aims to provide a Markdown to PDF conversion service with a client-side preview feature. Initially, there were issues with module loading (e.g., trying to load `@pubmd/core` which had Playwright dependencies directly on the client, and incorrect CDN URLs for client-side libraries). These have been resolved. The current architecture uses `marked`, `DOMPurify`, and `Mermaid.js` (ESM versions via CDN and import map) for the client-side preview. The `marked` library is extended to identify Mermaid code blocks and wrap them in a `<div class="mermaid">` for `mermaid.run()` to process. Custom fonts ('DejaVu Sans', 'DejaVu Serif') are fetched, converted to base64, and injected via `@font-face` rules for consistent preview styling. The main application logic, including CodeMirror editor, UI controls, and preview modal, appears to be functioning correctly, apart from the Mermaid diagram rendering.
+
+## Attempted Fixes
+
+1.  **Correcting Library Loading:** Ensured `marked`, `DOMPurify`, and `Mermaid.js` are loaded correctly using valid CDN URLs in the import map (`src/web/index.html`).
+2.  **Reverting to Known Good State:** Reverted `index.html`, `script.js`, and `style.css` to versions from a previous commit where the overall page styling was correct.
+3.  **Refactoring `script.js`:**
+    *   Removed attempts to use the Node.js-specific `@pubmd/core` package directly on the client for parsing.
+    *   Re-implemented client-side parsing using `marked` and `DOMPurify`.
+    *   Ensured `mermaid.initialize()` is called.
+    *   Ensured `mermaid.run()` is called on elements with the `.mermaid` class within the preview modal.
+4.  **Font Loading:** Confirmed that 'DejaVu Sans' and 'DejaVu Serif' fonts are being fetched and `@font-face` rules are injected into the document head. The preview modal content `font-family` is set based on user preference.
+5.  **Mermaid Extension for `marked`:** Verified that the custom `marked` extension correctly identifies ````mermaid` blocks and wraps their content in `<div class="mermaid">...</div>`.
+6.  **DOMPurify Configuration:** Ensured DOMPurify is configured to allow `div` tags and `class` attributes necessary for Mermaid.
+7.  **Simplified Test Case:** The error occurs even with a very simple Mermaid diagram like `graph TD; A-->B;` (as found in `default.md`).
+8.  **Mermaid Version:** Using Mermaid.js v11.6.0, which is a relatively recent version.
+
+## Hypothesis
+
+The "Could not find a suitable point for the given distance" error in Mermaid.js, when rendering SVG, is often related to issues with text measurement or layout calculations within the SVG environment created by Mermaid. This could be due to:
+1.  **Font Metrics:** Even though custom fonts are loaded, Mermaid might have trouble accurately determining character widths or line heights within its SVG rendering context, especially if it relies on specific browser APIs for text measurement that behave subtly differently or are affected by the CSS environment of the preview modal.
+2.  **CSS Conflicts/Inheritance:** Styles applied to the preview modal or its parent elements might be interfering with Mermaid's internal styling or layout calculations for SVG elements (e.g., `display`, `line-height`, `font-size` on parent containers affecting internal SVG `text` elements).
+3.  **SVG Rendering Context:** The way the SVG is embedded or sized within the preview modal might lead to calculation errors.
+4.  **Mermaid Configuration:** A specific Mermaid configuration option might be missing or incorrectly set, which is crucial for robust rendering in this specific DOM and CSS context. For example, explicitly setting `fontFamily` within `mermaid.initialize()` config might be necessary, even if the surrounding div has the correct font.
+
+Further research is needed to pinpoint the exact cause, potentially by isolating the Mermaid rendering in a simpler HTML structure or by experimenting with different Mermaid configuration options and CSS overrides.
+
+## Prior Research
+### src/web/default.md
+*Code snippet begins*
+#### 13. Mermaid Diagram
+
+```mermaid
+graph TD
+    A[Start] --> B{Is it working?}
+    B -- Yes --> C[Great!]
+    B -- No --> D[Fix it]
+    D --> B
+```
+*Code snippet ends*
+
+## Dependencies
+
+### src/web/index.html
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown to PDF Converter</title>
+
+    <!-- External CSS Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/material-darker.min.css">
+
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Import Map for ES Modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "marked": "https://cdn.jsdelivr.net/npm/marked@15.0.12/lib/marked.esm.js",
+            "dompurify": "https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.es.mjs",
+            "mermaid": "https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.esm.min.mjs"
+        }
+    }
+    </script>
+
+    <!-- External JS Libraries (deferred) -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js" defer></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js" defer></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js" defer></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/markdown/markdown.min.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Markdown to PDF Converter v3.9 (Core Integration)</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <input type="file" id="markdownFile" accept=".md,.txt" style="margin-bottom: 0;">
+            <div class="dark-mode-toggle">
+                <label class="switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label>
+                <span class="toggle-label">Dark Mode</span>
+            </div>
+        </div>
+        <label for="markdownInputInternal" class="label">Markdown Text:</label>
+        <div id="codeMirrorPlaceholder" class="code-mirror-placeholder">Loading Editor...</div>
+        <textarea id="markdownInputInternal"></textarea>
+        <div class="controls-row">
+            <div class="controls-left">
+                <button id="clearButton" class="secondary">Clear Text</button>
+                <div id="editorTogglesContainer">
+                    
+                </div>
+            </div>
+            <button id="convertToPdfButton" class="primary" disabled>Initializing...</button>
+        </div>
+        <div id="statusMessage">&nbsp;</div>
+    </div>
+
+    <div id="previewModalOverlay">
+        <div id="previewModal">
+            <div id="previewModalHeader"><h2>PDF Preview</h2></div>
+            <div id="previewModalContent"></div>
+            <div id="previewModalFilename">
+                <label for="fileNameInputModal">Filename:</label>
+                <input type="text" id="fileNameInputModal" value="md2pdf_core.pdf">
+            </div>
+            <div id="previewModalActions">
+                <div class="font-toggle"> 
+                    <label class="switch"><input type="checkbox" id="fontToggle"><span class="slider"></span></label>
+                    <span class="toggle-label">Serif Font</span>
+                </div>
+                <div class="action-buttons"> 
+                    <button id="cancelModalButton" class="secondary">Cancel</button>
+                    <button id="savePdfFromModalButton" class="primary">Save PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="renderArea"></div>
+
+    <div class="footer">
+        <p>Powered by @pubmd/core, html2canvas, jsPDF, CodeMirror.</p>
+        <p>Discover more widgets at <a href="https://cgee.nz/widgets" target="_blank">Chris Barlow's Widget Workshop</a>!</p>
+    </div>
+
+    <!-- Main Application Script -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
+```
+
+### src/web/script.js
+```javascript
 // Client-side libraries via import map
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
@@ -484,3 +644,190 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+```
+
+### src/web/style.css
+```css
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    margin: 0; padding: 20px; background-color: #f0f2f5; color: #1c1e21;
+    display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
+}
+body.preload .slider, body.preload .slider:before { transition: none !important; } 
+
+
+html.dark-mode body { background-color: #18191a; color: #e4e6eb; }
+
+.container {
+    background-color: #ffffff; padding: 30px; border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); width: 100%; max-width: 800px;
+    box-sizing: border-box; transition: background-color 0.3s;
+}
+html.dark-mode .container { background-color: #242526; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
+
+h1 { color: #0a66c2; text-align: center; margin-bottom: 30px; font-size: 2em; transition: color 0.3s; }
+html.dark-mode h1 { color: #58a6ff; }
+
+.label { display: block; font-weight: 600; margin-bottom: 8px; color: #333; font-size: 1.1em; transition: color 0.3s; }
+html.dark-mode .label { color: #dadce1; }
+
+textarea#markdownInputInternal { display: none; }
+.code-mirror-placeholder {
+    min-height: 400px; border: 1px solid #ccd0d5; border-radius: 6px; margin-bottom: 20px;
+    background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;
+    color: #6c757d; font-style: italic; box-sizing: border-box;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+html.dark-mode .code-mirror-placeholder { background-color: #3a3b3c; border-color: #555; color: #adb5bd; }
+
+.CodeMirror {
+    border: 1px solid #ccd0d5; border-radius: 6px; min-height: 400px; font-size: 1em;
+    line-height: 1.5; font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    margin-bottom: 20px; opacity: 0; /* Initial opacity for transition */
+    transition: border-color 0.3s, opacity 0.2s ease-in-out;
+}
+html.dark-mode .CodeMirror.cm-s-material-darker {
+    border-color: #555 !important; background-color: #1E1E1E !important; color: #D4D4D4 !important;
+}
+html.dark-mode .CodeMirror.cm-s-material-darker .CodeMirror-gutters {
+    background-color: #1E1E1E !important; border-right: 1px solid #444 !important; color: #858585 !important;
+}
+html.dark-mode .CodeMirror.cm-s-material-darker .cm-header { color: #569CD6 !important; font-weight: bold !important; }
+
+
+input[type="file"] {
+    display: block; padding: 10px; border: 1px solid #ccd0d5; border-radius: 6px;
+    cursor: pointer; margin: 0 0 30px 0; transition: border-color 0.3s, background-color 0.3s;
+}
+html.dark-mode input[type="file"] { background-color: #3a3b3c; border-color: #555; color: #e4e6eb; }
+
+.controls-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+.controls-left { display: flex; align-items: center; gap: 15px; }
+#editorTogglesContainer { display: flex; align-items: center; gap: 15px; opacity: 0; transition: opacity 0.3s ease-in-out 0.1s; }
+
+input[type="file"]::file-selector-button, button.secondary {
+    border: none; background: #0a66c2; padding: 8px 12px; border-radius: 4px; color: #fff;
+    cursor: pointer; transition: background-color .2s ease-in-out; font-family: inherit;
+}
+html.dark-mode input[type="file"]::file-selector-button,
+html.dark-mode button.secondary { background: #3081d2; color: #e4e6eb; }
+
+button.primary {
+    background-color: #0a66c2; color: white; border: none; padding: 12px 25px;
+    border-radius: 6px; font-size: 1em; font-weight: 600; cursor: pointer;
+    transition: background-color 0.2s ease-in-out; font-family: inherit;
+}
+html.dark-mode button.primary { background-color: #3081d2; color: #e4e6eb; }
+button:disabled { background-color: #cccccc; color: #666666; cursor: not-allowed; }
+html.dark-mode button:disabled { background-color: #404040; color: #888888; }
+
+#statusMessage { text-align:center; margin-top:15px; font-weight:bold; min-height: 1.2em; line-height: 1.2em; }
+.footer { text-align: center; margin-top: 30px; font-size: 0.9em; color: #606770; transition: color 0.3s; }
+html.dark-mode .footer { color: #b0b3b8; }
+.footer a { color: #0a66c2; text-decoration: none; transition: color 0.3s; }
+html.dark-mode .footer a { color: #58a6ff; }
+
+.switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccd0d5; transition: .2s; border-radius: 24px; }
+html.dark-mode .slider { background-color: #555; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .2s; border-radius: 50%; }
+input:checked + .slider { background-color: #0a66c2; }
+html.dark-mode input:checked + .slider { background-color: #3081d2; }
+input:checked + .slider:before { transform: translateX(26px); }
+.toggle-label { font-size: 0.9em; color: #666; white-space: nowrap; transition: color 0.3s; margin-left: 5px; vertical-align: middle;}
+html.dark-mode .toggle-label { color: #b0b3b8; }
+.font-toggle, .dark-mode-toggle { display: flex; align-items: center; }
+
+
+.mermaid svg { max-width: 100%; height: auto; }
+
+#renderArea {
+    position: absolute; left: -9999px; top: 0; visibility: hidden;
+    padding: 0; box-sizing: border-box;
+    /* font-family will be set by JS */
+    color: black; background-color: white;
+    font-size: 12pt; overflow-wrap: break-word;
+}
+#renderArea h1, #renderArea h2, #renderArea h3, #renderArea h4, #renderArea h5, #renderArea h6 { color: black; text-align: left; overflow-wrap: break-word;}
+#renderArea h1 { font-size: 24pt; margin-bottom: 12pt;}
+#renderArea h2 { font-size: 18pt; margin-bottom: 10pt;}
+#renderArea h3 { font-size: 14pt; margin-bottom: 8pt;}
+#renderArea p { font-size: 12pt; line-height: 1.5; margin-bottom: 10pt; color: black; overflow-wrap: break-word; }
+#renderArea ul, #renderArea ol { margin-bottom: 10pt; padding-left: 20pt; color: black; } /* Standard list styling */
+#renderArea li { font-size: 12pt; margin-bottom: 5pt; color: black; overflow-wrap: break-word; } /* Standard li styling */
+#renderArea strong, #renderArea b { color: black; font-weight: bold; }
+#renderArea em, #renderArea i { color: black; font-style: italic; }
+#renderArea pre {
+    background-color: #f5f5f5; border: 1px solid #ccc; padding: 10px; border-radius: 4px;
+    overflow-x: auto; font-family: 'Courier New', Courier, monospace; font-size: 10pt; color: black;
+    white-space: pre-wrap; word-wrap: break-word;
+}
+#renderArea code {
+    font-family: 'Courier New', Courier, monospace; background-color: #f0f0f0;
+    padding: 2px 4px; border-radius: 3px; font-size: 0.9em; color: black;
+    word-break: break-all; overflow-wrap: break-word;
+}
+#renderArea pre code { background-color: transparent; padding: 0; border-radius: 0; font-size: 1em; }
+#renderArea blockquote { border-left: 3px solid #ccc; padding-left: 10px; margin-left: 0; font-style: italic; color: black; overflow-wrap: break-word; }
+#renderArea table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
+#renderArea th, #renderArea td { border: 1px solid #ddd; padding: 8px; text-align: left; color: black; overflow-wrap: break-word; }
+#renderArea th { background-color: #f2f2f2; }
+#renderArea img { max-width: 100%; height: auto; display: block; margin: 10px 0; }
+
+#previewModalOverlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5); z-index: 1000;
+    justify-content: center; align-items: center;
+}
+#previewModal {
+    background-color: white; color: black;
+    padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%; max-width: 700px;
+    max-height: 90vh; display: flex; flex-direction: column;
+}
+#previewModalHeader { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+#previewModalHeader h2 { margin: 0; font-size: 1.5em; }
+#previewModalContent {
+    overflow-y: auto; flex-grow: 1;
+    border: 1px solid #ccc; padding: 15px;
+    /* font-family will be set by JS */ font-size: 12pt;
+    background-color: white; color: black;
+}
+#previewModalContent h1, #previewModalContent h2, #previewModalContent h3 { color: black; }
+#previewModalContent p, #previewModalContent li { color: black; } 
+#previewModalContent ul, #previewModalContent ol { padding-left: 20pt; }
+
+
+#previewModalContent strong, #previewModalContent b { font-weight: bold; color: black; }
+#previewModalContent em, #previewModalContent i { font-style: italic; color: black; }
+#previewModalContent pre { background-color: #f5f5f5; border: 1px solid #ccc; padding: 10px; color: black; }
+#previewModalContent code { background-color: #f0f0f0; padding: 2px 4px; color: black; }
+#previewModalContent pre code { background-color: transparent; }
+#previewModalContent blockquote { border-left: 3px solid #ccc; padding-left: 10px; color: #555; }
+#previewModalContent table { border-collapse: collapse; width: 100%; }
+#previewModalContent th, #previewModalContent td { border: 1px solid #ddd; padding: 8px; color: black; }
+#previewModalContent th { background-color: #f2f2f2; }
+#previewModalContent .mermaid svg { max-width: 100%; height: auto; }
+
+#previewModalFilename { margin-top: 20px; }
+#previewModalFilename label { display: block; margin-bottom: 5px; font-weight: bold; }
+#fileNameInputModal { width: calc(100% - 22px); padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+
+#previewModalActions {
+    margin-top: 20px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+#previewModalActions .action-buttons { 
+    display: flex;
+    gap: 10px;
+}
+#previewModalActions button { 
+     padding: 10px 20px;
+}
+#previewModalActions .font-toggle {
+    margin-right: auto; 
+}

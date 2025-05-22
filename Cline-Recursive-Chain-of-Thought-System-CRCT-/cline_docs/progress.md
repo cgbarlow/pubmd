@@ -41,11 +41,14 @@
 - [x] Modify `src/web/script.js` to import and use `MarkdownService` from `@pubmd/core`.
 - [x] Test Markdown rendering using the new `MarkdownService` (HTML Preview works, including Mermaid SVGs).
 - [ ] Test PDF generation using the new `PdfService` (Currently uses local PDF logic; Mermaid SVGs from core `MarkdownService` do not render in PDF).
+- [x] **Client-Side Mermaid Rendering**:
+    - [x] Identified and documented "Could not find a suitable point for the given distance" error in preview modal. ([`problem_statement-ClientSideMermaidRenderingError_20250522.md`](../../documentation/03_Implementation/problem_statement-ClientSideMermaidRenderingError_20250522.md))
+    - [ ] Debug and resolve the rendering error.
 - [ ] Ensure font handling works correctly via `FontService`.
 - [ ] Integrate `PreferenceService`.
 
 ## Overall Project
 - [x] Initial Project Setup (CRCT, linters, basic structure)
 - [ ] Full End-to-End Testing
-- [x] Documentation Review and Updates (Architectural docs, Implementation Plan for PDF/DOCX strategies, Mermaid rendering learnings)
+- [x] Documentation Review and Updates (Architectural docs, Implementation Plan for PDF/DOCX strategies, Mermaid rendering learnings, Client-side Mermaid issue)
 - [ ] Final Review and Cleanup
