@@ -9,9 +9,12 @@ function getPreference(name) { try { return localStorage.getItem(name); } catch 
 
 const DEJAVU_SANS_URL = 'https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSans.ttf';
 const DEJAVU_SERIF_URL = 'https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSerif.ttf';
+const API_BASE_URL = 'http://localhost:3001';
 
 let libsReady = false;
 let fontsReady = false;
+let apiServerReady = false;
+let currentFileName = 'pubmd_document.md'; // Default filename, updated on load
 
 function extractThemeVariables(rootElement) {
     const css = getComputedStyle(rootElement);
@@ -126,21 +129,33 @@ const mermaidExtension = {
 };
 marked.use(mermaidExtension);
 
+function generatePdfFilename(baseName = 'document') {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+
+    let namePart = baseName.replace(/\.(md|markdown|txt)$/i, ''); // Remove common markdown extensions
+    namePart = namePart.replace(/[^a-z0-9_.-]/gi, '_'); // Sanitize
+
+    return `${namePart}_${year}${month}${day}_${hours}${minutes}${seconds}.pdf`;
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
     try {
-        // Initial Mermaid.js configuration is removed from here.
-        // It will be configured dynamically in prepareContentForPreviewAndPdf.
-        // console.log('Mermaid.js will be configured dynamically before rendering.');
-
         const markdownInputTextArea = document.getElementById('markdownInputInternal');
         const codeMirrorPlaceholder = document.getElementById('codeMirrorPlaceholder');
         const editorTogglesContainer = document.getElementById('editorTogglesContainer');
         const convertToPdfButton = document.getElementById('convertToPdfButton');
         const statusMessage = document.getElementById('statusMessage');
-        const fontFamilySelector = document.getElementById('fontFamilySelector'); // Changed from fontToggle
+        const fontFamilySelector = document.getElementById('fontFamilySelector');
         const darkModeToggle = document.getElementById('darkModeToggle');
         const clearButton = document.getElementById('clearButton');
+        const fileNameDisplay = document.getElementById('fileNameDisplay'); // Get reference to file name display
 
         const previewModalOverlay = document.getElementById('previewModalOverlay');
         const previewModalContent = document.getElementById('previewModalContent');
@@ -151,46 +166,98 @@ document.addEventListener('DOMContentLoaded', () => {
         const mermaidThemeSelector = document.getElementById('mermaidThemeSelector');
 
         const initialDarkMode = getPreference('darkMode') === 'enabled';
-        const initialFontPreference = getPreference('fontPreference') || 'sans-serif'; // 'sans-serif' or 'serif'
+        const initialFontPreference = getPreference('fontPreference') || 'sans-serif';
         let cmTheme = initialDarkMode ? 'material-darker' : 'default';
+
+        // Function to update the displayed filename
+        function updateFileNameDisplay(newFileName) {
+            if (fileNameDisplay) {
+                fileNameDisplay.textContent = newFileName || 'No file chosen';
+            }
+            currentFileName = newFileName || 'pubmd_document.md'; // Update global var
+        }
+        updateFileNameDisplay('No file chosen'); // Initial state
+
+        async function checkApiServerStatus() {
+            if (!statusMessage || !savePdfFromModalButton) return;
+            statusMessage.textContent = 'Checking API server status...';
+            statusMessage.style.color = '#333';
+            try {
+                const response = await fetch(`${API_BASE_URL}/`);
+                if (response.ok) {
+                    const text = await response.text();
+                    if (text.includes('PubMD Core API Server is running')) {
+                        apiServerReady = true;
+                        statusMessage.textContent = 'API Server ready. Initializing...';
+                        statusMessage.style.color = 'green';
+                        if (savePdfFromModalButton) savePdfFromModalButton.disabled = false;
+                        console.log('API Server check successful.');
+                    } else {
+                        throw new Error('Unexpected response from API server.');
+                    }
+                } else {
+                    throw new Error(`API server responded with status: ${response.status}`);
+                }
+            } catch (error) {
+                apiServerReady = false;
+                console.error('API Server check failed:', error);
+                statusMessage.textContent = 'Error: API Server not detected. PDF generation disabled.';
+                statusMessage.style.color = 'red';
+                if (savePdfFromModalButton) {
+                    savePdfFromModalButton.disabled = true;
+                    savePdfFromModalButton.title = 'PDF Generation is disabled because the API server is not reachable.';
+                }
+            }
+        }
+
 
         function updateMainButtonState() {
             if (typeof marked === 'function' &&
                 typeof DOMPurify?.sanitize === 'function' &&
                 typeof mermaid?.run === 'function' && 
-                fontsReady &&
+                fontsReady && 
                 typeof CodeMirror !== 'undefined' &&
                 markdownEditor
                ) {
-                libsReady = true;
-                if (convertToPdfButton) {
+                libsReady = true; 
+                if (convertToPdfButton) { 
                     convertToPdfButton.disabled = false;
                     convertToPdfButton.textContent = 'Preview PDF';
                 }
-                statusMessage.textContent = 'Ready.'; statusMessage.style.color = 'green';
             } else if (!fontsReady) {
                 libsReady = false;
                 if (convertToPdfButton) {
                     convertToPdfButton.disabled = true;
                     convertToPdfButton.textContent = 'Loading Fonts...';
                 }
-                statusMessage.textContent = 'Please wait, loading fonts for preview...'; statusMessage.style.color = '#333';
+                if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') { 
+                    statusMessage.textContent = 'Please wait, loading fonts for preview...'; statusMessage.style.color = '#333';
+                }
             } else if (typeof CodeMirror === 'undefined' || !markdownEditor) {
                 libsReady = false;
                 if (convertToPdfButton) {
                     convertToPdfButton.disabled = true;
                     convertToPdfButton.textContent = 'Loading Editor...';
                 }
-                statusMessage.textContent = 'Please wait, editor loading...'; statusMessage.style.color = '#333';
+                if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
+                     statusMessage.textContent = 'Please wait, editor loading...'; statusMessage.style.color = '#333';
+                }
             }
-            else {
+            else { 
                 libsReady = false;
                 if (convertToPdfButton) {
                     convertToPdfButton.disabled = true;
                     convertToPdfButton.textContent = 'Libs Missing';
                 }
-                statusMessage.textContent = 'Error: Client-side libraries missing. Check console.'; statusMessage.style.color = 'red';
+                if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
+                    statusMessage.textContent = 'Error: Client-side libraries missing. Check console.'; statusMessage.style.color = 'red';
+                }
                 console.error("Missing client-side libraries: ", {marked, DOMPurify, mermaid, CodeMirror});
+            }
+
+            if (savePdfFromModalButton && !apiServerReady) {
+                savePdfFromModalButton.disabled = true;
+                savePdfFromModalButton.title = 'PDF Generation is disabled because the API server is not reachable.';
             }
         }
 
@@ -217,14 +284,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 return fontBase64;
             } catch (error) {
                 console.error(`Error loading font ${fontNameForLog} from ${fontUrl} for preview:`, error);
-                statusMessage.textContent = `Error loading font for preview: ${fontNameForLog}.`;
-                statusMessage.style.color = 'red';
+                if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
+                    statusMessage.textContent = `Error loading font for preview: ${fontNameForLog}.`;
+                    statusMessage.style.color = 'red';
+                }
                 return null;
             }
         }
 
         async function initializeFontsForPreview() {
-            statusMessage.textContent = 'Loading fonts for preview...';
+            if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
+                statusMessage.textContent = 'Loading fonts for preview...';
+            }
             fontBase64Sans = await loadFontAsBase64ForPreview(DEJAVU_SANS_URL, 'DejaVuSans');
             fontBase64Serif = await loadFontAsBase64ForPreview(DEJAVU_SERIF_URL, 'DejaVuSerif');
 
@@ -244,11 +315,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 fontsReady = true;
             } else {
                 console.error("One or more DejaVu fonts failed to be fetched for preview.");
-                statusMessage.textContent = 'Error loading custom fonts for preview.';
-                statusMessage.style.color = 'red';
+                 if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
+                    statusMessage.textContent = 'Error loading custom fonts for preview.';
+                    statusMessage.style.color = 'red';
+                }
                 fontsReady = false;
             }
-            updateMainButtonState();
+            updateMainButtonState(); 
         }
 
         const updateMainPageUI = (isDarkModeActive) => {
@@ -266,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const updatePreviewFont = () => {
             if (!fontFamilySelector || !previewModalContent) return;
 
-            const selectedFontValue = fontFamilySelector.value; // 'serif' or 'sans-serif'
+            const selectedFontValue = fontFamilySelector.value; 
             setPreference('fontPreference', selectedFontValue); 
 
             const isSerif = selectedFontValue === 'serif';
@@ -279,14 +352,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-
-        initializeFontsForPreview().then(() => {
+        checkApiServerStatus().then(() => {
+            return initializeFontsForPreview();
+        }).then(() => {
             updateMainPageUI(initialDarkMode);
             
             if (fontFamilySelector) {
                 fontFamilySelector.value = initialFontPreference;
             }
-            updatePreviewFont(); // Apply initial font to previewModalContent and potentially refresh preview
+            updatePreviewFont();
 
 
             if (typeof CodeMirror !== 'undefined') {
@@ -299,7 +373,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (codeMirrorPlaceholder) codeMirrorPlaceholder.style.display = 'none';
                 if (editorTogglesContainer) editorTogglesContainer.style.opacity = '1';
-                updateMainButtonState();
             } else {
                 console.error("CodeMirror not loaded. Falling back to plain textarea.");
                 if (codeMirrorPlaceholder) codeMirrorPlaceholder.textContent = "CodeMirror failed to load.";
@@ -314,22 +387,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     getWrapperElement: () => markdownInputTextArea
                 };
                 if (editorTogglesContainer) editorTogglesContainer.style.opacity = '1';
-                updateMainButtonState();
             }
+            updateMainButtonState(); 
 
             fetch('default.md')
                 .then(response => {
                     if (!response.ok) {
                         console.warn(`Could not load default.md: ${response.statusText}.`);
+                        updateFileNameDisplay('error_loading_default.md');
                         return "# Error: Could not load default example content.";
                     }
+                    updateFileNameDisplay('default.md'); // Set filename on successful fetch
                     return response.text();
                 })
                 .then(defaultMarkdownText => {
                     if(markdownEditor) markdownEditor.setValue(defaultMarkdownText);
+                    if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.' && fontsReady) {
+                        statusMessage.textContent = `File "${currentFileName}" loaded. Ready.`; 
+                        statusMessage.style.color = 'green';
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching default.md:', error);
+                    updateFileNameDisplay('error_fetching_default.md');
                     if(markdownEditor) markdownEditor.setValue("# Error: Failed to fetch default example content.");
                 });
 
@@ -347,7 +427,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 cancelModalButton.addEventListener('click', () => {
                     previewModalOverlay.style.display = 'none';
                     previewModalContent.innerHTML = '';
-                    statusMessage.textContent = 'PDF generation cancelled.';
+                    if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.' && fontsReady) {
+                       statusMessage.textContent = 'PDF generation cancelled.';
+                    }
                 });
             }
 
@@ -360,13 +442,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateMainPageUI(isChecked);
             });
 
-            if (fontFamilySelector) { // Changed from fontToggle
+            if (fontFamilySelector) {
                 fontFamilySelector.addEventListener('change', updatePreviewFont);
             }
 
             if (clearButton) clearButton.addEventListener('click', () => {
                 if(markdownEditor) {
                     markdownEditor.setValue('');
+                    updateFileNameDisplay('new_document.md'); // Reset filename
+                    if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.' && fontsReady) {
+                        statusMessage.textContent = 'Content cleared. Ready.';
+                        statusMessage.style.color = 'green';
+                    }
                     setTimeout(() => { if (markdownEditor.refresh) markdownEditor.refresh(); markdownEditor.focus(); }, 10);
                 }
             });
@@ -375,30 +462,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 markdownFileInput.addEventListener('change', (event) => {
                     const file = event.target.files[0];
                     if (file) {
+                        updateFileNameDisplay(file.name); // Set filename from uploaded file
                         const reader = new FileReader();
                         reader.onload = (e) => {
                             if (markdownEditor) {
                                 markdownEditor.setValue(e.target.result);
                                 setTimeout(() => { if (markdownEditor.refresh) markdownEditor.refresh(); }, 10);
-                                statusMessage.textContent = `File "${file.name}" loaded.`;
-                                statusMessage.style.color = 'green';
+                                if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.' && fontsReady) {
+                                    statusMessage.textContent = `File "${currentFileName}" loaded.`;
+                                    statusMessage.style.color = 'green';
+                                }
                                 previewModalContent.innerHTML = '';
                                 updateMainButtonState();
                             }
                         };
                         reader.onerror = () => {
-                            statusMessage.textContent = `Error reading file "${file.name}".`;
-                            statusMessage.style.color = 'red';
+                             if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
+                                statusMessage.textContent = `Error reading file "${currentFileName}".`;
+                                statusMessage.style.color = 'red';
+                            }
                         };
                         reader.readAsText(file);
+                    } else { // No file selected (e.g., user cancelled file dialog)
+                        // Do not change currentFileName or fileNameDisplay if no file was actually selected
                     }
                 });
             }
+            if (apiServerReady && fontsReady && libsReady && markdownEditor && statusMessage.textContent.startsWith('API Server ready')) {
+                 statusMessage.textContent = `File "${currentFileName}" loaded. Ready.`; statusMessage.style.color = 'green';
+            } else if (apiServerReady && fontsReady && libsReady && markdownEditor && !statusMessage.textContent.includes('File "') && fileNameDisplay.textContent === 'No file chosen') {
+                 // If default.md hasn't loaded yet, but everything else is ready, show generic ready.
+                 // This case might be rare if default.md loads fast.
+                 statusMessage.textContent = 'Ready.'; statusMessage.style.color = 'green';
+            }
+
+
+        }).catch(error => {
+            console.error("Error during chained initialization:", error);
+            if (statusMessage && statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
+                 statusMessage.textContent = "Initialization failed. Check console.";
+                 statusMessage.style.color = 'red';
+            }
         });
 
+
     async function prepareContentForPreviewAndPdf(isNewPreview = true) {
-        if (!libsReady || !fontsReady) {
-            statusMessage.textContent = 'Client libraries or fonts not ready. Please wait.';
+        if (!libsReady || !fontsReady) { 
+            statusMessage.textContent = 'Client libraries or fonts not ready for preview. Please wait.';
             statusMessage.style.color = 'orange';
             return false;
         }
@@ -410,11 +520,14 @@ document.addEventListener('DOMContentLoaded', () => {
         statusMessage.textContent = 'Preparing preview...';
         if (isNewPreview) { 
             originalMermaidCodeStore.clear();
+            if (fileNameInputModal) { // Pre-fill filename input for PDF
+                fileNameInputModal.value = generatePdfFilename(currentFileName);
+            }
         }
 
         const mdText = markdownEditor.getValue();
         if (!mdText.trim()) {
-            statusMessage.textContent = 'Please enter some Markdown.';
+            statusMessage.textContent = 'Please enter some Markdown for preview.';
             statusMessage.style.color = 'red';
             if (convertToPdfButton) {
                 convertToPdfButton.disabled = false;
@@ -443,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
         previewModalContent.style.backgroundColor = 'white'; 
         previewModalContent.style.color = 'black'; 
 
-        const isSerifUserChoice = fontFamilySelector && fontFamilySelector.value === 'serif'; // Changed from fontToggle
+        const isSerifUserChoice = fontFamilySelector && fontFamilySelector.value === 'serif';
         const overallPreviewFontFamily = isSerifUserChoice ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
         previewModalContent.style.fontFamily = overallPreviewFontFamily; 
         
@@ -454,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
         previewModalContent.style.width = (a4WidthInPx - 2 * marginInPxModal) + 'px';
         previewModalContent.style.padding = marginInPxModal + 'px';
         
-        const selectedMermaidThemeName = mermaidThemeSelector ? mermaidThemeSelector.value : 'light'; // Default to 'light'
+        const selectedMermaidThemeName = mermaidThemeSelector ? mermaidThemeSelector.value : 'light';
         const mermaidDiagramFontFamilyName = isSerifUserChoice ? "DejaVu Serif" : "DejaVu Sans"; 
         
         applyMermaidThemeAndFontForPreview(selectedMermaidThemeName, mermaidDiagramFontFamilyName);
@@ -523,7 +636,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function savePdfHandler() {
-        if (!libsReady) { // Removed fontsReady check as fonts are embedded by server
+        if (!apiServerReady) {
+            statusMessage.textContent = 'Error: API Server not available. Cannot save PDF.';
+            statusMessage.style.color = 'red';
+            if (savePdfFromModalButton) savePdfFromModalButton.disabled = true;
+            return;
+        }
+        if (!libsReady) { 
             statusMessage.textContent = 'Client libraries not ready. Cannot save PDF.';
             statusMessage.style.color = 'orange';
             return;
@@ -536,24 +655,33 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        let fileName = fileNameInputModal.value.trim();
-        if (!fileName) fileName = "pubmd_document.pdf";
-        if (!fileName.toLowerCase().endsWith('.pdf')) fileName += '.pdf';
+        let userFileName = fileNameInputModal.value.trim();
+        let finalFileName;
+
+        if (userFileName) {
+            if (!userFileName.toLowerCase().endsWith('.pdf')) {
+                userFileName += '.pdf';
+            }
+            finalFileName = userFileName;
+        } else {
+            finalFileName = generatePdfFilename(currentFileName);
+        }
+
 
         savePdfFromModalButton.disabled = true;
         savePdfFromModalButton.textContent = 'Generating...';
         statusMessage.textContent = 'Sending to server for PDF generation... please wait.';
         statusMessage.style.color = '#333';
         
-        const currentFontPreference = fontFamilySelector ? fontFamilySelector.value : 'sans-serif'; // 'sans-serif' or 'serif'
-        const currentMermaidTheme = mermaidThemeSelector ? mermaidThemeSelector.value : 'light'; // 'light', 'dark', or 'grey'
+        const currentFontPreference = fontFamilySelector ? fontFamilySelector.value : 'sans-serif';
+        const currentMermaidTheme = mermaidThemeSelector ? mermaidThemeSelector.value : 'light';
 
         const serverPayload = {
             markdown: rawMarkdownText,
             pdfOptions: {
                 pageFormat: 'a4',
                 orientation: 'portrait',
-                margins: { top: 15, right: 15, bottom: 15, left: 15 }, // in mm
+                margins: { top: 15, right: 15, bottom: 15, left: 15 }, 
                 printBackground: true,
             },
             markdownOptions: {
@@ -564,13 +692,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 mermaidTheme: currentMermaidTheme, 
                 mermaidSecurityLevel: 'loose',
             },
-            fontPreference: currentFontPreference === 'serif' ? 'serif' : 'sans' // Ensure 'sans' or 'serif'
+            fontPreference: currentFontPreference === 'serif' ? 'serif' : 'sans'
         };
 
         try {
             console.log("Sending Markdown to server for PDF generation. Payload:", JSON.stringify(serverPayload, null, 2));
             
-            const response = await fetch('http://localhost:3001/api/generate-pdf-from-markdown', {
+            const response = await fetch(`${API_BASE_URL}/api/generate-pdf-from-markdown`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -589,15 +717,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const url = URL.createObjectURL(pdfBlob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = fileName;
+            a.download = finalFileName;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            statusMessage.textContent = `PDF "${fileName}" saved successfully!`;
+            statusMessage.textContent = `PDF "${finalFileName}" saved successfully!`;
             statusMessage.style.color = 'green';
-            // previewModalOverlay.style.display = 'none'; // Keep modal open or close based on preference
 
         } catch (error) {
             console.error("Error generating PDF via server:", error);
