@@ -15,6 +15,10 @@ graph TD;
     DoView["DoView"]
     ComplianceApp["Compliance Assistant"]
 
+    Marama["Marama"]
+    FamilyTree["Family Tree"]
+    FamilyHistory["Family History"]
+
     subgraph "Pubmd components"
         PubmdCore["Pubmd (core)"]
         PubmdLite["Pubmd Lite"]
@@ -52,6 +56,10 @@ graph TD;
     RagPlatform --> DoView
     RagPlatform --> ComplianceApp
 
+    Marama --> RagMod
+    Marama --> FamilyHistory
+    FamilyTree <--> FamilyHistory
+
     %% Styling
     style PubmdCore fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style PubmdLite fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
@@ -61,3 +69,5 @@ graph TD;
     style DoView fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style Eve2 fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style ComplianceApp fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style FamilyHistory fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style FamilyTree fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
