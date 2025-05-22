@@ -61,13 +61,14 @@ graph TD;
     FamilyTree <--> FamilyHistory
 
     %% Styling
-    style PubmdCore fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style PubmdCore fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
     style PubmdLite fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style PubmdCLI fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
-    style PubmdW fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
-    style RagMod fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style PubmdW fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
+    style RagMod fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
     style DoView fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style Eve2 fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
-    style ComplianceApp fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style ComplianceApp fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
     style FamilyHistory fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style FamilyTree fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
+    style Marama fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
