@@ -1,3 +1,4 @@
+```mermaid
 graph TD;
     Eve1["EVE 1.0"]
     SparxConv["SparxEA conversion functionality"]
