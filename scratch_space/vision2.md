@@ -18,7 +18,7 @@ graph TD;
         PubmdCLI["Pubmd CLI"]
         PubmdLive["Pubmd Live"]
 
-        subgraph PubmdW_container
+        subgraph PubmdW_container["Pubmd Wiki"]
             PubmdW["Pubmd Wiki"]
             subgraph "Modules"
                 SparxMod["SparxEA Module"]
