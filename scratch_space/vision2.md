@@ -38,6 +38,6 @@ graph TD;
     PubmdW --> PubmdLive
     DoViewAg --> DoView
     RagApp --> DoView
-    PubmdW --> RagMod
+    PubmdW --> Modules
     RagMod --> RagApp
     SparxMod --> Eve2
