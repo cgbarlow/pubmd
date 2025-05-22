@@ -51,12 +51,12 @@ graph TD;
     RagApp --> DoView
 
     %% Styling
-    style PubmdCore fill:#53af53,stroke:#333,stroke-width:2px,color:#333
-    style PubmdLite fill:#53af53,stroke:#333,stroke-width:2px,color:#333
-    style PubmdCLI fill:#53af53,stroke:#333,stroke-width:2px,color:#333
-    style PubmdW fill:#53af53,stroke:#333,stroke-width:2px,color:#333
-    style RagMod fill:#53af53,stroke:#333,stroke-width:2px,color:#333
-    style PubmdLive fill:#53af53,stroke:#333,stroke-width:2px,color:#333
-    style RagApp fill:#53af53,stroke:#333,stroke-width:2px,color:#333
-    style DoView fill:#53af53,stroke:#333,stroke-width:2px,color:#333
-    style Eve2 fill:#53af53,stroke:#333,stroke-width:2px,color:#333
+    style PubmdCore fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style PubmdLite fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style PubmdCLI fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style PubmdW fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style RagMod fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style PubmdLive fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style RagApp fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style DoView fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style Eve2 fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
