@@ -13,7 +13,7 @@ graph TD;
     Eve2["Eve 2.0"]
     DoView["DoView"]
     SparxMod["SparxEA Module"]
-    RadMod["RAG Module"]
+    RagMod["RAG Module"]
 
     Eve1 --> SparxConv
     SparxConv --> SparxMod
