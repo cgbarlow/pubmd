@@ -15,7 +15,6 @@ graph TD;
         PubmdLive["Pubmd Live"]
 
         subgraph "Modules"
-            %% Swapped order: RagMod now declared before SparxMod
             RagMod["RAG Module"]
             SparxMod["SparxEA Module"]
         end
@@ -35,7 +34,7 @@ graph TD;
     WikiPlat --> PubmdW
 
     Eve1 --> SparxConv
-    SparxConv --> SparxMod %% Link remains the same, but SparxMod's position will change
+    SparxConv --> SparxMod 
 
     %% Pubmd Core outputs
     PubmdCore --> PubmdW
@@ -44,7 +43,7 @@ graph TD;
     PubmdCore --> PubmdLive
 
     %% Module inputs and outputs
-    PubmdW --> RagMod %% Link remains the same, but RagMod's position will change
+    PubmdW --> RagMod 
     RagMod --> RagApp
 
     %% EVE 2.0 inputs
