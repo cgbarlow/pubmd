@@ -40,5 +40,4 @@ graph TD;
     RagApp --> DoView
     PubmdW --> RagMod
     RagMod --> RagApp
-    PubmdW --> Eve2
     SparxMod --> Eve2
