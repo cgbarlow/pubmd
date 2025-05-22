@@ -36,9 +36,9 @@ graph TD;
     PubmdCore --> PubmdLite
     PubmdCore --> PubmdCLI
     PubmdW --> PubmdLive
-    DoViewAg --> DoView
-    RagApp --> DoView
     PubmdW --> Modules
     Modules --> PubmdLive
+    DoViewAg --> DoView
     RagMod --> RagApp
+    RagApp --> DoView
     SparxMod --> Eve2
