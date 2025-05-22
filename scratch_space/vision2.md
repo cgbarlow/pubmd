@@ -21,8 +21,8 @@ graph TD;
         subgraph PubmdW_container["Pubmd Wiki"]
             PubmdW["Pubmd Wiki"]
             subgraph "Modules"
-                SparxMod["SparxEA Module"]
                 RagMod["RAG Module"]
+                SparxMod["SparxEA Module"]
             end
         end
     end
