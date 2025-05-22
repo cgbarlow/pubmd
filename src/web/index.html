@@ -33,8 +33,11 @@
 <body>
     <div class="container">
         <h1>Markdown to PDF Converter v3.9 (Core Integration)</h1>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <input type="file" id="markdownFile" accept=".md,.txt" style="margin-bottom: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+                <input type="file" id="markdownFile" accept=".md,.txt" style="margin-bottom: 0;">
+                <span id="fileNameDisplay" class="file-name-display">No file chosen</span>
+            </div>
             <div class="dark-mode-toggle">
                 <label class="switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label>
                 <span class="toggle-label">Dark Mode</span>
@@ -76,7 +79,7 @@
                         <label for="mermaidThemeSelector" class="toggle-label">Mermaid Theme:</label>
                         <select id="mermaidThemeSelector">
                             <option value="light" selected>Light</option>
-                            <option value="dark">Dark</option>
+                            <!-- <option value="dark">Dark</option> --> <!-- Temporarily commented out due to preview text color issue -->
                             <option value="grey">Grey</option>
                         </select>
                     </div>

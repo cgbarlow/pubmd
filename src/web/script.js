@@ -14,7 +14,7 @@ const API_BASE_URL = 'http://localhost:3001';
 let libsReady = false;
 let fontsReady = false;
 let apiServerReady = false;
-let currentFileName = 'pubmd_document.md'; // Default filename, updated on load
+let currentFileName = 'new_document.md'; // Default for a new, unsaved document
 
 function extractThemeVariables(rootElement) {
     const css = getComputedStyle(rootElement);
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fontFamilySelector = document.getElementById('fontFamilySelector');
         const darkModeToggle = document.getElementById('darkModeToggle');
         const clearButton = document.getElementById('clearButton');
-        const fileNameDisplay = document.getElementById('fileNameDisplay'); // Get reference to file name display
+        const fileNameDisplaySpan = document.getElementById('fileNameDisplay'); 
 
         const previewModalOverlay = document.getElementById('previewModalOverlay');
         const previewModalContent = document.getElementById('previewModalContent');
@@ -169,14 +169,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const initialFontPreference = getPreference('fontPreference') || 'sans-serif';
         let cmTheme = initialDarkMode ? 'material-darker' : 'default';
 
-        // Function to update the displayed filename
-        function updateFileNameDisplay(newFileName) {
-            if (fileNameDisplay) {
-                fileNameDisplay.textContent = newFileName || 'No file chosen';
-            }
-            currentFileName = newFileName || 'pubmd_document.md'; // Update global var
+        // Initialize filename display and internal variable
+        currentFileName = 'new_document.md';
+        if (fileNameDisplaySpan) {
+            fileNameDisplaySpan.textContent = 'No file chosen';
+            console.log("Initial: fileNameDisplaySpan.textContent set to 'No file chosen'");
+        } else {
+            console.error("Initial: fileNameDisplaySpan is null!");
         }
-        updateFileNameDisplay('No file chosen'); // Initial state
+
 
         async function checkApiServerStatus() {
             if (!statusMessage || !savePdfFromModalButton) return;
@@ -345,10 +346,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const isSerif = selectedFontValue === 'serif';
             const previewFontFamily = isSerif ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
             
-            previewModalContent.style.fontFamily = previewFontFamily; 
-            
+            // Only update the font family of the preview modal content if it's visible
+            // The overall font for the content (including mermaid) is set in prepareContentForPreviewAndPdf
             if (previewModalOverlay.style.display === 'flex') {
-                prepareContentForPreviewAndPdf(false); 
+                 previewModalContent.style.fontFamily = previewFontFamily; 
+                 prepareContentForPreviewAndPdf(false); // Re-render preview with new font hint for Mermaid
             }
         };
 
@@ -359,8 +361,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (fontFamilySelector) {
                 fontFamilySelector.value = initialFontPreference;
+                // Initial font setting for previewModalContent will be handled by the first call to prepareContentForPreviewAndPdf
             }
-            updatePreviewFont();
+            // updatePreviewFont(); // Don't call here, rely on prepareContent...
 
 
             if (typeof CodeMirror !== 'undefined') {
@@ -394,14 +397,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(response => {
                     if (!response.ok) {
                         console.warn(`Could not load default.md: ${response.statusText}.`);
-                        updateFileNameDisplay('error_loading_default.md');
+                        currentFileName = 'error_loading_default.md';
+                        if (fileNameDisplaySpan) fileNameDisplaySpan.textContent = currentFileName;
                         return "# Error: Could not load default example content.";
                     }
-                    updateFileNameDisplay('default.md'); // Set filename on successful fetch
                     return response.text();
                 })
                 .then(defaultMarkdownText => {
                     if(markdownEditor) markdownEditor.setValue(defaultMarkdownText);
+                    currentFileName = 'default.md'; 
+                    if (fileNameDisplaySpan) {
+                        fileNameDisplaySpan.textContent = 'default.md';
+                        console.log("Default.md loaded: fileNameDisplaySpan.textContent set to 'default.md'");
+                    } else {
+                        console.error("Default.md loaded: fileNameDisplaySpan is null!");
+                    }
                     if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.' && fontsReady) {
                         statusMessage.textContent = `File "${currentFileName}" loaded. Ready.`; 
                         statusMessage.style.color = 'green';
@@ -409,7 +419,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .catch(error => {
                     console.error('Error fetching default.md:', error);
-                    updateFileNameDisplay('error_fetching_default.md');
+                    currentFileName = 'error_fetching_default.md';
+                    if (fileNameDisplaySpan) fileNameDisplaySpan.textContent = currentFileName;
                     if(markdownEditor) markdownEditor.setValue("# Error: Failed to fetch default example content.");
                 });
 
@@ -449,7 +460,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (clearButton) clearButton.addEventListener('click', () => {
                 if(markdownEditor) {
                     markdownEditor.setValue('');
-                    updateFileNameDisplay('new_document.md'); // Reset filename
+                    currentFileName = 'new_document.md'; 
+                    if (fileNameDisplaySpan) {
+                        fileNameDisplaySpan.textContent = 'No file chosen';
+                        console.log("Clear button: fileNameDisplaySpan.textContent set to 'No file chosen'");
+                    }
                     if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.' && fontsReady) {
                         statusMessage.textContent = 'Content cleared. Ready.';
                         statusMessage.style.color = 'green';
@@ -462,7 +477,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 markdownFileInput.addEventListener('change', (event) => {
                     const file = event.target.files[0];
                     if (file) {
-                        updateFileNameDisplay(file.name); // Set filename from uploaded file
+                        currentFileName = file.name; 
+                        if (fileNameDisplaySpan) fileNameDisplaySpan.textContent = currentFileName;
+                        
                         const reader = new FileReader();
                         reader.onload = (e) => {
                             if (markdownEditor) {
@@ -483,17 +500,20 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         };
                         reader.readAsText(file);
-                    } else { // No file selected (e.g., user cancelled file dialog)
-                        // Do not change currentFileName or fileNameDisplay if no file was actually selected
                     }
                 });
             }
-            if (apiServerReady && fontsReady && libsReady && markdownEditor && statusMessage.textContent.startsWith('API Server ready')) {
-                 statusMessage.textContent = `File "${currentFileName}" loaded. Ready.`; statusMessage.style.color = 'green';
-            } else if (apiServerReady && fontsReady && libsReady && markdownEditor && !statusMessage.textContent.includes('File "') && fileNameDisplay.textContent === 'No file chosen') {
-                 // If default.md hasn't loaded yet, but everything else is ready, show generic ready.
-                 // This case might be rare if default.md loads fast.
-                 statusMessage.textContent = 'Ready.'; statusMessage.style.color = 'green';
+            // Final status update logic - this might need adjustment based on async loading of default.md
+            if (apiServerReady && fontsReady && libsReady && markdownEditor) {
+                // Check if default.md has already set the status, if not, set a generic one.
+                if (!statusMessage.textContent.includes(`File "`) && !statusMessage.textContent.startsWith('Error: API Server not detected')) {
+                     if (currentFileName === 'default.md' || (fileNameDisplaySpan && fileNameDisplaySpan.textContent === 'default.md')) {
+                        statusMessage.textContent = `File "default.md" loaded. Ready.`;
+                     } else if (currentFileName === 'new_document.md' && fileNameDisplaySpan && fileNameDisplaySpan.textContent === 'No file chosen') {
+                        statusMessage.textContent = 'Ready.';
+                     } // Otherwise, an error or specific file status might already be set.
+                     if (!statusMessage.textContent.toLowerCase().includes('error')) statusMessage.style.color = 'green';
+                }
             }
 
 
@@ -552,26 +572,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return false;
         }
+        
+        const selectedMermaidThemeName = mermaidThemeSelector ? mermaidThemeSelector.value : 'light';
+        const isSerifUserChoice = fontFamilySelector && fontFamilySelector.value === 'serif';
+        const mermaidDiagramFontFamilyName = isSerifUserChoice ? "DejaVu Serif" : "DejaVu Sans"; 
+        
+        applyMermaidThemeAndFontForPreview(selectedMermaidThemeName, mermaidDiagramFontFamilyName);
+        const dynamicThemeVariables = extractThemeVariables(previewModalContent);
 
+        // Ensure preview modal itself has a white background and black base text color
+        // This is for the content *around* the mermaid diagram, if any, or as a base.
         previewModalContent.style.backgroundColor = 'white'; 
         previewModalContent.style.color = 'black'; 
-
-        const isSerifUserChoice = fontFamilySelector && fontFamilySelector.value === 'serif';
+        
         const overallPreviewFontFamily = isSerifUserChoice ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
         previewModalContent.style.fontFamily = overallPreviewFontFamily; 
-        
         previewModalContent.style.fontSize = '12pt';
         const dpi = 96;
         const a4WidthInPx = Math.floor(210 * dpi / 25.4);
         const marginInPxModal = Math.floor(10 * dpi / 25.4);
         previewModalContent.style.width = (a4WidthInPx - 2 * marginInPxModal) + 'px';
         previewModalContent.style.padding = marginInPxModal + 'px';
-        
-        const selectedMermaidThemeName = mermaidThemeSelector ? mermaidThemeSelector.value : 'light';
-        const mermaidDiagramFontFamilyName = isSerifUserChoice ? "DejaVu Serif" : "DejaVu Sans"; 
-        
-        applyMermaidThemeAndFontForPreview(selectedMermaidThemeName, mermaidDiagramFontFamilyName);
-        const dynamicThemeVariables = extractThemeVariables(previewModalContent);
         
         previewModalContent.innerHTML = htmlContentToPreview;
         

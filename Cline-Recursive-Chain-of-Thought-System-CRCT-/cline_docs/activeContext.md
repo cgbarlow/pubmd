@@ -1,7 +1,7 @@
 # Active Context
 
 **Current Task**: Address issues and enhancements following initial server-side PDF generation implementation, as detailed in `documentation/03_Implementation/next_steps_20250522_server_pdf_fixes.md`.
-Currently focusing on: **Task 2: Refactor Default Markdown Loading and Filename Generation.**
+Currently focusing on: **Task 4: Fix Mermaid Theme Styling Inconsistencies (Preview vs. PDF).**
 
 **Overall Cycle Goals**:
 1.  **[COMPLETED]** Fix Mermaid preview rendering issues.
@@ -20,15 +20,14 @@ Currently focusing on: **Task 2: Refactor Default Markdown Loading and Filename 
     *   Implemented a check in `src/web/script.js` at startup to verify API server responsiveness.
     *   UI (status message, save PDF button) updated based on server status.
 
-2.  **[PENDING] Refactor Default Markdown Loading and Filename Generation:**
-    *   **Default Content Loading:** Modify `src/web/script.js` to load `default.md` as if it were a user-selected file, capturing its name.
+2.  **[COMPLETED & VERIFIED] Refactor Default Markdown Loading and Filename Generation:**
+    *   **Default Content Loading & Display:** Modified `src/web/script.js` to load `default.md`. The `fileNameDisplay` span now correctly shows "default.md" on initial load, "No file chosen" after clearing text, and the actual filename when a user uploads a file. The internal `currentFileName` variable is managed consistently for PDF generation. This was verified after a direct assignment approach was implemented.
     *   **Output Filename Enhancement:**
-        *   Dynamically generate PDF output filename using the loaded file's name and a timestamp (e.g., `originalfilename_YYYYMMDD_HHMMSS.pdf`).
+        *   Dynamically generate PDF output filename using `currentFileName` and a timestamp (e.g., `originalfilename_YYYYMMDD_HHMMSS.pdf`) via `generatePdfFilename()` helper.
         *   Pre-fill `fileNameInputModal` with this name, allowing user modification.
 
-3.  **[PENDING] Remove Broken Image Link from Default Content:**
-    *   Edit `src/web/default.md` to remove or replace the `https://via.placeholder.com/150` image link.
-    *   Consider replacing it with a valid, working placeholder image URL or removing the image example.
+3.  **[COMPLETED] Remove Broken Image Link from Default Content:**
+    *   Edited `src/web/default.md` to replace the `https://via.placeholder.com/150` image link with `https://placehold.co/150x150.png`.
 
 4.  **[PENDING] Fix Mermaid Theme Styling Inconsistencies (Preview vs. PDF):**
     *   **Dark Theme Preview:** Address unreadable text (black on near-black) in client-side preview.

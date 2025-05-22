@@ -52,7 +52,7 @@
 
 ## 5. Images
 
-![Alt text for image](https://via.placeholder.com/150)
+![Alt text for image](https://placehold.co/150x150.png)
 
 ---
 
@@ -130,7 +130,7 @@ graph TD
 
 ---
 
-## 14. Footnotes
+## 14. Footnotes (NOT CURRENTLY SUPPORTED)
 
 Here is a footnote reference[^1].
 
@@ -138,7 +138,7 @@ Here is a footnote reference[^1].
 
 ---
 
-## 15. Definition Lists
+## 15. Definition Lists (NOT CURRENTLY SUPPORTED)
 
 Term 1
 : Definition 1
@@ -155,11 +155,10 @@ Term 2
 
 ---
 
-## 17. Math (if supported via KaTeX or MathJax)
+## 17. Math (NOT CURRENTLY SUPPORTED via KaTeX or MathJax)
 
 Inline math: \$E = mc^2\$
 Block math:
 
 ```math
 \int_{a}^{b} x^2 dx
-```

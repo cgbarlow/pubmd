@@ -11,10 +11,10 @@
     --mermaid-font-size: var(--mermaid-font-size-default);
     --mermaid-text-color: #333333;
     --mermaid-node-text-color: #333333; /* Ensure nodes also use this */
+    --mermaid-primary-text-color: #333333; /* Text on nodes */
     --mermaid-line-color: #888888;
     --mermaid-primary-color: #f4f4f4; /* Node background */
     --mermaid-primary-border-color: #888888;
-    --mermaid-primary-text-color: #333333; /* Text on nodes */
     --mermaid-secondary-color: #dcdcdc;
     --mermaid-secondary-border-color: #777777;
     --mermaid-secondary-text-color: #333333;
@@ -50,7 +50,7 @@
     /* From reference: .node rect */
     --mermaid-primary-color: #e8e8ff; /* Node background */
     --mermaid-primary-border-color: #cccccc; 
-
+    
     /* From reference: .subgraph > rect */
     --mermaid-cluster-background-color: #fff4dd;
     --mermaid-cluster-border-color: #cccccc;
@@ -115,6 +115,75 @@
 
     --mermaid-error-background-color: #3e1c1c; /* Dark red for errors */
     --mermaid-error-text-color: #ff8a80;
+}
+
+/* Direct overrides for text elements in dark theme for better preview consistency */
+/* These rules apply when .mermaid-theme-dark is on a PARENT of the .mermaid div */
+.mermaid-theme-dark .mermaid .node text,
+.mermaid-theme-dark .mermaid .node > .label text, /* More specific for node labels */
+.mermaid-theme-dark .mermaid .node tspan { /* tspan elements within text */
+    fill: var(--mermaid-node-text-color, #dddddd) !important;
+}
+
+.mermaid-theme-dark .mermaid .cluster text,
+.mermaid-theme-dark .mermaid .cluster > .label text { /* More specific for cluster labels */
+    fill: var(--mermaid-text-color, #dddddd) !important;
+}
+
+.mermaid-theme-dark .mermaid .noteText,
+.mermaid-theme-dark .mermaid .note > text { /* More specific for note text */
+    fill: var(--mermaid-note-text-color, #dddddd) !important;
+}
+
+.mermaid-theme-dark .mermaid .edgeLabel text,
+.mermaid-theme-dark .mermaid .edgeLabel span { /* For HTML content in edge labels */
+    fill: var(--mermaid-label-text-color, #dddddd) !important; /* SVG text */
+    color: var(--mermaid-label-text-color, #dddddd) !important; /* HTML text */
+}
+
+/* General text elements within the SVG, less specific, as a fallback */
+.mermaid-theme-dark .mermaid svg text {
+    fill: var(--mermaid-text-color, #dddddd);
+}
+.mermaid-theme-dark .mermaid svg tspan { /* Ensure tspans also inherit */
+    fill: currentColor; /* Inherit from parent text element if not overridden */
+}
+
+
+/* Specific for flowchart labels if they are not covered by .edgeLabel or .node text */
+.mermaid-theme-dark .mermaid .flowchart-label text,
+.mermaid-theme-dark .mermaid .labelHost foreignObject div, /* For foreignObject labels */
+.mermaid-theme-dark .mermaid .labelHost span { /* For HTML-based labels */
+    fill: var(--mermaid-label-text-color, #dddddd) !important; 
+    color: var(--mermaid-label-text-color, #dddddd) !important; 
+}
+
+/* Ensure actor text in sequence diagrams is also light */
+.mermaid-theme-dark .mermaid .actor text,
+.mermaid-theme-dark .mermaid .actor line { /* Actor symbol lines */
+    fill: var(--mermaid-text-color, #dddddd) !important;
+    stroke: var(--mermaid-text-color, #dddddd) !important; /* For lines of the actor symbol */
+}
+.mermaid-theme-dark .mermaid .actor > rect { /* Actor box */
+     fill: var(--mermaid-primary-color, #1c1d1e) !important;
+     stroke: var(--mermaid-primary-border-color, #444444) !important;
+}
+
+
+/* Ensure task text in gantt diagrams is also light */
+.mermaid-theme-dark .mermaid .taskText,
+.mermaid-theme-dark .mermaid .taskTextOutside {
+    fill: var(--mermaid-text-color, #dddddd) !important;
+}
+.mermaid-theme-dark .mermaid .task {
+    stroke: var(--mermaid-primary-border-color, #444444) !important;
+    fill: var(--mermaid-primary-color, #1c1d1e) !important;
+}
+.mermaid-theme-dark .mermaid .task.done {
+    fill: var(--mermaid-secondary-color, #2a2f36) !important;
+}
+.mermaid-theme-dark .mermaid .task.active {
+     fill: var(--mermaid-tertiary-color, #161a1e) !important;
 }
 
 

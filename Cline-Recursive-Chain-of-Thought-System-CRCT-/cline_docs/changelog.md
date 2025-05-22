@@ -1,5 +1,19 @@
 ## 2025-05-22 (Continued)
 
+*   **Filename Display Fix (Task 2 from `next_steps_20250522_server_pdf_fixes.md`):**
+    *   Resolved an issue where the filename was not displaying on initial load (showing "No file chosen" instead of "default.md").
+    *   The `fileNameDisplaySpan` element was missing its ID in `src/web/index.html`.
+    *   Added `<span id="fileNameDisplay" class="file-name-display">No file chosen</span>` to `src/web/index.html` next to the file input, which corrected the `fileNameDisplaySpan is null!` console error and restored correct filename display behavior.
+*   **Mermaid Theme Styling (Task 4.1 from `next_steps_20250522_server_pdf_fixes.md`):**
+    *   **Dark Theme Preview Text Issue (Workaround):** Despite attempts to fix black text on dark nodes in the client-side preview for the "Dark" Mermaid theme using specific CSS overrides in `src/web/mermaid-themes.css`, the issue persisted.
+    *   As a temporary workaround to prevent a poor user experience, the "Dark" theme option has been commented out from the Mermaid theme selector in `src/web/index.html`.
+    *   This is now a known issue to be addressed in future development. The "Light" and "Grey" themes remain available for client-side preview.
+*   **Default Content Update (Task 3 from `next_steps_20250522_server_pdf_fixes.md`):**
+    *   Replaced the broken placeholder image link (`https://via.placeholder.com/150`) in `src/web/default.md` with a working one (`https://placehold.co/150x150.png`).
+*   **Filename Display & PDF Naming (Task 2 from `next_steps_20250522_server_pdf_fixes.md` - Initial Implementation):**
+    *   Refactored default Markdown loading in `src/web/script.js` to track the current filename (`default.md` or user-uploaded file name).
+    *   Implemented dynamic PDF output filenames in `src/web/script.js`. Filenames now incorporate the source Markdown filename and a timestamp (e.g., `default_YYYYMMDD_HHMMSS.pdf`). The PDF save modal pre-fills this name but allows user modification.
+    *   Further refined filename display logic in `src/web/script.js` by directly setting `fileNameDisplaySpan.textContent` and `currentFileName` in relevant event handlers and promise resolutions. This ensures "default.md" is shown on load, "No file chosen" after clearing, and the correct filename on upload, resolving a previous display issue. Added console logs for debugging filename display updates.
 *   **MUP & CRCT Initialization:**
     *   Continued Mandatory Update Protocol (MUP).
     *   Loaded `execution_plugin.md` as `testing_plugin.md` was not found. Updated `.clinerules` to reflect `current_phase: Execution`.
@@ -25,7 +39,7 @@
         *   Added a new `.mermaid-theme-dark` class with CSS custom properties based on the reference file.
         *   Ensured all themes define a comprehensive set of CSS custom properties for Mermaid's `themeVariables`.
     *   **`src/web/index.html`**:
-        *   Updated the Mermaid theme selector dropdown to include "Light" (default), "Dark", and "Grey" options.
+        *   Updated the Mermaid theme selector dropdown to include "Light" (default), "Dark", and "Grey" options. (Note: "Dark" theme later commented out due to preview issues).
     *   **`src/web/script.js`**:
         *   Changed the default Mermaid theme from "github" to "light" in `applyMermaidThemeAndFontForPreview` and `prepareContentForPreviewAndPdf`.
     *   **Next Steps (Task Specific):** Request user testing of the new themes.
