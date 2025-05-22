@@ -56,7 +56,5 @@ graph TD;
     style PubmdCLI fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style PubmdW fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style RagMod fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
-    style PubmdLive fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
-    style RagApp fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style DoView fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style Eve2 fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
