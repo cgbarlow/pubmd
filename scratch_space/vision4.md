@@ -1,3 +1,7 @@
+# Vision for modular component architecture
+Tying all my ideas together.
+
+```mermaid
 graph TD;
     Eve1["EVE 1.0"]
     BaseReact["Base React website"]
