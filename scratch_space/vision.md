@@ -12,9 +12,11 @@ graph TD;
     RagApp["Rag-app"]
     Eve2["Eve 2.0"]
     DoView["DoView"]
+    SparxMod["SparxEA Module"]
 
     Eve1 --> SparxConv
-    SparxConv --> Eve2
+    SparxConv --> SparxMod
+    SparxMod --> Eve2
     Eve1 --> BaseReact
     BaseReact --> WikiPlat
     WikiPlat --> PubmdW
