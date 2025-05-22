@@ -8,6 +8,7 @@ graph TD;
     BaseReact["Base React website"]
     WikiPlat["Wiki platform"]
     RagApp["Rag-app"]
+    PubmdLive["Pubmd Live"]
     Eve2["EVE 2.0"]
     DoView["DoView"]
     DoViewAg["DoView Agent"]
@@ -16,8 +17,7 @@ graph TD;
         PubmdCore["Pubmd (core)"]
         PubmdLite["Pubmd Lite"]
         PubmdCLI["Pubmd CLI"]
-        PubmdLive["Pubmd Live"]
-
+        
         subgraph PubmdW_container["Pubmd Wiki"]
             PubmdW["Pubmd Wiki"]
             subgraph "Modules"
@@ -35,7 +35,7 @@ graph TD;
     PubmdCore --> PubmdW
     PubmdCore --> PubmdLite
     PubmdCore --> PubmdCLI
-    PubmdCore --> PubmdLive
+    PubmdW --> PubmdLive
     RagApp --> DoView
     DoViewAg --> DoView
     PubmdW --> RagMod
