@@ -523,135 +523,85 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function savePdfHandler() {
-        if (!libsReady || !fontsReady) {
-            statusMessage.textContent = 'Client libraries or fonts not ready. Cannot save PDF.';
+        if (!libsReady) { // Removed fontsReady check as fonts are embedded by server
+            statusMessage.textContent = 'Client libraries not ready. Cannot save PDF.';
             statusMessage.style.color = 'orange';
             return;
         }
-        if (!previewModalContent || !previewModalContent.innerHTML.trim()) {
-            statusMessage.textContent = 'No content to save. Please generate a preview first.';
+        
+        const rawMarkdownText = markdownEditor.getValue();
+        if (!rawMarkdownText.trim()) {
+            statusMessage.textContent = 'Cannot generate PDF from empty Markdown.';
             statusMessage.style.color = 'red';
             return;
         }
 
+        let fileName = fileNameInputModal.value.trim();
+        if (!fileName) fileName = "pubmd_document.pdf";
+        if (!fileName.toLowerCase().endsWith('.pdf')) fileName += '.pdf';
+
         savePdfFromModalButton.disabled = true;
-        savePdfFromModalButton.textContent = 'Saving...';
-        statusMessage.textContent = 'Generating PDF... This may take a moment.';
+        savePdfFromModalButton.textContent = 'Generating...';
+        statusMessage.textContent = 'Sending to server for PDF generation... please wait.';
         statusMessage.style.color = '#333';
+        
+        const currentFontPreference = fontFamilySelector ? fontFamilySelector.value : 'sans-serif'; // 'sans-serif' or 'serif'
+        const currentMermaidTheme = mermaidThemeSelector ? mermaidThemeSelector.value : 'light'; // 'light', 'dark', or 'grey'
+
+        const serverPayload = {
+            markdown: rawMarkdownText,
+            pdfOptions: {
+                pageFormat: 'a4',
+                orientation: 'portrait',
+                margins: { top: 15, right: 15, bottom: 15, left: 15 }, // in mm
+                printBackground: true,
+            },
+            markdownOptions: {
+                gfm: true,
+                breaks: true,
+                headerIds: true,
+                sanitizeHtml: true, 
+                mermaidTheme: currentMermaidTheme, 
+                mermaidSecurityLevel: 'loose',
+            },
+            fontPreference: currentFontPreference === 'serif' ? 'serif' : 'sans' // Ensure 'sans' or 'serif'
+        };
 
         try {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({
-                orientation: 'p', unit: 'mm', format: 'a4',
-                putOnlyUsedFonts: true, floatPrecision: 16 
+            console.log("Sending Markdown to server for PDF generation. Payload:", JSON.stringify(serverPayload, null, 2));
+            
+            const response = await fetch('http://localhost:3001/api/generate-pdf-from-markdown', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(serverPayload),
             });
 
-            // Add fonts to jsPDF instance
-            if (fontBase64Sans) {
-                pdf.addFileToVFS('DejaVuSans.ttf', fontBase64Sans);
-                pdf.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`Server error: ${response.status} ${response.statusText}. Details: ${errorText}`);
+                throw new Error(`Server error: ${response.status}. See console for details.`);
             }
-            if (fontBase64Serif) {
-                pdf.addFileToVFS('DejaVuSerif.ttf', fontBase64Serif);
-                pdf.addFont('DejaVuSerif.ttf', 'DejaVuSerif', 'normal');
-            }
-            
-            const currentFontFamily = fontFamilySelector && fontFamilySelector.value === 'serif' ? 'DejaVuSerif' : 'DejaVuSans';
-            pdf.setFont(currentFontFamily);
 
-            // Temporarily set a fixed width for rendering to PDF to match A4 proportions
-            // This ensures html2canvas captures content as it would appear on an A4 page.
-            const originalWidth = previewModalContent.style.width;
-            const originalPadding = previewModalContent.style.padding;
-            const dpi = 96; // Standard screen DPI
-            const a4WidthInPx = Math.floor(210 * dpi / 25.4); // A4 width in pixels
-            const marginInPx = Math.floor(10 * dpi / 25.4); // 10mm margin in pixels
+            const pdfBlob = await response.blob();
 
-            previewModalContent.style.width = (a4WidthInPx - 2 * marginInPx) + 'px';
-            previewModalContent.style.padding = marginInPx + 'px';
-            
-            // Ensure all Mermaid SVGs are fully rendered and sized correctly before html2canvas
-            const mermaidSvgs = previewModalContent.querySelectorAll('.mermaid svg');
-            mermaidSvgs.forEach(svg => {
-                svg.style.maxWidth = '100%'; // Ensure SVG scales within its container
-                svg.setAttribute('width', '100%'); // Force width for rendering
-                // Consider if height needs explicit setting or if viewBox handles it
-            });
-            await new Promise(resolve => setTimeout(resolve, 200)); // Small delay for rendering updates
+            const url = URL.createObjectURL(pdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
 
-            const canvas = await html2canvas(previewModalContent, { 
-                scale: 2, // Increase scale for better quality
-                useCORS: true, 
-                logging: true,
-                backgroundColor: '#ffffff', // Ensure background is white for PDF
-                onclone: (clonedDoc) => {
-                    // Ensure styles are correctly applied in the cloned document for html2canvas
-                    const clonedPreviewContent = clonedDoc.getElementById('previewModalContent');
-                    if (clonedPreviewContent) {
-                        clonedPreviewContent.style.fontFamily = previewModalContent.style.fontFamily;
-                        clonedPreviewContent.style.color = 'black'; // Force black text for PDF
-                        clonedPreviewContent.style.backgroundColor = 'white'; // Force white background
-                        
-                        // Apply black color to all text elements within the cloned content for PDF
-                        const allElements = clonedPreviewContent.querySelectorAll('*');
-                        allElements.forEach(el => {
-                            // Preserve Mermaid diagram styling by not overriding their fill/stroke
-                            if (!el.closest('.mermaid')) { // Check if element is NOT part of a mermaid diagram
-                                el.style.color = 'black';
-                            }
-                        });
-
-                        // Ensure mermaid diagrams in the clone also use the correct theme variables for PDF
-                        const clonedMermaidElements = clonedDoc.querySelectorAll('.mermaid');
-                        clonedMermaidElements.forEach(async (el) => {
-                            const diagramId = el.id;
-                            const originalCode = originalMermaidCodeStore.get(diagramId);
-                            if (originalCode) {
-                                el.textContent = originalCode; // Reset to original code
-                                el.removeAttribute('data-processed');
-                                const svgChild = el.querySelector('svg');
-                                if (svgChild) el.removeChild(svgChild);
-
-                                // Re-run mermaid with PDF-specific theme settings if necessary
-                                // For now, we assume the current theme is okay for PDF
-                                // but one might want a 'print' or 'bw' theme here.
-                            }
-                        });
-                    }
-                }
-            });
-
-            // Restore original styles after canvas capture
-            previewModalContent.style.width = originalWidth;
-            previewModalContent.style.padding = originalPadding;
-
-            const imgData = canvas.toDataURL('image/png');
-            const imgProps = pdf.getImageProperties(imgData);
-            const pdfWidth = pdf.internal.pageSize.getWidth() - 20; // A4 width - 2 * 10mm margin
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-            let currentPdfHeight = pdfHeight;
-            let position = 0;
-            const pageHeight = pdf.internal.pageSize.getHeight() - 20; // A4 height - 2 * 10mm margin
-
-            pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth, pdfHeight);
-            currentPdfHeight -= pageHeight;
-
-            while (currentPdfHeight > 0) {
-                position -= pageHeight;
-                pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 10, position + 10, pdfWidth, pdfHeight);
-                currentPdfHeight -= pageHeight;
-            }
-            
-            const filename = fileNameInputModal.value || 'markdown_output.pdf';
-            pdf.save(filename);
-
-            statusMessage.textContent = `PDF "${filename}" saved successfully!`;
+            statusMessage.textContent = `PDF "${fileName}" saved successfully!`;
             statusMessage.style.color = 'green';
+            // previewModalOverlay.style.display = 'none'; // Keep modal open or close based on preference
 
         } catch (error) {
-            console.error("Error generating PDF:", error);
-            statusMessage.textContent = "Error generating PDF. Check console for details.";
+            console.error("Error generating PDF via server:", error);
+            statusMessage.textContent = `Error generating PDF: ${error.message}. Check console.`;
             statusMessage.style.color = 'red';
         } finally {
             if (savePdfFromModalButton) {
