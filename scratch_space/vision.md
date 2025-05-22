@@ -14,6 +14,7 @@ graph TD;
     DoView["DoView"]
 
     Eve1 --> SparxConv
+    SparxConv --> Eve2
     Eve1 --> BaseReact
     BaseReact --> WikiPlat
     WikiPlat --> PubmdW
@@ -24,4 +25,3 @@ graph TD;
     PubmdW --> RagApp
     PubmdW --> Eve2
     RagApp --> DoView
-    SparxConv --> Eve2
