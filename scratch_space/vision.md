@@ -1,31 +1,37 @@
-```mermaid
 graph TD;
+    %% Non-Pubmd nodes
     Eve1["EVE 1.0"]
     SparxConv["SparxEA conversion functionality"]
     BaseReact["Base React website"]
     WikiPlat["Wiki platform"]
-    PubmdW["Pubmd Wiki"]
-    PubmdCore["Pubmd (core)"]
-    PubmdLite["Pubmd Lite"]
-    PubmdCLI["Pubmd CLI"]
-    PubmdLive["Pubmd Live"]
     RagApp["Rag-app"]
     Eve2["Eve 2.0"]
     DoView["DoView"]
+    DoViewAg["DoView Agent"]
     SparxMod["SparxEA Module"]
     RagMod["RAG Module"]
 
+    subgraph "Pubmd components"
+        PubmdCore["Pubmd (core)"]
+        PubmdLite["Pubmd Lite"]
+        PubmdCLI["Pubmd CLI"]
+        PubmdW["Pubmd Wiki"]
+        PubmdLive["Pubmd Live"]
+    end
+
+    %% links
     Eve1 --> SparxConv
     SparxConv --> SparxMod
     SparxMod --> Eve2
     Eve1 --> BaseReact
     BaseReact --> WikiPlat
-    WikiPlat --> PubmdW
+    WikiPlat --> PubmdW %% Link to PubmdW inside subgraph
     PubmdCore --> PubmdLite
     PubmdCore --> PubmdCLI
     PubmdCore --> PubmdW
     PubmdCore --> PubmdLive
     RagApp --> DoView
-    PubmdW --> RagMod
+    DoViewAg --> DoView
+    PubmdW --> RagMod %% Link from PubmdW inside subgraph
     RagMod --> RagApp
-    PubmdW --> Eve2
+    PubmdW --> Eve2 %% Link from PubmdW inside subgraph
