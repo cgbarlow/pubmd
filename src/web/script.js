@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const editorTogglesContainer = document.getElementById('editorTogglesContainer');
         const convertToPdfButton = document.getElementById('convertToPdfButton');
         const statusMessage = document.getElementById('statusMessage');
-        const fontToggle = document.getElementById('fontToggle');
+        const fontFamilySelector = document.getElementById('fontFamilySelector'); // Changed from fontToggle
         const darkModeToggle = document.getElementById('darkModeToggle');
         const clearButton = document.getElementById('clearButton');
 
@@ -151,13 +151,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const mermaidThemeSelector = document.getElementById('mermaidThemeSelector');
 
         const initialDarkMode = getPreference('darkMode') === 'enabled';
-        const initialSerifFont = getPreference('fontPreference') === 'serif';
+        const initialFontPreference = getPreference('fontPreference') || 'sans-serif'; // 'sans-serif' or 'serif'
         let cmTheme = initialDarkMode ? 'material-darker' : 'default';
 
         function updateMainButtonState() {
             if (typeof marked === 'function' &&
                 typeof DOMPurify?.sanitize === 'function' &&
-                typeof mermaid?.run === 'function' && // Check for mermaid.run, initialization happens later
+                typeof mermaid?.run === 'function' && 
                 fontsReady &&
                 typeof CodeMirror !== 'undefined' &&
                 markdownEditor
@@ -263,23 +263,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         
-        const updatePreviewFontPreference = (isSerifFontActive) => {
-            if (fontToggle) fontToggle.checked = isSerifFontActive;
-            const previewFontFamily = isSerifFontActive ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
-            if (previewModalContent) {
-                previewModalContent.style.fontFamily = previewFontFamily; 
-                 if (previewModalOverlay.style.display === 'flex') {
-                    prepareContentForPreviewAndPdf(false); 
-                }
+        const updatePreviewFont = () => {
+            if (!fontFamilySelector || !previewModalContent) return;
+
+            const selectedFontValue = fontFamilySelector.value; // 'serif' or 'sans-serif'
+            setPreference('fontPreference', selectedFontValue); 
+
+            const isSerif = selectedFontValue === 'serif';
+            const previewFontFamily = isSerif ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
+            
+            previewModalContent.style.fontFamily = previewFontFamily; 
+            
+            if (previewModalOverlay.style.display === 'flex') {
+                prepareContentForPreviewAndPdf(false); 
             }
         };
 
 
         initializeFontsForPreview().then(() => {
             updateMainPageUI(initialDarkMode);
-            if (fontToggle) fontToggle.checked = initialSerifFont;
-            const initialPreviewFont = initialSerifFont ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
-            if (previewModalContent) previewModalContent.style.fontFamily = initialPreviewFont;
+            
+            if (fontFamilySelector) {
+                fontFamilySelector.value = initialFontPreference;
+            }
+            updatePreviewFont(); // Apply initial font to previewModalContent and potentially refresh preview
 
 
             if (typeof CodeMirror !== 'undefined') {
@@ -353,11 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateMainPageUI(isChecked);
             });
 
-            if (fontToggle) fontToggle.addEventListener('change', () => {
-                const isChecked = fontToggle.checked;
-                setPreference('fontPreference', isChecked ? 'serif' : 'sans-serif');
-                updatePreviewFontPreference(isChecked);
-            });
+            if (fontFamilySelector) { // Changed from fontToggle
+                fontFamilySelector.addEventListener('change', updatePreviewFont);
+            }
 
             if (clearButton) clearButton.addEventListener('click', () => {
                 if(markdownEditor) {
@@ -438,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
         previewModalContent.style.backgroundColor = 'white'; 
         previewModalContent.style.color = 'black'; 
 
-        const isSerifUserChoice = fontToggle && fontToggle.checked;
+        const isSerifUserChoice = fontFamilySelector && fontFamilySelector.value === 'serif'; // Changed from fontToggle
         const overallPreviewFontFamily = isSerifUserChoice ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
         previewModalContent.style.fontFamily = overallPreviewFontFamily; 
         
@@ -500,28 +505,20 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (mermaidElements.length === 0) {
                 console.log("[Preview] No Mermaid elements found to render.");
             } else {
-                console.warn("[Preview] Mermaid.run() is not available or no elements to process, skipping Mermaid rendering.");
+                console.warn("[Preview] Mermaid.run() is not available or no Mermaid elements found.");
             }
         } catch (error) {
-            console.error("[Preview] Error during Mermaid.run():", error);
-            statusMessage.textContent = "Error rendering Mermaid diagram in preview. Check console.";
+            console.error("[Preview] Error during client-side Mermaid.run():", error);
+            statusMessage.textContent = "Error rendering Mermaid diagrams in preview. Check console.";
             statusMessage.style.color = 'red';
-            const mermaidElements = previewModalContent.querySelectorAll('.mermaid');
-            mermaidElements.forEach(el => {
-                if (!el.querySelector('svg')) { 
-                    el.innerHTML = `<p style="color:red; font-size:12px; white-space:pre-wrap;">Mermaid Error: ${error.message}\nOriginal Code:\n${el.textContent || originalMermaidCodeStore.get(el.id) || 'Unknown'}</p>`;
-                }
-            });
-        } finally {
-            if (isNewPreview && convertToPdfButton) {
-                convertToPdfButton.disabled = false;
-                convertToPdfButton.textContent = 'Preview PDF';
-            }
-            if (!isNewPreview) { 
-                 statusMessage.textContent = 'Preview updated.';
-                 statusMessage.style.color = 'green';
-            }
         }
+
+        if (isNewPreview && convertToPdfButton) {
+            convertToPdfButton.disabled = false;
+            convertToPdfButton.textContent = 'Preview PDF';
+        }
+        statusMessage.textContent = 'Preview updated.';
+        statusMessage.style.color = 'green';
         return true;
     }
 
@@ -531,187 +528,153 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMessage.style.color = 'orange';
             return;
         }
-        const mdText = markdownEditor.getValue();
-        if (!mdText.trim()) {
-            statusMessage.textContent = 'Markdown is empty. Cannot save PDF.';
+        if (!previewModalContent || !previewModalContent.innerHTML.trim()) {
+            statusMessage.textContent = 'No content to save. Please generate a preview first.';
             statusMessage.style.color = 'red';
             return;
         }
 
-        const fileNameInput = document.getElementById('fileNameInput');
-        let fileName = fileNameInput.value.trim();
-        if (!fileName) {
-            const now = new Date();
-            fileName = `markdown_export_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
-        }
-        fileName = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`;
-
-        if (fileNameInputModal) fileNameInputModal.style.display = 'none';
-        statusMessage.textContent = `Generating PDF: ${fileName}...`;
+        savePdfFromModalButton.disabled = true;
+        savePdfFromModalButton.textContent = 'Saving...';
+        statusMessage.textContent = 'Generating PDF... This may take a moment.';
         statusMessage.style.color = '#333';
-        if (savePdfFromModalButton) savePdfFromModalButton.disabled = true;
-
 
         try {
-            const previewHtml = previewModalContent.innerHTML;
-            const styles = Array.from(document.styleSheets)
-                .map(sheet => {
-                    try {
-                        return Array.from(sheet.cssRules || [])
-                            .map(rule => rule.cssText)
-                            .join('\n');
-                    } catch (e) {
-                        // For external stylesheets, you might not be able to access cssRules
-                        if (sheet.href) {
-                           // In a real scenario, you might fetch and inline these,
-                           // but for now, we'll rely on the server to handle linked CSS if possible,
-                           // or accept that they might be missed if not directly injectable.
-                           console.warn(`Could not access CSS rules for ${sheet.href}. It might not be included in the PDF if it's cross-origin and not fetched by the server.`);
-                        }
-                        return '';
-                    }
-                })
-                .join('\n');
-            
-            const fullHtmlForPdf = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>PDF Preview</title>
-                    <style>
-                        body { margin: 0; padding: 0; background-color: white; color: black; }
-                        /* Inject all collected styles */
-                        ${styles}
-                        /* Ensure previewModalContent styles are applied if they were dynamic */
-                        #previewModalContent {
-                            font-family: ${previewModalContent.style.fontFamily || "'DejaVu Sans', sans-serif"};
-                            font-size: ${previewModalContent.style.fontSize || '12pt'};
-                            width: ${previewModalContent.style.width || 'auto'};
-                            padding: ${previewModalContent.style.padding || '0'};
-                            background-color: ${previewModalContent.style.backgroundColor || 'white'};
-                            color: ${previewModalContent.style.color || 'black'};
-                            /* Add any other necessary styles from previewModalContent.style */
-                        }
-                        /* Ensure mermaid diagrams are visible and styled */
-                        .mermaid { display: block; } /* Or other appropriate display */
-                    </style>
-                </head>
-                <body>
-                    <div id="previewModalContent">${previewHtml}</div>
-                </body>
-                </html>`;
-
-            // For client-side PDF generation using jsPDF (simplified, might need html2canvas for full fidelity)
             const { jsPDF } = window.jspdf;
-            if (!jsPDF) {
-                throw new Error("jsPDF library not found on window object.");
-            }
             const pdf = new jsPDF({
-                orientation: 'p',
-                unit: 'pt',
-                format: 'a4',
-                putOnlyUsedFonts: true,
-                compress: true,
+                orientation: 'p', unit: 'mm', format: 'a4',
+                putOnlyUsedFonts: true, floatPrecision: 16 
             });
 
-            // Add DejaVu Sans font if available
+            // Add fonts to jsPDF instance
             if (fontBase64Sans) {
                 pdf.addFileToVFS('DejaVuSans.ttf', fontBase64Sans);
                 pdf.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
-                pdf.setFont('DejaVuSans'); // Set as default
             }
-            // Add DejaVu Serif font if available
             if (fontBase64Serif) {
                 pdf.addFileToVFS('DejaVuSerif.ttf', fontBase64Serif);
                 pdf.addFont('DejaVuSerif.ttf', 'DejaVuSerif', 'normal');
-                // If serif is preferred, set it as default:
-                // if (fontToggle && fontToggle.checked) pdf.setFont('DejaVuSerif');
             }
             
-            // Use html2canvas to render the HTML content onto the PDF
-            // This requires html2canvas to be loaded, e.g., via import map or script tag
-            if (typeof html2canvas === 'function') {
-                const canvas = await html2canvas(previewModalContent, { 
-                    scale: 2, // Increase scale for better quality
-                    useCORS: true, // If you have external images/SVGs
-                    logging: true,
-                    onclone: (clonedDoc) => {
-                        // Ensure mermaid SVGs are fully rendered in the cloned document
-                        // This might involve re-running mermaid.run() on the cloned document's mermaid elements
-                        // if html2canvas doesn't capture them correctly initially.
-                        // For now, we assume SVGs are already inline and correctly styled.
-                        const clonedMermaidElements = clonedDoc.querySelectorAll('#previewModalContent .mermaid');
-                        clonedMermaidElements.forEach(el => {
-                            // Potentially re-render or ensure styles are fully applied
+            const currentFontFamily = fontFamilySelector && fontFamilySelector.value === 'serif' ? 'DejaVuSerif' : 'DejaVuSans';
+            pdf.setFont(currentFontFamily);
+
+            // Temporarily set a fixed width for rendering to PDF to match A4 proportions
+            // This ensures html2canvas captures content as it would appear on an A4 page.
+            const originalWidth = previewModalContent.style.width;
+            const originalPadding = previewModalContent.style.padding;
+            const dpi = 96; // Standard screen DPI
+            const a4WidthInPx = Math.floor(210 * dpi / 25.4); // A4 width in pixels
+            const marginInPx = Math.floor(10 * dpi / 25.4); // 10mm margin in pixels
+
+            previewModalContent.style.width = (a4WidthInPx - 2 * marginInPx) + 'px';
+            previewModalContent.style.padding = marginInPx + 'px';
+            
+            // Ensure all Mermaid SVGs are fully rendered and sized correctly before html2canvas
+            const mermaidSvgs = previewModalContent.querySelectorAll('.mermaid svg');
+            mermaidSvgs.forEach(svg => {
+                svg.style.maxWidth = '100%'; // Ensure SVG scales within its container
+                svg.setAttribute('width', '100%'); // Force width for rendering
+                // Consider if height needs explicit setting or if viewBox handles it
+            });
+            await new Promise(resolve => setTimeout(resolve, 200)); // Small delay for rendering updates
+
+            const canvas = await html2canvas(previewModalContent, { 
+                scale: 2, // Increase scale for better quality
+                useCORS: true, 
+                logging: true,
+                backgroundColor: '#ffffff', // Ensure background is white for PDF
+                onclone: (clonedDoc) => {
+                    // Ensure styles are correctly applied in the cloned document for html2canvas
+                    const clonedPreviewContent = clonedDoc.getElementById('previewModalContent');
+                    if (clonedPreviewContent) {
+                        clonedPreviewContent.style.fontFamily = previewModalContent.style.fontFamily;
+                        clonedPreviewContent.style.color = 'black'; // Force black text for PDF
+                        clonedPreviewContent.style.backgroundColor = 'white'; // Force white background
+                        
+                        // Apply black color to all text elements within the cloned content for PDF
+                        const allElements = clonedPreviewContent.querySelectorAll('*');
+                        allElements.forEach(el => {
+                            // Preserve Mermaid diagram styling by not overriding their fill/stroke
+                            if (!el.closest('.mermaid')) { // Check if element is NOT part of a mermaid diagram
+                                el.style.color = 'black';
+                            }
+                        });
+
+                        // Ensure mermaid diagrams in the clone also use the correct theme variables for PDF
+                        const clonedMermaidElements = clonedDoc.querySelectorAll('.mermaid');
+                        clonedMermaidElements.forEach(async (el) => {
+                            const diagramId = el.id;
+                            const originalCode = originalMermaidCodeStore.get(diagramId);
+                            if (originalCode) {
+                                el.textContent = originalCode; // Reset to original code
+                                el.removeAttribute('data-processed');
+                                const svgChild = el.querySelector('svg');
+                                if (svgChild) el.removeChild(svgChild);
+
+                                // Re-run mermaid with PDF-specific theme settings if necessary
+                                // For now, we assume the current theme is okay for PDF
+                                // but one might want a 'print' or 'bw' theme here.
+                            }
                         });
                     }
-                });
-                const imgData = canvas.toDataURL('image/png');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
-                const imgProps = pdf.getImageProperties(imgData);
-                const imgWidth = pdfWidth - 40; // With some margin
-                const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-                let heightLeft = imgHeight;
-                let position = 20; // Top margin
-
-                pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
-                heightLeft -= pdfHeight - 40; // Subtract page height considering margins
-
-                while (heightLeft > 0) {
-                    position = heightLeft - imgHeight + 20; // Adjust position for next page
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
-                    heightLeft -= pdfHeight - 40;
                 }
-            } else {
-                // Fallback if html2canvas is not available (less accurate)
-                console.warn("html2canvas not found. PDF quality might be lower.");
-                await pdf.html(previewModalContent, {
-                    callback: function (doc) {
-                        // Save is handled outside
-                    },
-                    x: 20,
-                    y: 20,
-                    width: pdf.internal.pageSize.getWidth() - 40,
-                    windowWidth: previewModalContent.scrollWidth,
-                    html2canvas: {
-                        scale: 2, // Try to improve quality
-                        logging: true,
-                        useCORS: true,
-                    }
-                });
-            }
+            });
 
-            pdf.save(fileName);
-            statusMessage.textContent = `PDF "${fileName}" saved successfully.`;
+            // Restore original styles after canvas capture
+            previewModalContent.style.width = originalWidth;
+            previewModalContent.style.padding = originalPadding;
+
+            const imgData = canvas.toDataURL('image/png');
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth() - 20; // A4 width - 2 * 10mm margin
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            let currentPdfHeight = pdfHeight;
+            let position = 0;
+            const pageHeight = pdf.internal.pageSize.getHeight() - 20; // A4 height - 2 * 10mm margin
+
+            pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth, pdfHeight);
+            currentPdfHeight -= pageHeight;
+
+            while (currentPdfHeight > 0) {
+                position -= pageHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 10, position + 10, pdfWidth, pdfHeight);
+                currentPdfHeight -= pageHeight;
+            }
+            
+            const filename = fileNameInputModal.value || 'markdown_output.pdf';
+            pdf.save(filename);
+
+            statusMessage.textContent = `PDF "${filename}" saved successfully!`;
             statusMessage.style.color = 'green';
 
         } catch (error) {
-            console.error('Error generating PDF client-side:', error);
-            statusMessage.textContent = `Error generating PDF: ${error.message}. Check console.`;
+            console.error("Error generating PDF:", error);
+            statusMessage.textContent = "Error generating PDF. Check console for details.";
             statusMessage.style.color = 'red';
         } finally {
-            if (savePdfFromModalButton) savePdfFromModalButton.disabled = false;
-            if (convertToPdfButton) {
-                 convertToPdfButton.disabled = false;
-                 convertToPdfButton.textContent = 'Preview PDF';
+            if (savePdfFromModalButton) {
+                savePdfFromModalButton.disabled = false;
+                savePdfFromModalButton.textContent = 'Save PDF';
             }
         }
     }
 
+    // Ensure body class for preload transition disabling is removed after initial load
+    document.body.classList.remove('preload');
+
     } catch (e) {
-        console.error("Critical error in DOMContentLoaded:", e);
-        const statusMsg = document.getElementById('statusMessage');
-        if (statusMsg) {
-            statusMsg.textContent = "A critical error occurred. Please refresh. Check console.";
-            statusMsg.style.color = "red";
+        console.error("Critical error on DOMContentLoaded:", e);
+        const status = document.getElementById('statusMessage');
+        if (status) {
+            status.textContent = "A critical error occurred. Please refresh the page or check the console.";
+            status.style.color = 'red';
         }
-        const convertBtn = document.getElementById('convertToPdfButton');
-        if (convertBtn) {
-            convertBtn.disabled = true;
-            convertBtn.textContent = "Error";
+        const button = document.getElementById('convertToPdfButton');
+        if (button) {
+            button.disabled = true;
+            button.textContent = "Error";
         }
     }
 });

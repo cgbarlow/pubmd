@@ -65,9 +65,12 @@
             </div>
             <div id="previewModalActions">
                 <div class="preview-controls-left">
-                    <div class="font-toggle"> 
-                        <label class="switch"><input type="checkbox" id="fontToggle"><span class="slider"></span></label>
-                        <span class="toggle-label">Serif Font</span>
+                    <div class="font-family-selector-container">
+                        <label for="fontFamilySelector" class="toggle-label">Font:</label>
+                        <select id="fontFamilySelector">
+                            <option value="sans-serif" selected>Sans-serif</option>
+                            <option value="serif">Serif</option>
+                        </select>
                     </div>
                     <div class="mermaid-theme-selector-container">
                         <label for="mermaidThemeSelector" class="toggle-label">Mermaid Theme:</label>

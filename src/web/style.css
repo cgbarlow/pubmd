@@ -88,7 +88,7 @@ html.dark-mode input:checked + .slider { background-color: #3081d2; }
 input:checked + .slider:before { transform: translateX(26px); }
 .toggle-label { font-size: 0.9em; color: #666; white-space: nowrap; transition: color 0.3s; margin-left: 5px; vertical-align: middle;}
 html.dark-mode .toggle-label { color: #b0b3b8; }
-.font-toggle, .dark-mode-toggle { display: flex; align-items: center; }
+.dark-mode-toggle { display: flex; align-items: center; } /* .font-toggle class removed as it's no longer used */
 
 
 .mermaid svg { max-width: 100%; height: auto; }
@@ -137,10 +137,10 @@ html.dark-mode .toggle-label { color: #b0b3b8; }
     width: 90%; max-width: 700px;
     max-height: 90vh; display: flex; flex-direction: column;
 }
-#previewModalHeader { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+#previewModalHeader { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; box-sizing: border-box; width: 100%; }
 #previewModalHeader h2 { margin: 0; font-size: 1.5em; }
 #previewModalContent {
-    overflow-y: auto; flex-grow: 1;
+    overflow-y: auto; overflow-x: auto; flex-grow: 1; width: calc(100% - 5px) !important; box-sizing: border-box;
     border: 1px solid #ccc; padding: 15px;
     /* font-family will be set by JS */ font-size: 12pt;
     background-color: white; color: black;
@@ -171,6 +171,11 @@ html.dark-mode .toggle-label { color: #b0b3b8; }
     justify-content: space-between; 
     align-items: center; 
 }
+.preview-controls-left {
+    display: flex;
+    align-items: baseline; /* Changed from center to baseline */
+    gap: 15px; /* Space between font toggle and mermaid theme selector */
+}
 #previewModalActions .action-buttons { 
     display: flex;
     gap: 10px;
@@ -178,6 +183,4 @@ html.dark-mode .toggle-label { color: #b0b3b8; }
 #previewModalActions button { 
      padding: 10px 20px;
 }
-#previewModalActions .font-toggle {
-    margin-right: auto; 
-}
+/* Removed rule for #previewModalActions .font-toggle { margin-right: auto; } as it's handled by justify-content on parent */
