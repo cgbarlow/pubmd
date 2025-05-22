@@ -4,40 +4,60 @@ Tying all my ideas together.
 ```mermaid
 graph TD;
     Eve1["EVE 1.0"]
-    SparxConv["SparxEA conversion functionality"]
     BaseReact["Base React website"]
+    SparxConv["SparxEA conversion functionality"]
     WikiPlat["Wiki platform"]
-    RagApp["Rag-app"]
+
+    PubmdLive["Pubmd Live"]
+    RagPlatform["Rag Platform"]
+    DoViewAg["DoView Agent"]
     Eve2["EVE 2.0"]
     DoView["DoView"]
-    DoViewAg["DoView Agent"]
+    ComplianceApp["Compliance Assistant"]
 
     subgraph "Pubmd components"
         PubmdCore["Pubmd (core)"]
         PubmdLite["Pubmd Lite"]
         PubmdCLI["Pubmd CLI"]
-        PubmdLive["Pubmd Live"]
-
-        subgraph PubmdW ["Pubmd Wiki"]
+        
+        subgraph PubmdW_container["Pubmd Wiki"]
+            PubmdW["Pubmd Wiki"]
             subgraph "Modules"
-                SparxMod["SparxEA Module"]
                 RagMod["RAG Module"]
+                SparxMod["SparxEA Module"]
             end
         end
     end
 
-    Eve1 --> SparxConv
-    SparxConv --> SparxMod
     Eve1 --> BaseReact
+    Eve1 --> SparxConv
+
     BaseReact --> WikiPlat
+    SparxConv --> SparxMod
+
     WikiPlat --> PubmdW
     PubmdCore --> PubmdW
     PubmdCore --> PubmdLite
     PubmdCore --> PubmdCLI
-    PubmdCore --> PubmdLive
-    RagApp --> DoView
-    DoViewAg --> DoView
-    PubmdW --> RagMod
-    RagMod --> RagApp
-    PubmdW --> Eve2
+    
+    PubmdW --> PubmdLive
+    PubmdW --> Modules      
+    
+    Modules --> PubmdLive
+
+    RagMod --> RagPlatform
     SparxMod --> Eve2
+
+    DoViewAg --> DoView
+    RagPlatform --> DoView
+    RagPlatform --> ComplianceApp
+
+    %% Styling
+    style PubmdCore fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style PubmdLite fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style PubmdCLI fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style PubmdW fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style RagMod fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style DoView fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style Eve2 fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style ComplianceApp fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
