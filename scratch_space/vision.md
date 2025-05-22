@@ -1,4 +1,3 @@
-```mermaid
 graph TD;
     Eve1["EVE 1.0"]
     SparxConv["SparxEA conversion functionality"]
@@ -12,7 +11,6 @@ graph TD;
     RagApp["Rag-app"]
     Eve2["Eve 2.0"]
     DoView["DoView"]
-
     Eve1 --> SparxConv
     Eve1 --> BaseReact
     BaseReact --> WikiPlat
@@ -24,4 +22,3 @@ graph TD;
     PubmdW --> RagApp
     PubmdW --> Eve2
     RagApp --> DoView
-    ```
