@@ -1,6 +1,5 @@
 ```mermaid
 graph TD;
-    %% nodes
     Eve1["EVE 1.0"]
     SparxConv["SparxEA conversion functionality"]
     BaseReact["Base React website"]
@@ -14,7 +13,6 @@ graph TD;
     Eve2["Eve 2.0"]
     DoView["DoView"]
 
-    %% links
     Eve1 --> SparxConv
     Eve1 --> BaseReact
     BaseReact --> WikiPlat
