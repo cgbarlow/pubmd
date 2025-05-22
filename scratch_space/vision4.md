@@ -28,8 +28,6 @@ graph TD;
         end
     end
 
-    { rank = same; BaseReact; SparxConv }
-
     Eve1 --> BaseReact
     Eve1 --> SparxConv
 
