@@ -26,12 +26,12 @@ graph TD;
     SparxMod --> Eve2
     Eve1 --> BaseReact
     BaseReact --> WikiPlat
-    WikiPlat --> PubmdW %% Link to PubmdW inside subgraph
+    WikiPlat --> PubmdW 
     PubmdCore --> PubmdLite
     PubmdCore --> PubmdCLI
     PubmdCore --> PubmdW
     PubmdCore --> PubmdLive
     RagApp --> DoView
     DoViewAg --> DoView
-    PubmdW --> RagMod %% Link from PubmdW inside subgraph
+    PubmdW --> RagMod 
     RagMod --> RagApp
