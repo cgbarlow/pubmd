@@ -16,9 +16,9 @@ graph TD;
 
         subgraph "Modules"
             %% Order here can influence layout for incoming arrows
-            SparxMod["SparxEA Module"]
             RagMod["RAG Module"]
-        end
+            SparxMod["SparxEA Module"]
+            end
     end
 
     %% Lower-level applications
