@@ -1,3 +1,7 @@
+# Vision for modular component architecture
+Tying all my ideas together.
+
+```mermaid
 graph TD;
     Eve1["EVE 1.0"]
     SparxConv["SparxEA conversion functionality"]
@@ -14,7 +18,7 @@ graph TD;
         PubmdCLI["Pubmd CLI"]
         PubmdLive["Pubmd Live"]
 
-        subgraph "PubmdW" ["Pubmd Wiki"]
+        subgraph PubmdW ["Pubmd Wiki"]
             subgraph "Modules"
                 SparxMod["SparxEA Module"]
                 RagMod["RAG Module"]
