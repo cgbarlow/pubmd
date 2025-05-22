@@ -10,8 +10,8 @@ graph TD;
 
     PubmdLive["Pubmd Live"]
     RagApp["Rag-app"]
-    Eve2["EVE 2.0"]
     DoViewAg["DoView Agent"]
+    Eve2["EVE 2.0"]
     DoView["DoView"]
 
     subgraph "Pubmd components"
@@ -42,7 +42,8 @@ graph TD;
     
     Modules --> PubmdLive
 
-    DoViewAg --> DoView
     RagMod --> RagApp
-    RagApp --> DoView
     SparxMod --> Eve2
+
+    DoViewAg --> DoView
+    RagApp --> DoView
