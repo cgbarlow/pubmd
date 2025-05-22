@@ -16,7 +16,47 @@ html.dark-mode body { background-color: #18191a; color: #e4e6eb; }
 }
 html.dark-mode .container { background-color: #242526; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
 
-h1 { color: #0a66c2; text-align: center; margin-bottom: 30px; font-size: 2em; transition: color 0.3s; }
+.title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Align items vertically to the center */
+    margin-bottom: 20px; 
+    padding-top: 0; 
+}
+
+.title-bar h1 {
+    text-align: left;
+    margin-bottom: 0; 
+    margin-top: 0; 
+    color: #0a66c2; /* Copied from original h1 */
+    font-size: 2em; /* Copied from original h1 */
+    transition: color 0.3s; /* Copied from original h1 */
+}
+
+.title-bar h2 {
+    text-align: right;
+    font-style: italic;
+    color: #999; /* Light grey */
+    font-size: 1em; /* Adjust to be less prominent */
+    font-weight: normal; /* Less prominent */
+    margin-bottom: 0; 
+    margin-top: 0; 
+    transition: color 0.3s;
+}
+
+html.dark-mode .title-bar h1 { color: #58a6ff; } /* Copied from original h1 dark mode */
+html.dark-mode .title-bar h2 {
+    color: #777; /* Lighter grey for dark mode */
+}
+
+
+h1 { /* This rule is now primarily for h1 elements NOT inside .title-bar, or as a fallback */
+    color: #0a66c2; 
+    /* text-align: center; */ /* Removed, handled by .title-bar h1 or default */
+    /* margin-bottom: 30px; */ /* Removed, handled by .title-bar or default */
+    font-size: 2em; 
+    transition: color 0.3s; 
+}
 html.dark-mode h1 { color: #58a6ff; }
 
 .label { display: block; font-weight: 600; margin-bottom: 8px; color: #333; font-size: 1.1em; transition: color 0.3s; }
@@ -56,7 +96,7 @@ html.dark-mode .editor-title-bar {
 
 textarea#markdownInputInternal { display: none; }
 .code-mirror-placeholder {
-    min-height: 400px; 
+    min-height: 500px; 
     /* border removed, handled by wrapper */
     /* border-radius removed, handled by wrapper/title bar logic */
     /* margin-bottom removed, handled by wrapper */
@@ -72,7 +112,7 @@ html.dark-mode .code-mirror-placeholder { background-color: #3a3b3c; color: #adb
 
 .CodeMirror {
     /* border removed, handled by wrapper */
-    min-height: 400px; font-size: 1em;
+    min-height: 500px; font-size: 1em;
     line-height: 1.5; font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
     /* margin-bottom removed, handled by wrapper */
     opacity: 0; /* Initial opacity for transition */
@@ -119,7 +159,7 @@ button:disabled { background-color: #cccccc; color: #666666; cursor: not-allowed
 html.dark-mode button:disabled { background-color: #404040; color: #888888; }
 
 #statusMessage { text-align:center; margin-top:15px; font-weight:bold; min-height: 1.2em; line-height: 1.2em; }
-.footer { text-align: center; margin-top: 30px; font-size: 0.9em; color: #606770; transition: color 0.3s; }
+.footer { text-align: center; margin-top: 15px; font-size: 0.9em; color: #606770; transition: color 0.3s; }
 html.dark-mode .footer { color: #b0b3b8; }
 .footer a { color: #0a66c2; text-decoration: none; transition: color 0.3s; }
 html.dark-mode .footer a { color: #58a6ff; }

@@ -3,6 +3,11 @@
 **Current Task**: Address issues and enhancements following initial server-side PDF generation implementation, as detailed in `documentation/03_Implementation/next_steps_20250522_server_pdf_fixes.md`.
 Currently focusing on: **Task 4: Fix Mermaid Theme Styling Inconsistencies (Preview vs. PDF).**
 
+**Recent UI Adjustments (User Requests):**
+*   Modified `src/web/index.html` and `src/web/style.css` to change the layout and styling of the main title (h1) and tagline (h2). The h1 is now left-aligned, and the h2 is on the same line, right-aligned, italic, and light grey. Vertical alignment of h2 adjusted to center within the title bar.
+*   Increased the `min-height` of the CodeMirror editor area (`.code-mirror-placeholder` and `.CodeMirror` in `src/web/style.css`) to `550px` to make better use of screen real estate.
+*   Reduced `margin-top` for the `.footer` class in `src/web/style.css` from `30px` to `15px`.
+
 **Overall Cycle Goals**:
 1.  **[COMPLETED]** Fix Mermaid preview rendering issues.
 2.  **[COMPLETED & VERIFIED]** Implement a working Mermaid theme selector for client-side preview.
