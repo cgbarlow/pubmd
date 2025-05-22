@@ -1,3 +1,37 @@
+## 2025-05-22 (Continued)
+
+*   **MUP & CRCT Initialization:**
+    *   Continued Mandatory Update Protocol (MUP).
+    *   Loaded `execution_plugin.md` as `testing_plugin.md` was not found. Updated `.clinerules` to reflect `current_phase: Execution`.
+    *   Completed CRCT core file initialization.
+*   **Mermaid Theme Selector Debugging (Fix Implemented & Verified):**
+    *   Continued investigation into the client-side preview issue where Mermaid diagram colors do not update with theme changes.
+    *   Referenced user-provided solution document: `documentation/03_Implementation/issue_research_MermaidThemeColorUpdateFailureInClient-SidePreview_20250522.md`.
+    *   **Implemented Fix in `src/web/script.js`**:
+        *   Removed the initial static `mermaid.initialize()` call from `DOMContentLoaded`.
+        *   Added a new `extractThemeVariables(rootElement)` function to dynamically read computed CSS variables for Mermaid themes from the specified `rootElement` (the preview modal content area).
+        *   Modified the `prepareContentForPreviewAndPdf()` function:
+            *   After applying theme and font classes to the preview container, it now calls `extractThemeVariables()` to get the current theme's variable values.
+            *   Added a call to `mermaid.mermaidAPI.reset()` (if available, for Mermaid v10.3+) before re-initializing Mermaid to clear its internal cache.
+            *   Updated the `mermaid.initialize()` call within this function to use `theme: 'base'` and pass the dynamically extracted `themeVariables`. This ensures Mermaid uses the fresh, correct color values for each render.
+    *   **Verification**: User confirmed that the theme toggle now correctly updates Mermaid diagram colors in the client-side preview.
+    *   **Next Steps (Task Specific):** Discuss with user whether to refine GitHub theme CSS or proceed to PDF theme integration.
+
+## 2025-05-22
+
+*   **Mermaid Theme Selector Implementation (In Progress):**
+    *   Began implementation of a Mermaid theme selector for client-side preview and PDF generation.
+    *   Successfully fixed Mermaid preview rendering issues, enabling further work on theming.
+    *   Theme selector currently allows font changes, and CSS variables for themes are correctly injected into the DOM.
+    *   **Identified Core Issue:** The visual appearance of Mermaid diagrams (specifically colors) does not update correctly in the client-side preview when a new theme is selected. This occurs despite CSS variables being present and correctly updated in the DOM. Fonts, however, do update correctly.
+    *   **Affected Files (Anticipated/Current):**
+        *   `src/web/index.html` (for theme selector UI)
+        *   `src/web/script.js` (for theme selection logic, Mermaid initialization, and dynamic CSS updates)
+        *   `src/web/mermaid-themes.css` (for theme definitions)
+        *   `nodejs_projects/core/src/services/markdown/markdown.service.ts` (will require updates for PDF theme integration)
+        *   `nodejs_projects/core/src/services/pdf/playwright.engine.ts` (will require updates for PDF theme integration)
+    *   **Next Steps:** Further investigation into the color update discrepancy for client-side preview.
+
 ## 2025-05-21
 
 *   **Resolved Mermaid Diagram Rendering in PDFs via Playwright in MarkdownService:**

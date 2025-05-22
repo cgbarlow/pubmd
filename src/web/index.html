@@ -11,6 +11,7 @@
 
     <!-- Local CSS -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mermaid-themes.css"> <!-- Added Mermaid themes CSS -->
 
     <!-- Import Map for ES Modules -->
     <script type="importmap">
@@ -24,11 +25,8 @@
     </script>
 
     <!-- External JS Libraries (deferred) -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js" defer></script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js" defer></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js" defer></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/markdown/markdown.min.js" defer></script>
 </head>
@@ -66,9 +64,18 @@
                 <input type="text" id="fileNameInputModal" value="md2pdf_core.pdf">
             </div>
             <div id="previewModalActions">
-                <div class="font-toggle"> 
-                    <label class="switch"><input type="checkbox" id="fontToggle"><span class="slider"></span></label>
-                    <span class="toggle-label">Serif Font</span>
+                <div class="preview-controls-left">
+                    <div class="font-toggle"> 
+                        <label class="switch"><input type="checkbox" id="fontToggle"><span class="slider"></span></label>
+                        <span class="toggle-label">Serif Font</span>
+                    </div>
+                    <div class="mermaid-theme-selector-container">
+                        <label for="mermaidThemeSelector" class="toggle-label">Mermaid Theme:</label>
+                        <select id="mermaidThemeSelector">
+                            <option value="github" selected>GitHub</option>
+                            <option value="greyscale">Greyscale</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="action-buttons"> 
                     <button id="cancelModalButton" class="secondary">Cancel</button>

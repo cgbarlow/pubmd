@@ -1,0 +1,89 @@
+/* Base variables that might be common or overridden */
+:root {
+    /* Default font, can be overridden by .mermaid-font-xxx */
+    --mermaid-font-family-default: 'DejaVu Sans', sans-serif; 
+    --mermaid-font-size-default: 16px;
+}
+
+/* Greyscale Theme */
+.mermaid-theme-greyscale {
+    --mermaid-font-family: var(--mermaid-font-family-default);
+    --mermaid-font-size: var(--mermaid-font-size-default);
+    --mermaid-text-color: #333333;
+    --mermaid-node-text-color: #333333; /* Ensure nodes also use this */
+    --mermaid-line-color: #888888;
+    --mermaid-primary-color: #f4f4f4; /* Node background */
+    --mermaid-primary-border-color: #888888;
+    --mermaid-primary-text-color: #333333; /* Text on nodes */
+    --mermaid-secondary-color: #dcdcdc;
+    --mermaid-secondary-border-color: #777777;
+    --mermaid-secondary-text-color: #333333;
+    --mermaid-tertiary-color: #cecece;
+    --mermaid-tertiary-border-color: #666666;
+    --mermaid-tertiary-text-color: #333333;
+    --mermaid-note-bkg-color: #f0f0f0;
+    --mermaid-note-text-color: #333333;
+    --mermaid-note-border-color: #aaaaaa;
+    --mermaid-label-background-color: #e0e0e0; /* For labels on edges */
+    --mermaid-label-text-color: #333333;
+    --mermaid-error-background-color: #ffdddd;
+    --mermaid-error-text-color: #d8000c;
+    --mermaid-flowchart-arrowhead-color: #666666;
+    --mermaid-cluster-background-color: rgba(200, 200, 200, 0.1);
+    --mermaid-cluster-border-color: #bbbbbb;
+    /* Add any other specific variables Mermaid uses for 'base' theme */
+}
+
+/* GitHub-like Theme (Light) */
+.mermaid-theme-github {
+    --mermaid-font-family: var(--mermaid-font-family-default);
+    --mermaid-font-size: var(--mermaid-font-size-default);
+    --mermaid-text-color: #24292f; /* GitHub Dark Gray for general text */
+    --mermaid-node-text-color: #24292f; /* Text inside nodes */
+    --mermaid-line-color: #d0d7de; /* GitHub Light Gray for lines/borders */
+    --mermaid-primary-color: #f6f8fa; /* GitHub Very Light Gray (node background) */
+    --mermaid-primary-border-color: #d0d7de; /* Border for primary nodes */
+    --mermaid-primary-text-color: #24292f; /* Text on primary nodes */
+    --mermaid-secondary-color: #0969da; /* GitHub Blue (can be used for specific node types if Mermaid supports it via config) */
+    --mermaid-secondary-border-color: #0969da;
+    --mermaid-secondary-text-color: #ffffff; /* Text on secondary nodes */
+    --mermaid-tertiary-color: #161b22; /* Darker gray for other elements if needed */
+    --mermaid-tertiary-border-color: #161b22;
+    --mermaid-tertiary-text-color: #ffffff;
+    --mermaid-note-bkg-color: #fff8c5; /* Light yellow for notes */
+    --mermaid-note-text-color: #24292f;
+    --mermaid-note-border-color: #f6e05e;
+    --mermaid-label-background-color: #ebf4ff; /* Light blue for labels on edges */
+    --mermaid-label-text-color: #0969da; /* Text color for labels on edges */
+    --mermaid-error-background-color: #ffebe9;
+    --mermaid-error-text-color: #d73a49;
+    --mermaid-flowchart-arrowhead-color: #57606a; /* Arrowhead color */
+    --mermaid-cluster-background-color: rgba(235, 244, 255, 0.5); /* Very light blue, semi-transparent for clusters */
+    --mermaid-cluster-border-color: #80b4f1; /* Border for clusters */
+}
+
+/* Font Family Overrides for Mermaid diagrams */
+/* Apply these classes to a container wrapping the .mermaid div */
+.mermaid-font-sans {
+    --mermaid-font-family: 'DejaVu Sans', sans-serif !important;
+}
+
+.mermaid-font-serif {
+    --mermaid-font-family: 'DejaVu Serif', serif !important;
+}
+
+/* Ensure the variables are applied to the Mermaid SVG elements */
+/* This might be needed if the classes are on a parent not directly read by mermaid for vars */
+.mermaid-theme-greyscale .mermaid svg, .mermaid-theme-greyscale .mermaid {
+    /* All variables from .mermaid-theme-greyscale will apply here */
+}
+.mermaid-theme-github .mermaid svg, .mermaid-theme-github .mermaid {
+    /* All variables from .mermaid-theme-github will apply here */
+}
+
+.mermaid-font-sans .mermaid svg, .mermaid-font-sans .mermaid {
+    font-family: var(--mermaid-font-family);
+}
+.mermaid-font-serif .mermaid svg, .mermaid-font-serif .mermaid {
+    font-family: var(--mermaid-font-family);
+}
