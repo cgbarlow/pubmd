@@ -15,7 +15,20 @@
             *   Added a call to `mermaid.mermaidAPI.reset()` (if available, for Mermaid v10.3+) before re-initializing Mermaid to clear its internal cache.
             *   Updated the `mermaid.initialize()` call within this function to use `theme: 'base'` and pass the dynamically extracted `themeVariables`. This ensures Mermaid uses the fresh, correct color values for each render.
     *   **Verification**: User confirmed that the theme toggle now correctly updates Mermaid diagram colors in the client-side preview.
-    *   **Next Steps (Task Specific):** Discuss with user whether to refine GitHub theme CSS or proceed to PDF theme integration.
+*   **Mermaid Theme Refinement (Light, Dark, Grey - Implemented):**
+    *   User opted to refine Mermaid themes.
+    *   Implemented "Light", "Dark", and "Grey" themes.
+    *   Used `src/web/reference/github_css_research.css` as a style guide for "Light" and "Dark" themes.
+    *   **`src/web/mermaid-themes.css`**:
+        *   Renamed `.mermaid-theme-greyscale` to `.mermaid-theme-grey`.
+        *   Renamed `.mermaid-theme-github` to `.mermaid-theme-light` and updated its CSS custom properties based on the reference file.
+        *   Added a new `.mermaid-theme-dark` class with CSS custom properties based on the reference file.
+        *   Ensured all themes define a comprehensive set of CSS custom properties for Mermaid's `themeVariables`.
+    *   **`src/web/index.html`**:
+        *   Updated the Mermaid theme selector dropdown to include "Light" (default), "Dark", and "Grey" options.
+    *   **`src/web/script.js`**:
+        *   Changed the default Mermaid theme from "github" to "light" in `applyMermaidThemeAndFontForPreview` and `prepareContentForPreviewAndPdf`.
+    *   **Next Steps (Task Specific):** Request user testing of the new themes.
 
 ## 2025-05-22
 

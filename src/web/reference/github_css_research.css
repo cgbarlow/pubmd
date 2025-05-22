@@ -1,0 +1,35 @@
+/* ─────────── Light Mode ─────────── */
+.mermaid .subgraph > rect {
+  /* the big yellow group box */
+  fill: #fff4dd;
+  stroke: #cccccc;
+}
+.mermaid .node rect {
+  /* those lavender nodes */
+  fill: #e8e8ff;
+  stroke: #cccccc;
+}
+.mermaid .node text {
+  fill: #333333;
+}
+.mermaid .edgePath path {
+  stroke: #999999;
+}
+
+/* ─────────── Dark Mode ─────────── */
+.mermaid.dark .subgraph > rect {
+  /* dark-grey group box */
+  fill: #242524;
+  stroke: #555555;
+}
+.mermaid.dark .node rect {
+  /* almost-black nodes */
+  fill: #1c1d1e;
+  stroke: #444444;
+}
+.mermaid.dark .node text {
+  fill: #dddddd;
+}
+.mermaid.dark .edgePath path {
+  stroke: #777777;
+}

@@ -5,8 +5,8 @@
     --mermaid-font-size-default: 16px;
 }
 
-/* Greyscale Theme */
-.mermaid-theme-greyscale {
+/* Grey Theme */
+.mermaid-theme-grey {
     --mermaid-font-family: var(--mermaid-font-family-default);
     --mermaid-font-size: var(--mermaid-font-size-default);
     --mermaid-text-color: #333333;
@@ -31,36 +31,92 @@
     --mermaid-flowchart-arrowhead-color: #666666;
     --mermaid-cluster-background-color: rgba(200, 200, 200, 0.1);
     --mermaid-cluster-border-color: #bbbbbb;
-    /* Add any other specific variables Mermaid uses for 'base' theme */
 }
 
-/* GitHub-like Theme (Light) */
-.mermaid-theme-github {
+/* Light Theme (GitHub Inspired) */
+.mermaid-theme-light {
     --mermaid-font-family: var(--mermaid-font-family-default);
     --mermaid-font-size: var(--mermaid-font-size-default);
-    --mermaid-text-color: #24292f; /* GitHub Dark Gray for general text */
-    --mermaid-node-text-color: #24292f; /* Text inside nodes */
-    --mermaid-line-color: #d0d7de; /* GitHub Light Gray for lines/borders */
-    --mermaid-primary-color: #f6f8fa; /* GitHub Very Light Gray (node background) */
-    --mermaid-primary-border-color: #d0d7de; /* Border for primary nodes */
-    --mermaid-primary-text-color: #24292f; /* Text on primary nodes */
-    --mermaid-secondary-color: #0969da; /* GitHub Blue (can be used for specific node types if Mermaid supports it via config) */
-    --mermaid-secondary-border-color: #0969da;
-    --mermaid-secondary-text-color: #ffffff; /* Text on secondary nodes */
-    --mermaid-tertiary-color: #161b22; /* Darker gray for other elements if needed */
-    --mermaid-tertiary-border-color: #161b22;
-    --mermaid-tertiary-text-color: #ffffff;
-    --mermaid-note-bkg-color: #fff8c5; /* Light yellow for notes */
-    --mermaid-note-text-color: #24292f;
-    --mermaid-note-border-color: #f6e05e;
-    --mermaid-label-background-color: #ebf4ff; /* Light blue for labels on edges */
-    --mermaid-label-text-color: #0969da; /* Text color for labels on edges */
-    --mermaid-error-background-color: #ffebe9;
-    --mermaid-error-text-color: #d73a49;
-    --mermaid-flowchart-arrowhead-color: #57606a; /* Arrowhead color */
-    --mermaid-cluster-background-color: rgba(235, 244, 255, 0.5); /* Very light blue, semi-transparent for clusters */
-    --mermaid-cluster-border-color: #80b4f1; /* Border for clusters */
+
+    /* From reference: .node text */
+    --mermaid-text-color: #333333; 
+    --mermaid-node-text-color: #333333; 
+    --mermaid-primary-text-color: #333333; 
+
+    /* From reference: .edgePath path */
+    --mermaid-line-color: #999999; 
+    --mermaid-flowchart-arrowhead-color: #999999; /* Match line color */
+
+    /* From reference: .node rect */
+    --mermaid-primary-color: #e8e8ff; /* Node background */
+    --mermaid-primary-border-color: #cccccc; 
+
+    /* From reference: .subgraph > rect */
+    --mermaid-cluster-background-color: #fff4dd;
+    --mermaid-cluster-border-color: #cccccc;
+
+    /* Sensible defaults for other vars, can be refined */
+    --mermaid-secondary-color: #d1e7ff; /* Lighter blue as secondary */
+    --mermaid-secondary-border-color: #b3d7ff;
+    --mermaid-secondary-text-color: #333333;
+    
+    --mermaid-tertiary-color: #f0f0f0; 
+    --mermaid-tertiary-border-color: #cccccc;
+    --mermaid-tertiary-text-color: #333333;
+
+    --mermaid-note-bkg-color: #fff9e6; /* Light yellow for notes */
+    --mermaid-note-text-color: #333333;
+    --mermaid-note-border-color: #ffe0b3;
+
+    --mermaid-label-background-color: #e8f5ff; 
+    --mermaid-label-text-color: #333333; 
+
+    --mermaid-error-background-color: #ffebee; /* Light red for errors */
+    --mermaid-error-text-color: #c62828;
 }
+
+/* Dark Theme (GitHub Inspired) */
+.mermaid-theme-dark {
+    --mermaid-font-family: var(--mermaid-font-family-default);
+    --mermaid-font-size: var(--mermaid-font-size-default);
+
+    /* From reference: .node text */
+    --mermaid-text-color: #dddddd;
+    --mermaid-node-text-color: #dddddd;
+    --mermaid-primary-text-color: #dddddd;
+
+    /* From reference: .edgePath path */
+    --mermaid-line-color: #777777;
+    --mermaid-flowchart-arrowhead-color: #777777; /* Match line color */
+
+    /* From reference: .node rect */
+    --mermaid-primary-color: #1c1d1e; /* Node background */
+    --mermaid-primary-border-color: #444444;
+
+    /* From reference: .subgraph > rect */
+    --mermaid-cluster-background-color: #242524;
+    --mermaid-cluster-border-color: #555555;
+
+    /* Sensible defaults for other vars, can be refined */
+    --mermaid-secondary-color: #2a2f36; /* Darker blue/grey as secondary */
+    --mermaid-secondary-border-color: #38414b;
+    --mermaid-secondary-text-color: #dddddd;
+
+    --mermaid-tertiary-color: #161a1e; 
+    --mermaid-tertiary-border-color: #333333;
+    --mermaid-tertiary-text-color: #dddddd;
+
+    --mermaid-note-bkg-color: #2f2b1e; /* Dark yellow for notes */
+    --mermaid-note-text-color: #dddddd;
+    --mermaid-note-border-color: #5a523a;
+
+    --mermaid-label-background-color: #1c2938; 
+    --mermaid-label-text-color: #dddddd; 
+
+    --mermaid-error-background-color: #3e1c1c; /* Dark red for errors */
+    --mermaid-error-text-color: #ff8a80;
+}
+
 
 /* Font Family Overrides for Mermaid diagrams */
 /* Apply these classes to a container wrapping the .mermaid div */
@@ -74,11 +130,14 @@
 
 /* Ensure the variables are applied to the Mermaid SVG elements */
 /* This might be needed if the classes are on a parent not directly read by mermaid for vars */
-.mermaid-theme-greyscale .mermaid svg, .mermaid-theme-greyscale .mermaid {
-    /* All variables from .mermaid-theme-greyscale will apply here */
+.mermaid-theme-grey .mermaid svg, .mermaid-theme-grey .mermaid {
+    /* All variables from .mermaid-theme-grey will apply here */
 }
-.mermaid-theme-github .mermaid svg, .mermaid-theme-github .mermaid {
-    /* All variables from .mermaid-theme-github will apply here */
+.mermaid-theme-light .mermaid svg, .mermaid-theme-light .mermaid {
+    /* All variables from .mermaid-theme-light will apply here */
+}
+.mermaid-theme-dark .mermaid svg, .mermaid-theme-dark .mermaid {
+    /* All variables from .mermaid-theme-dark will apply here */
 }
 
 .mermaid-font-sans .mermaid svg, .mermaid-font-sans .mermaid {

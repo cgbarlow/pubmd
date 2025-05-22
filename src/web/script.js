@@ -80,7 +80,7 @@ function applyMermaidThemeAndFontForPreview(themeName, selectedFontFamilyName) {
     fontClassesToRemove.forEach(cls => previewContentElement.classList.remove(cls));
 
     // Apply new theme class
-    const newThemeClass = `mermaid-theme-${themeName || 'github'}`;
+    const newThemeClass = `mermaid-theme-${themeName || 'light'}`; // Default to 'light'
     previewContentElement.classList.add(newThemeClass);
 
     // Apply new font class
@@ -449,7 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
         previewModalContent.style.width = (a4WidthInPx - 2 * marginInPxModal) + 'px';
         previewModalContent.style.padding = marginInPxModal + 'px';
         
-        const selectedMermaidThemeName = mermaidThemeSelector ? mermaidThemeSelector.value : 'github';
+        const selectedMermaidThemeName = mermaidThemeSelector ? mermaidThemeSelector.value : 'light'; // Default to 'light'
         const mermaidDiagramFontFamilyName = isSerifUserChoice ? "DejaVu Serif" : "DejaVu Sans"; 
         
         applyMermaidThemeAndFontForPreview(selectedMermaidThemeName, mermaidDiagramFontFamilyName);
