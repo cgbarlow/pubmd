@@ -1,5 +1,23 @@
 ## 2025-05-22 (Continued)
 
+*   **UI Enhancement: Fixed Dark Mode Flash (FOUC):**
+    *   Addressed an issue where refreshing the page in dark mode caused a brief flash of light mode.
+    *   **`src/web/index.html`**:
+        *   Added an inline script to the `<head>` to immediately apply the `dark-mode` class to the `<html>` element if `localStorage` indicates dark mode is enabled.
+        *   Added a `preload` class to the `<body>` element.
+    *   **`src/web/style.css`**:
+        *   Updated the CSS rule from `body.preload .slider, body.preload .slider:before { transition: none !important; }` to the more general `body.preload * { transition: none !important; }`. This disables all transitions on all elements while the `preload` class is active on the body, preventing any transition-related flashes.
+    *   **`src/web/script.js`**:
+        *   Added logic within the `DOMContentLoaded` event listener's `finally` block to remove the `preload` class from the `<body>`. This is done using a double `requestAnimationFrame` to ensure it occurs after the browser's initial paint, re-enabling CSS transitions smoothly.
+*   **UI Cosmetic Adjustments (User Requests):**
+    *   **Title/Tagline:** Modified `src/web/index.html` and `src/web/style.css` to restyle the main page title (`<h1>`) and tagline (`<h2>`).
+        *   Wrapped `<h1>` and `<h2>` in a new `div.title-bar`.
+        *   Styled `.title-bar` with flexbox to position `<h1>` left-aligned and `<h2>` right-aligned on the same line.
+        *   Adjusted `<h2>` to be italic, light grey, and less prominent.
+        *   Set `align-items: center` on `.title-bar` for vertical centering of `<h1>` and `<h2>`.
+        *   Removed top padding from `.title-bar` and adjusted margins on `<h1>` and `<h2>` to reduce excess space.
+    *   **Editor Height:** Increased `min-height` of `.code-mirror-placeholder` and `.CodeMirror` in `src/web/style.css` from `400px` to `550px` to better utilize screen real estate.
+    *   **Footer Padding:** Reduced `margin-top` for the `.footer` class in `src/web/style.css` from `30px` to `15px`.
 *   **CRCT Summary Update:**
     *   Created `documentation/crct_summary_20250522_mermaid_theming_status.md` to capture the end-of-day status for the Mermaid theming PDF generation task.
     *   Updated `Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs/activeContext.md` to reflect the current state, including the PDF styling issue and next steps.
@@ -100,7 +118,8 @@
     *   **Affected File:** `nodejs_projects/core/src/services/pdf/playwright.engine.ts`
 *   **Implemented Text-Only Mermaid Rendering in MarkdownService:**
     *   Modified `nodejs_projects/core/src/services/markdown/markdown.service.ts` to initialize Mermaid with `htmlLabels: false` for `flowchart`, `sequence`, and `state` diagram types. This forces Mermaid to use SVG `<text>` elements instead of `<foreignObject>`, aiming to improve PDF export compatibility.
-    *   Used `as any` type assertions to bypass TypeScript errors for `htmlLabels` in `sequence` and `state` configurations, assuming the property is valid at runtime for Mermaid v11.6.
+    *   Used `as any` type assertions to bypass TypeScript errors for `htmlLabels` in `sequence` and `state` configurations,
+        assuming the property is valid at runtime for Mermaid v11.6.
     *   This change aligns with the strategy outlined in `documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_take8_pivot_o3_mermaid_text_only.md`.
     *   **Affected File:** `nodejs_projects/core/src/services/markdown/markdown.service.ts`
 *   **Updated Playwright PDF Engine for Mermaid SVG Correction:**

@@ -7,6 +7,11 @@ Currently focusing on: **Task 4: Fix Mermaid Theme Styling Inconsistencies (Prev
 *   Modified `src/web/index.html` and `src/web/style.css` to change the layout and styling of the main title (h1) and tagline (h2). The h1 is now left-aligned, and the h2 is on the same line, right-aligned, italic, and light grey. Vertical alignment of h2 adjusted to center within the title bar.
 *   Increased the `min-height` of the CodeMirror editor area (`.code-mirror-placeholder` and `.CodeMirror` in `src/web/style.css`) to `550px` to make better use of screen real estate.
 *   Reduced `margin-top` for the `.footer` class in `src/web/style.css` from `30px` to `15px`.
+*   **[COMPLETED] Fixed Dark Mode Flash (FOUC):**
+    *   Added an inline script to `src/web/index.html` `<head>` to apply `dark-mode` class to `<html>` immediately based on `localStorage`.
+    *   Added `preload` class to `<body>` in `src/web/index.html`.
+    *   Updated `src/web/style.css` to use `body.preload * { transition: none !important; }` to disable all transitions during preload.
+    *   Updated `src/web/script.js` to remove the `preload` class from `<body>` after initial setup and paint, re-enabling transitions.
 
 **Overall Cycle Goals**:
 1.  **[COMPLETED]** Fix Mermaid preview rendering issues.

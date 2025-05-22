@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pubmd</title>
 
+    <!-- Early script to prevent FOUC for dark mode -->
+    <script>
+        (function() {
+            try {
+                const darkMode = localStorage.getItem('darkMode');
+                if (darkMode === 'enabled') {
+                    document.documentElement.classList.add('dark-mode');
+                }
+            } catch (e) {
+                console.error('Error applying dark mode early:', e);
+            }
+        })();
+    </script>
+
     <!-- External CSS Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/material-darker.min.css">
@@ -30,7 +44,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/markdown/markdown.min.js" defer></script>
 </head>
-<body>
+<body class="preload">
     <div class="container">
         <div class="title-bar">
             <h1>pubmd</h1>

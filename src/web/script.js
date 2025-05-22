@@ -498,195 +498,192 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         };
                         reader.readAsText(file);
-                    } else {
-                        // No file selected, but content might still be in editor from a previous load.
-                        // If editor is empty, or was showing 'new_document.md' or 'default.md',
-                        // then reset to 'new_document.md' state.
-                        if (!markdownEditor.getValue().trim() || currentFileName === 'new_document.md' || currentFileName === 'default.md') {
-                           currentFileName = 'new_document.md';
-                           updateFileNameDisplay();
-                        }
-                        // Otherwise, keep currentFileName and its display as is.
                     }
                 });
             }
         }).catch(error => {
-            console.error("Initialization failed:", error);
+            console.error("Error in main initialization chain:", error);
             if (statusMessage) {
-                statusMessage.textContent = 'Critical error during initialization. Check console.';
+                statusMessage.textContent = 'Critical error during page load. Check console.';
                 statusMessage.style.color = 'red';
-            }
-            if (convertToPdfButton) {
-                convertToPdfButton.disabled = true;
-                convertToPdfButton.textContent = 'Init Failed';
             }
         });
     } catch (error) {
-        console.error("Error in DOMContentLoaded:", error);
-        const statusMessage = document.getElementById('statusMessage');
-        if (statusMessage) {
-            statusMessage.textContent = 'A critical error occurred on page load. Check console.';
-            statusMessage.style.color = 'red';
+        console.error("Critical error during DOMContentLoaded setup:", error);
+        const statusMsg = document.getElementById('statusMessage');
+        if (statusMsg) {
+            statusMsg.textContent = 'A critical error occurred. Please check the console.';
+            statusMsg.style.color = 'red';
         }
-    }
-
-    async function prepareContentForPreviewAndPdf(isNewPreview = true) {
-        if (!libsReady || !markdownEditor) {
-            if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
-                statusMessage.textContent = 'Libraries or editor not ready.';
-                statusMessage.style.color = 'red';
-            }
-            return;
-        }
-
-        const markdownText = markdownEditor.getValue();
-        // Allow preview/PDF generation for 'default.md' even if its content is technically empty,
-        // but not for a truly new, untouched document.
-        if (!markdownText.trim() && currentFileName === 'new_document.md') { 
-            if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
-                statusMessage.textContent = 'Cannot generate PDF from empty input.';
-                statusMessage.style.color = 'orange';
-            }
-            return;
-        }
-        
-        if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
-            statusMessage.textContent = 'Processing Markdown for preview...';
-            statusMessage.style.color = '#333';
-        }
-
-        const selectedFontFamilyValue = fontFamilySelector.value;
-        const selectedFontFamilyName = selectedFontFamilyValue === 'serif' ? 'DejaVu Serif' : 'DejaVu Sans';
-        const previewFontFamilyCSS = selectedFontFamilyValue === 'serif' ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
-        
-        const selectedMermaidTheme = mermaidThemeSelector.value || 'light'; 
-
-        applyMermaidThemeAndFontForPreview(selectedMermaidTheme, selectedFontFamilyName);
-        
-        const themeVariables = extractThemeVariables(previewModalContent);
-
-        mermaid.initialize({
-            startOnLoad: false, 
-            theme: 'base', 
-            fontFamily: previewFontFamilyCSS, 
-            themeVariables: themeVariables
+    } finally {
+        // Remove preload class to re-enable transitions after initial setup
+        // Use double requestAnimationFrame to ensure it happens after paint
+        window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
+                document.body.classList.remove('preload');
+                console.log('Preload class removed, transitions re-enabled.');
+            });
         });
-        console.log("Mermaid initialized for preview with theme:", selectedMermaidTheme, "font:", previewFontFamilyCSS, "vars:", themeVariables);
-
-        const dirtyHtml = marked.parse(markdownText);
-        const cleanHtml = DOMPurify.sanitize(dirtyHtml, {
-            USE_PROFILES: { html: true },
-            ADD_TAGS: ['svg', 'path', 'g', 'rect', 'circle', 'text', 'line', 'polygon', 'polyline', 'ellipse', 'style', 'defs', 'marker', 'use', 'foreignObject', 'switch'],
-            ADD_ATTR: ['transform', 'd', 'cx', 'cy', 'r', 'x', 'y', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'points', 'viewBox', 'preserveAspectRatio', 'class', 'id', 'style', 'marker-start', 'marker-end', 'font-family', 'font-size', 'text-anchor', 'dominant-baseline', 'href', 'xlink:href', 'data-mermaid-theme']
-        });
-
-        previewModalContent.innerHTML = cleanHtml;
-        previewModalContent.style.fontFamily = previewFontFamilyCSS; 
-
-        try {
-            await mermaid.run({
-                nodes: previewModalContent.querySelectorAll('.mermaid'),
-                suppressErrors: false 
-            });
-            console.log("Mermaid diagrams rendered in preview.");
-        } catch (error) {
-            console.error("Error rendering Mermaid diagrams in preview:", error);
-            if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
-                statusMessage.textContent = 'Error rendering Mermaid diagrams. Check console.';
-                statusMessage.style.color = 'red';
-            }
-            previewModalContent.querySelectorAll('.mermaid').forEach(el => {
-                const originalCode = originalMermaidCodeStore.get(el.id);
-                if (originalCode) {
-                    el.innerHTML = `<pre class="mermaid-error">Error rendering diagram:\n${error.message}\n\nOriginal code:\n${originalCode}</pre>`;
-                } else {
-                    el.innerHTML = `<pre class="mermaid-error">Error rendering diagram:\n${error.message}</pre>`;
-                }
-            });
-        }
-        
-
-        if (isNewPreview) {
-            // Use currentFileName for PDF name generation, which could be 'default.md' or a user file
-            fileNameInputModal.value = generatePdfFilename(currentFileName);
-            previewModalOverlay.style.display = 'flex';
-        }
-        
-        if (statusMessage.textContent !== 'Error: API Server not detected. PDF generation disabled.') {
-            statusMessage.textContent = 'Preview ready.';
-            statusMessage.style.color = 'green';
-        }
-    }
-
-
-    async function savePdfHandler() {
-        if (!apiServerReady) {
-            statusMessage.textContent = 'API Server not available. Cannot save PDF.';
-            statusMessage.style.color = 'red';
-            return;
-        }
-        if (!libsReady || !markdownEditor) {
-            statusMessage.textContent = 'Libraries or editor not ready.';
-            statusMessage.style.color = 'red';
-            return;
-        }
-
-        const markdownText = markdownEditor.getValue();
-        if (!markdownText.trim() && currentFileName === 'new_document.md') {
-            statusMessage.textContent = 'Cannot generate PDF from empty input.';
-            statusMessage.style.color = 'orange';
-            return;
-        }
-
-        statusMessage.textContent = 'Generating PDF via server...';
-        statusMessage.style.color = '#333';
-        savePdfFromModalButton.disabled = true;
-        savePdfFromModalButton.textContent = 'Generating...';
-
-        const selectedFontFamilyValue = fontFamilySelector.value;
-        const selectedFontFamilyName = selectedFontFamilyValue === 'serif' ? 'DejaVu Serif' : 'DejaVu Sans';
-        const selectedMermaidTheme = mermaidThemeSelector.value || 'light';
-
-        const serverPayload = {
-            markdown: markdownText,
-            fontFamily: selectedFontFamilyName, 
-            mermaidTheme: selectedMermaidTheme, 
-            pdfOptions: { }
-        };
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/generate-pdf-from-markdown`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(serverPayload)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ message: 'Unknown server error' }));
-                throw new Error(`Server error: ${response.status} - ${errorData.message || response.statusText}`);
-            }
-
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileNameInputModal.value || generatePdfFilename(currentFileName);
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            a.remove();
-
-            statusMessage.textContent = 'PDF generated and download started.';
-            statusMessage.style.color = 'green';
-            previewModalOverlay.style.display = 'none'; 
-
-        } catch (error) {
-            console.error('Error generating PDF via server:', error);
-            statusMessage.textContent = `Error generating PDF: ${error.message}. Check console.`;
-            statusMessage.style.color = 'red';
-        } finally {
-            savePdfFromModalButton.disabled = false;
-            savePdfFromModalButton.textContent = 'Save PDF';
-        }
     }
 });
+
+
+async function prepareContentForPreviewAndPdf(isNewPreview = true) {
+    if (!libsReady || !fontsReady) {
+        console.warn("Preview/PDF generation attempted before libraries or fonts were ready.");
+        if (document.getElementById('statusMessage')) {
+            document.getElementById('statusMessage').textContent = 'Please wait for initialization to complete.';
+            document.getElementById('statusMessage').style.color = 'orange';
+        }
+        return;
+    }
+
+    const markdownText = markdownEditor.getValue();
+    const previewModalOverlay = document.getElementById('previewModalOverlay');
+    const previewModalContent = document.getElementById('previewModalContent');
+    const fileNameInputModal = document.getElementById('fileNameInputModal');
+    const fontFamilySelector = document.getElementById('fontFamilySelector');
+    const mermaidThemeSelector = document.getElementById('mermaidThemeSelector');
+
+    if (!previewModalOverlay || !previewModalContent || !fileNameInputModal || !fontFamilySelector || !mermaidThemeSelector) {
+        console.error("One or more critical UI elements for PDF preview are missing.");
+        if (document.getElementById('statusMessage')) {
+            document.getElementById('statusMessage').textContent = 'Error: Preview UI elements missing.';
+            document.getElementById('statusMessage').style.color = 'red';
+        }
+        return;
+    }
+    
+    const selectedFontFamily = fontFamilySelector.value === 'serif' ? 'DejaVu Serif' : 'DejaVu Sans';
+    const selectedMermaidTheme = mermaidThemeSelector.value || 'light';
+
+    applyMermaidThemeAndFontForPreview(selectedMermaidTheme, selectedFontFamily);
+
+    const dirtyHtml = marked.parse(markdownText);
+    const cleanHtml = DOMPurify.sanitize(dirtyHtml, {
+        USE_PROFILES: { html: true },
+        ADD_TAGS: ['style'], // Allow style tags for Mermaid themes if needed (though CSS vars are preferred)
+        ADD_ATTR: ['id', 'class'] // Allow id and class for Mermaid diagrams
+    });
+    
+    previewModalContent.innerHTML = cleanHtml;
+    previewModalContent.style.fontFamily = selectedFontFamily === 'DejaVu Serif' ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
+
+    try {
+        const themeVariables = extractThemeVariables(previewModalContent);
+        console.log("Extracted theme variables for Mermaid:", themeVariables);
+
+        mermaid.initialize({
+            startOnLoad: false, // We will call run manually
+            theme: 'base', // Use 'base' and supply themeVariables
+            themeVariables: themeVariables,
+            fontFamily: selectedFontFamily === 'DejaVu Serif' ? 'DejaVu Serif' : 'DejaVu Sans',
+            // securityLevel: 'loose', // Consider implications if using complex diagrams
+        });
+
+        // Re-render Mermaid diagrams
+        const mermaidElements = previewModalContent.querySelectorAll('.mermaid');
+        if (mermaidElements.length > 0) {
+            await mermaid.run({
+                nodes: mermaidElements,
+                suppressErrors: false
+            });
+            console.log(`Mermaid diagrams (count: ${mermaidElements.length}) rendered in preview.`);
+        } else {
+            console.log("No Mermaid diagrams found in preview content.");
+        }
+
+    } catch (error) {
+        console.error("Error rendering Mermaid diagrams in preview:", error);
+        if (document.getElementById('statusMessage')) {
+            document.getElementById('statusMessage').textContent = 'Error rendering Mermaid diagrams. Check console.';
+            document.getElementById('statusMessage').style.color = 'red';
+        }
+    }
+    
+    if (isNewPreview) {
+        fileNameInputModal.value = generatePdfFilename(currentFileName);
+        previewModalOverlay.style.display = 'flex';
+    }
+}
+
+
+async function savePdfHandler() {
+    const statusMessage = document.getElementById('statusMessage');
+    const savePdfButton = document.getElementById('savePdfFromModalButton');
+    const cancelModalButton = document.getElementById('cancelModalButton');
+    const fontFamilySelector = document.getElementById('fontFamilySelector');
+    const mermaidThemeSelector = document.getElementById('mermaidThemeSelector');
+    const fileNameInputModal = document.getElementById('fileNameInputModal');
+
+    if (!statusMessage || !savePdfButton || !cancelModalButton || !fontFamilySelector || !mermaidThemeSelector || !fileNameInputModal) {
+        console.error("One or more critical UI elements for PDF saving are missing.");
+        if (statusMessage) {
+            statusMessage.textContent = 'Error: PDF saving UI elements missing.';
+            statusMessage.style.color = 'red';
+        }
+        return;
+    }
+
+    if (!apiServerReady) {
+        statusMessage.textContent = 'API Server not available. Cannot generate PDF.';
+        statusMessage.style.color = 'red';
+        return;
+    }
+
+    const originalButtonText = savePdfButton.textContent;
+    savePdfButton.disabled = true;
+    savePdfButton.textContent = 'Generating...';
+    cancelModalButton.disabled = true;
+    statusMessage.textContent = 'Generating PDF, please wait...';
+    statusMessage.style.color = '#333';
+
+    const markdownText = markdownEditor.getValue();
+    const selectedFontPreference = fontFamilySelector.value; // 'sans-serif' or 'serif'
+    const selectedMermaidTheme = mermaidThemeSelector.value; // 'light', 'dark', or 'grey'
+    const outputFilename = fileNameInputModal.value || generatePdfFilename(currentFileName);
+
+    try {
+        const serverPayload = {
+            markdownContent: markdownText,
+            pdfOptions: {
+                fontPreference: selectedFontPreference,
+                mermaidTheme: selectedMermaidTheme,
+            }
+        };
+
+        const response = await fetch(`${API_BASE_URL}/api/generate-pdf-from-markdown`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(serverPayload)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Server error: ${response.status} - ${errorText}`);
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = outputFilename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        statusMessage.textContent = `PDF "${outputFilename}" generated successfully!`;
+        statusMessage.style.color = 'green';
+        document.getElementById('previewModalOverlay').style.display = 'none';
+
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        statusMessage.textContent = `Error generating PDF: ${error.message}. Check console.`;
+        statusMessage.style.color = 'red';
+    } finally {
+        savePdfButton.disabled = false;
+        savePdfButton.textContent = originalButtonText;
+        cancelModalButton.disabled = false;
+    }
+}
