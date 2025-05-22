@@ -1,3 +1,4 @@
+```mermaid
 graph TD;
     %% Non-Pubmd nodes
     Eve1["EVE 1.0"]
@@ -34,4 +35,3 @@ graph TD;
     DoViewAg --> DoView
     PubmdW --> RagMod %% Link from PubmdW inside subgraph
     RagMod --> RagApp
-    PubmdW --> Eve2 %% Link from PubmdW inside subgraph
