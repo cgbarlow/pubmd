@@ -4,8 +4,8 @@ Tying all my ideas together.
 ```mermaid
 graph TD;
     Eve1["EVE 1.0"]
-    SparxConv["SparxEA conversion functionality"]
     BaseReact["Base React website"]
+    SparxConv["SparxEA conversion functionality"]
     WikiPlat["Wiki platform"]
 
     PubmdLive["Pubmd Live"]
@@ -28,10 +28,14 @@ graph TD;
         end
     end
 
-    Eve1 --> SparxConv
-    SparxConv --> SparxMod
+    { rank = same; BaseReact; SparxConv }
+
     Eve1 --> BaseReact
+    Eve1 --> SparxConv
+
     BaseReact --> WikiPlat
+    SparxConv --> SparxMod
+
     WikiPlat --> PubmdW
     PubmdCore --> PubmdW
     PubmdCore --> PubmdLite
