@@ -3,71 +3,89 @@ Tying all my ideas together.
 
 ```mermaid
 graph TD;
-    Eve1["EVE 1.0"]
-    BaseReact["Base React website"]
-    SparxConv["SparxEA conversion functionality"]
-    WikiPlat["Wiki platform"]
+    subgraph "Architecture"
+        Eve1["EVE 1.0"]
+        BaseReact["Base React website"]
+        SparxConv["SparxEA conversion functionality"]
+        WikiPlat["Wiki platform"]
 
-    PubmdLive["Pubmd Live"]
-    RagPlatform["Rag Platform"]
-    DoViewAg["DoView Agent"]
-    Eve2["EVE 2.0"]
-    DoView["DoView"]
-    ComplianceApp["Compliance Assistant"]
+        PubmdLive["Pubmd Live"]
+        RagPlatform["Rag Platform"]
+        DoViewAg["DoView Agent"]
+        Eve2["EVE 2.0"]
+        DoView["DoView"]
+        ComplianceApp["Compliance Assistant"]
 
-    Marama["Marama"]
-    FamilyTree["Family Tree"]
-    FamilyHistory["Family History"]
+        Marama["Marama"]
+        FamilyTree["Family Tree"]
+        FamilyHistory["Family History"]
 
-    subgraph "Pubmd components"
-        PubmdCore["Pubmd (core)"]
-        PubmdLite["Pubmd Lite"]
-        PubmdCLI["Pubmd CLI"]
-        
-        subgraph PubmdW_container["Pubmd Wiki"]
-            PubmdW["Pubmd Wiki"]
-            subgraph "Modules"
-                RagMod["RAG Module"]
-                SparxMod["SparxEA Module"]
+        subgraph "Pubmd components"
+            PubmdCore["Pubmd (core)"]
+            PubmdLite["Pubmd Lite"]
+            PubmdCLI["Pubmd CLI"]
+            
+            subgraph PubmdW_container["Pubmd Wiki"]
+                PubmdW["Pubmd Wiki"]
+                subgraph "Modules"
+                    RagMod["RAG Module"]
+                    SparxMod["SparxEA Module"]
+                end
             end
         end
+
+        Eve1 --> BaseReact
+        Eve1 --> SparxConv
+
+        BaseReact --> WikiPlat
+        SparxConv --> SparxMod
+
+        WikiPlat --> PubmdW
+        PubmdCore --> PubmdW
+        PubmdCore --> PubmdLite
+        PubmdCore --> PubmdCLI
+        
+        PubmdW --> PubmdLive
+        PubmdW --> Modules      
+        
+        Modules --> PubmdLive
+
+        RagMod --> RagPlatform
+        SparxMod --> Eve2
+
+        DoViewAg --> DoView
+        RagPlatform --> DoView
+        RagPlatform --> ComplianceApp
+
+        Marama --> RagMod
+        Marama --> FamilyHistory
+        FamilyTree <--> FamilyHistory
     end
 
-    Eve1 --> BaseReact
-    Eve1 --> SparxConv
-
-    BaseReact --> WikiPlat
-    SparxConv --> SparxMod
-
-    WikiPlat --> PubmdW
-    PubmdCore --> PubmdW
-    PubmdCore --> PubmdLite
-    PubmdCore --> PubmdCLI
-    
-    PubmdW --> PubmdLive
-    PubmdW --> Modules      
-    
-    Modules --> PubmdLive
-
-    RagMod --> RagPlatform
-    SparxMod --> Eve2
-
-    DoViewAg --> DoView
-    RagPlatform --> DoView
-    RagPlatform --> ComplianceApp
-
-    Marama --> RagMod
-    Marama --> FamilyHistory
-    FamilyTree <--> FamilyHistory
+    subgraph "Key"
+        direction LR
+        Done["Done / little work required"]
+        Priority1["Priority 1 - leading"]
+        Priority2["Priority 2 - leading/supporting"]
+        Priority3["Priority 3 - supporting"]
+    end
 
     %% Styling
-    style PubmdCore fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style Key fill:#000000
+    style Architecture fill:#000000
+    
+    style Priority1 fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
+    style Priority2 fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style Priority3 fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
+
+    style PubmdCore fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
     style PubmdLite fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style PubmdCLI fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
-    style PubmdW fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
-    style RagMod fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style PubmdW fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
+    style RagMod fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
     style DoView fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style Eve2 fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
-    style ComplianceApp fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style ComplianceApp fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
     style FamilyHistory fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style FamilyTree fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
+    style Marama fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
