@@ -71,6 +71,13 @@ graph TD;
     end
 
     %% Styling
+    style Key fill:#000000
+    style Architecture fill:#000000
+    
+    style Priority1 fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
+    style Priority2 fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
+    style Priority3 fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
+
     style PubmdCore fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
     style PubmdLite fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style PubmdCLI fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
@@ -82,5 +89,3 @@ graph TD;
     style FamilyHistory fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style FamilyTree fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
     style Marama fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
-    style Architecture fill:#000000
-    style Key fill:#000000
