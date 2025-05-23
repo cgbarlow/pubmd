@@ -67,13 +67,6 @@ graph TD;
     Marama --> FamilyHistory
     FamilyTree <--> FamilyHistory
 
-    %% Invisible links to push "Key" subgraph to the bottom
-    PubmdLive ~~~> Done
-    DoView ~~~> Done
-    ComplianceApp ~~~> Done
-    Eve2 ~~~> Done
-    FamilyHistory ~~~> Done
-
     %% Styling
     style PubmdCore fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
     style PubmdLite fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
