@@ -50,6 +50,15 @@ html.dark-mode .title-bar h2 {
 }
 
 
+.title-bar h1 .title-lite {
+    color: #767676; /* Light grey for less emphasis */
+    font-weight: normal; /* Match h2 for less prominence */
+}
+
+html.dark-mode .title-bar h1 .title-lite {
+    color: #a0a0a0; /* Lighter grey for dark mode */
+}
+ 
 h1 { /* This rule is now primarily for h1 elements NOT inside .title-bar, or as a fallback */
     color: #0a66c2; 
     /* text-align: center; */ /* Removed, handled by .title-bar h1 or default */
