@@ -63,7 +63,7 @@ graph TD;
     end
 
     subgraph "Key"
-        direction TD
+        direction LR
         Done["Done / little work required"]
         Priority1["Priority 1 - leading"]
         Priority2["Priority 2 - leading/supporting"]
