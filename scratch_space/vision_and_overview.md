@@ -3,7 +3,7 @@ This diagram outlines a modular component architecture, illustrating the evoluti
 
 ```mermaid
 graph TD;
-    subgraph "Core_Arch"
+    subgraph Core_Arch["Core Architecture"]
         Eve1["EVE 1.0"]
         BaseReact["Base React website"]
         SparxConv["SparxEA conversion functionality"]
@@ -53,9 +53,6 @@ graph TD;
         RAGPlatform --> DoView
         RAGPlatform --> ComplianceApp
 
-        Marama --> RAGMod
-        Marama --> FamilyHistory
-        FamilyTree <--> FamilyHistory
     end
 
     subgraph "Key"
@@ -66,15 +63,20 @@ graph TD;
         Priority3["Priority 3 - supporting"]
     end
 
-    subgraph "Related Projects"
-        Marama["Marama"]
+    subgraph Related["Related Projects"]
         FamilyTree["Family Tree"]
         FamilyHistory["Family History"]
+        Marama["Marama"]
+
+        FamilyTree <--> FamilyHistory
+        Marama --> RAGMod
+        Marama --> FamilyHistory
     end
 
     %% Styling
     style Key fill:#000000
     style Core_Arch fill:#000000
+    style Related fill:#000000
     
     style Priority1 fill:#0fa044,stroke:#333,stroke-width:2px,color:#333
     style Priority2 fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
@@ -95,13 +97,13 @@ graph TD;
 
 ## Outline
 
-**Core Evolution and PubMD:**
-*   The architecture originates from `EVE 1.0` a.k.a. *Enterprise View Explorer*, which provided foundational elements like a `Base React website` and `SparxEA conversion functionality`.
+**Core Architecture Evolution and PubMD:**
+*   The **"Core Architecture"** depicted in the diagram originates from `EVE 1.0` a.k.a. *Enterprise View Explorer*, which provided foundational elements like a `Base React website` and `SparxEA conversion functionality`.
 *   These initial components transition into more robust platforms: the `Base React website` evolves into a `Wiki platform`, which in turn forms the basis for `Pubmd Wiki`. The `SparxEA conversion functionality` feeds into a dedicated `SparxEA Module`.
 *   The **PubMD components** are central to this vision. `Pubmd (core)` is a high-priority (Priority 1) foundational block that underpins `Pubmd Wiki` (also Priority 1), `Pubmd Lite` (Priority 2), and `Pubmd CLI` (Priority 2).
 *   `Pubmd Wiki` is a key platform, hosting `Modules` such as the `RAG Module` (Priority 1) and the `SparxEA Module`. Both the wiki and its modules contribute to `Pubmd Live`.
 
-**Key Application Streams:**
+**Key Application Streams (within Core Architecture):**
 1.  **RAG-Powered Applications:**
     *   The `RAG Module` is a critical component that feeds into a `RAG Platform`.
     *   This `RAG Platform` serves as a backbone for several applications:
@@ -109,16 +111,18 @@ graph TD;
         *   `DoView`: A Priority 2 application, also supported by a `DoView Agent`.
 2.  **EVE 2.0 and Specialized Tools:**
     *   The `SparxEA Module` (derived from `EVE 1.0`'s conversion functionality) contributes to the development of `EVE 2.0` (Priority 2).
-3.  **Personal Knowledge & Domain-Specific Data:**
-    *   `Marama` (Priority 3) is a supporting component that integrates with the `RAG Module` and `Family History` (Priority 2).
-    *   `Family Tree` (Priority 3) has a close, bidirectional relationship with `Family History`, suggesting a system for managing genealogical or related historical data.
+
+**Related Projects (Personal Knowledge & Domain-Specific Data):**
+*   The diagram now visually groups `Marama`, `Family Tree`, and `Family History` under **"Related Projects"**. These components are:
+    *   `Marama` (Priority 3): A supporting component that integrates with the `RAG Module` (part of the Core Architecture) and `Family History`.
+    *   `Family History` (Priority 2) and `Family Tree` (Priority 3): These have a close, bidirectional relationship, suggesting a system for managing genealogical or related historical data.
   
 ## Roadmap
 
 **Overall Trajectory and Priorities:**
-The vision depicts a strategic progression from earlier, more monolithic components towards a highly modular and interconnected system. The styling indicates a clear prioritization:
-*   **Priority 1 (Green):** Focuses on establishing the core `Pubmd (core)` and `Pubmd Wiki` infrastructure, along with the `RAG Module` and the `Compliance Assistant` application. This suggests that content management, retrieval-augmented generation, and compliance are immediate key objectives.
-*   **Priority 2 (Blue):** Includes extensions of PubMD (`Pubmd Lite`, `Pubmd CLI`), the `DoView` application, the next-generation `EVE 2.0`, and `Family History`. These are important follow-on or supporting developments.
-*   **Priority 3 (Yellow):** Components like `Marama` and `Family Tree` are currently designated as supporting elements, likely providing data or specialized functionality to the higher-priority systems.
+The vision depicts a strategic progression from earlier, more monolithic components towards a highly modular and interconnected system. The "Core Architecture" forms the central development thrust, supported by "Related Projects". The styling indicates a clear prioritization:
+*   **Priority 1 (Green):** Focuses on establishing the core `Pubmd (core)` and `Pubmd Wiki` infrastructure, along with the `RAG Module` and the `Compliance Assistant` application. This suggests that content management, retrieval-augmented generation, and compliance are immediate key objectives within the Core Architecture.
+*   **Priority 2 (Blue):** Includes extensions of PubMD (`Pubmd Lite`, `Pubmd CLI`), the `DoView` application, the next-generation `EVE 2.0` (all part of Core Architecture), and `Family History` (from Related Projects). These are important follow-on or supporting developments.
+*   **Priority 3 (Yellow):** Components like `Marama` and `Family Tree` (from Related Projects) are currently designated as supporting elements, likely providing data or specialized functionality to the higher-priority systems.
 
-In essence, the architecture aims to create a robust, extensible platform leveraging PubMD's core capabilities and RAG technology to power a diverse set of tools and applications, ranging from live documentation and compliance assistance to specialized data management and the evolution of the EVE platform.
+In essence, the architecture aims to create a robust, extensible platform leveraging PubMD's core capabilities and RAG technology to power a diverse set of tools and applications, ranging from live documentation and compliance assistance to specialized data management and the evolution of the EVE platform. The "Related Projects" provide complementary data and functionalities.
