@@ -1,3 +1,13 @@
+## 2025-05-23 (Continued)
+
+*   **PDF Font & Mermaid Theme Debugging Session Concluded:**
+    *   Investigated issues with custom font rendering in server-generated PDFs and Mermaid theme application.
+    *   **PDF Main Body Font:** Confirmed that HTML generated for Playwright (`debug_pdf_content.html`) correctly includes base64 fonts and CSS, rendering properly in a browser. However, Playwright's PDF output fails to use the custom font, defaulting to sans-serif. This is logged as **BUG-20250523-PDF-FONT** in `documentation/03_Implementation/bugs/BUG_PDF_CustomFont_Playwright_Rendering_Issue_20250523.md`. Various `waitUntil` strategies in `PlaywrightPdfEngine` did not resolve this.
+    *   **Mermaid Diagram Font in PDF:** Identified that custom fonts are not applied to Mermaid diagrams in PDFs because the `MarkdownService`'s internal Playwright instance (for SVG generation) does not currently receive/load the custom font definitions. This is a known limitation requiring future enhancement.
+    *   **Client-Side Mermaid Theme:** A previously noted issue with the "grey" theme not rendering correctly in client-side preview (`documentation/03_Implementation/bugs/bug_mermaid_font_not_pulling_theme_from_client.md`) remains relevant.
+    *   **Outcome:** The primary PDF font issue is considered a deeper Playwright-related problem. Other issues have clearer paths for future fixes. Debugging task for this session is complete.
+
+---
 ## 2025-05-23
 
 *   **Mermaid Regression Investigation & Planning:**

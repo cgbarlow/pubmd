@@ -1,10 +1,10 @@
 [COUNT]
-10
+11
 
 [LAST_ACTION_STATE]
-last_action: "MUP: Created plan_MermaidRegressionFix_2250523.md. Updated activeContext.md and changelog.md."
+last_action: "MUP: Concluded PDF font/Mermaid theme debugging. BUG-20250523-PDF-FONT logged. Updated activeContext.md, changelog.md."
 current_phase: "Execution"
-next_action: "Await user confirmation of server-side TypeScript environment fix (Phase 2, Step 1 of plan_MermaidRegressionFix_2250523.md)."
+next_action: "Load next prioritized task from CRCT task list."
 next_phase: "Execution"
 
 ---
@@ -67,6 +67,7 @@ next_phase: "Execution"
 - Mermaid theme color updates might not be applying visually despite CSS variables being correctly injected and fonts working. This requires further investigation, potentially related to Mermaid's rendering lifecycle or CSS specificity.
 - If a phase-specific plugin (e.g., testing_plugin.md) is missing, and the user directs to load an alternative (e.g., execution_plugin.md), update .clinerules current_phase to match the loaded plugin. Ensure MUP updates reflect the ongoing initialization steps, like reading all core files, before proceeding to task-specific actions.
 - **Mermaid Theming Fix**: To dynamically update Mermaid diagram colors when themes change: 1. Remove initial static `mermaid.initialize()`. 2. Create `extractThemeVariables(rootElement)` to get computed CSS values for the current theme. 3. In the rendering function, *after* applying theme classes to the diagram container: call `mermaid.mermaidAPI.reset()` (Mermaid >=10.3), then `mermaid.initialize({ theme: 'base', themeVariables: <extracted_vars> })`, then `mermaid.run()`. This ensures Mermaid uses fresh, resolved color values from CSS variables for each render.
+- CRCT core files (`.clinerules`, `activeContext.md`, `changelog.md`, etc.) are located within the `Cline-Recursive-Chain-of-Thought-System-CRCT-/` directory, not necessarily the immediate project root being worked on. Verify paths carefully.
 
 [Character_Definitions]
 

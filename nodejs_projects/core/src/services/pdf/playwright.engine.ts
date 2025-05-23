@@ -25,7 +25,7 @@ export class PlaywrightPdfEngine implements IPdfEngine {
         }
       });
 
-      await page.setContent(html, { waitUntil: 'domcontentloaded' });
+      await page.setContent(html, { waitUntil: 'load' }); // Changed from domcontentloaded to load
 
       // Inject script to correct SVG issues before PDF generation
       await page.evaluate(() => {

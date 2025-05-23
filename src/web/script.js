@@ -666,17 +666,19 @@ async function savePdfHandler() {
     statusMessage.style.color = '#333';
 
     const markdownText = markdownEditor.getValue();
-    const selectedFontPreference = fontFamilySelector.value; 
-    const selectedMermaidTheme = mermaidThemeSelector.value; 
+    const selectedFontPreference = fontFamilySelector.value; // 'sans-serif' or 'serif'
+    const selectedMermaidTheme = mermaidThemeSelector.value; // 'light', 'dark', or 'grey'
     const outputFilename = fileNameInputModal.value || generatePdfFilename(currentFileName);
 
     try {
+        // Construct payload according to ADR 003
         const serverPayload = {
             markdown: markdownText,
-            pdfOptions: {
-                fontPreference: selectedFontPreference,
-                mermaidTheme: selectedMermaidTheme,
-            }
+            fontPreference: selectedFontPreference, // Top-level
+            markdownOptions: {
+                mermaidTheme: selectedMermaidTheme  // Nested under markdownOptions
+            },
+            // pdfOptions: {} // For page format, margins - can be added if needed, server uses defaults
         };
 
         const response = await fetch(`${API_BASE_URL}/api/generate-pdf-from-markdown`, {

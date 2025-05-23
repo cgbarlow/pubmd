@@ -60,30 +60,21 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
     }
 
     try {
-        console.log('Received PDF generation request. Full req.body:', JSON.stringify(req.body, null, 2));
-
-        const { markdown, fontPreference: clientFontPreference, markdownOptions: clientMarkdownOptions, pdfOptions: clientPdfOptionsAny } = req.body as {
+        // Temporarily cast clientPdfOptions to 'any' to bypass TS errors due to stale type defs
+        // The client IS sending mermaidTheme and fontPreference within pdfOptions.
+        const { markdown, pdfOptions: clientPdfOptionsAny } = req.body as {
             markdown: string;
-            fontPreference?: 'sans-serif' | 'serif'; // Expected top-level
-            markdownOptions?: { mermaidTheme?: MermaidTheme }; // Expected top-level
-            pdfOptions?: any; // For other PDF settings like margins, format
+            pdfOptions?: any; // Temporarily 'any'
         };
-        
-        const clientPdfOptions = clientPdfOptionsAny as PdfGenerationOptions; // Cast for known properties if they exist
+        const clientPdfOptions = clientPdfOptionsAny as PdfGenerationOptions; // Cast back for known properties
 
         if (!markdown) {
             res.status(400).send('Missing "markdown" content in request body.');
             return;
         }
 
-        console.log(`Markdown length: ${markdown.length}`);
-        console.log(`Received fontPreference: ${clientFontPreference}`);
-        console.log(`Received markdownOptions: ${JSON.stringify(clientMarkdownOptions)}`);
-        if (clientMarkdownOptions) {
-            console.log(`Received mermaidTheme (from markdownOptions): ${clientMarkdownOptions.mermaidTheme}`);
-        }
-        console.log('Received clientPdfOptions (for layout etc.):', clientPdfOptionsAny);
-
+        console.log(`Received PDF generation request from Markdown. Markdown length: ${markdown.length}`);
+        console.log('Client PDF Options (raw):', clientPdfOptionsAny);
 
         // --- 1. Prepare options for MarkdownService.parse() ---
         const markdownParseOptionsForService: MarkdownParseOptions = {
@@ -91,16 +82,23 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
             breaks: true,
         };
 
-        const selectedMermaidTheme = clientMarkdownOptions?.mermaidTheme || 'light'; // Default to 'light'
-        (markdownParseOptionsForService as any).mermaidTheme = selectedMermaidTheme; // Use 'mermaidTheme' as per core service
-        console.log(`Using Mermaid theme for MarkdownService: ${selectedMermaidTheme}`);
-        
-        if (clientFontPreference) {
-             console.log(`Font preference for MarkdownService (if applicable): ${clientFontPreference}`);
+        // Attempt to use the properties, but acknowledge TS might complain due to stale types
+        // The server build is failing because it doesn't see the updated types from @pubmd/core
+        // Use 'mermaidTheme' as suggested by the error message for 'mermaidRenderTheme' for now.
+        if (clientPdfOptionsAny?.mermaidTheme) {
+            (markdownParseOptionsForService as any).mermaidTheme = clientPdfOptionsAny.mermaidTheme;
+            // Intended: markdownParseOptionsForService.mermaidRenderTheme = clientPdfOptionsAny.mermaidTheme;
+        } else {
+            (markdownParseOptionsForService as any).mermaidTheme = 'light';
         }
 
-
-        console.log('Options for MarkdownService.parse():', markdownParseOptionsForService);
+        if (clientPdfOptionsAny?.fontPreference) {
+            (markdownParseOptionsForService as any).fontPreference = clientPdfOptionsAny.fontPreference;
+        } else {
+            (markdownParseOptionsForService as any).fontPreference = 'sans';
+        }
+        
+        console.log('Options for MarkdownService.parse() (with temporary type workarounds):', markdownParseOptionsForService);
         const htmlStart = Date.now();
         const htmlFromMarkdown = await markdownService.parse(markdown, markdownParseOptionsForService);
         const htmlDuration = Date.now() - htmlStart;
@@ -108,27 +106,24 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
 
         // --- 2. Construct Full HTML with Embedded Fonts for PDF ---
         let fontFaceRules = '';
-        let bodyFontFamily = `sans-serif`; // Default
-        const overallFontPreference = clientFontPreference || 'sans-serif'; 
-        console.log(`Determined overallFontPreference for PDF body: ${overallFontPreference}`);
-
+        let bodyFontFamily = `sans-serif`;
+        const overallFontPreference = clientPdfOptionsAny?.fontPreference || 'sans';
 
         if (serverFontBase64Sans && serverFontBase64Serif) {
             fontFaceRules = `
               @font-face {
-                font-family: 'DejaVu Sans'; /* Simplified name */
+                font-family: 'DejaVu Sans PDF';
                 src: url(data:font/ttf;base64,${serverFontBase64Sans}) format('truetype');
               }
               @font-face {
-                font-family: 'DejaVu Serif'; /* Simplified name */
+                font-family: 'DejaVu Serif PDF';
                 src: url(data:font/ttf;base64,${serverFontBase64Serif}) format('truetype');
               }
             `;
-            bodyFontFamily = overallFontPreference === 'serif' ? `'DejaVu Serif', serif` : `'DejaVu Sans', sans-serif`;
+            bodyFontFamily = overallFontPreference === 'serif' ? `'DejaVu Serif PDF', serif` : `'DejaVu Sans PDF', sans-serif`;
         } else {
-            console.warn("Server-side DejaVu fonts not available for PDF. PDF will use system default fonts.");
+            console.warn("Server-side DejaVu fonts not available for PDF.");
         }
-        console.log(`Applying body font-family to PDF: ${bodyFontFamily}`);
         
         const finalHtmlForPdf = `
             <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>PDF Document</title>
@@ -145,10 +140,6 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
               ul, ol { padding-left: 20pt; margin-left: 0; }
               li { margin-bottom: 5px; }
             </style></head><body>${htmlFromMarkdown}</body></html>`;
-        
-        fs.writeFileSync(path.join(__dirname, 'debug_pdf_content.html'), finalHtmlForPdf);
-        console.log('Debug HTML for PDF saved to: ' + path.join(__dirname, 'debug_pdf_content.html'));
-        // console.log('Debug HTML for PDF saved to debug_pdf_content.html');
 
         // --- 3. Prepare options for PdfService.generatePdfFromHtml() ---
         const pdfLayoutOptions: PdfGenerationOptions = {
