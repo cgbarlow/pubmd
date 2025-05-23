@@ -33,6 +33,13 @@ graph TD;
         end
     end
 
+    subgraph "Key"
+        Done["Done / little work required"]
+        Priority1["Priority 1 - leading"]
+        Priority2["Priority 2 - leading/supporting"]
+        Priority3["Priority 3 - supporting"]
+    end
+
     Eve1 --> BaseReact
     Eve1 --> SparxConv
 
@@ -72,3 +79,4 @@ graph TD;
     style FamilyHistory fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style FamilyTree fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
     style Marama fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
+    style Key fill:#a0960f,stroke:#333,stroke-width:2px,color:#333,clusterBkg:#ffffff
