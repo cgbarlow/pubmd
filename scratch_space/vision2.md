@@ -79,4 +79,4 @@ graph TD;
     style FamilyHistory fill:#0f83a0,stroke:#333,stroke-width:2px,color:#333
     style FamilyTree fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
     style Marama fill:#a0960f,stroke:#333,stroke-width:2px,color:#333
-    style Key fill:#ffffff
+    style Key fill:#000000
