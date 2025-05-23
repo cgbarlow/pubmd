@@ -595,6 +595,17 @@ async function prepareContentForPreviewAndPdf(isNewPreview = true) {
 
     } catch (error) {
         console.error("Error rendering Mermaid diagrams in preview:", error);
+if (mermaidElements && mermaidElements.forEach && originalMermaidCodeStore) {
+    mermaidElements.forEach(el => {
+        const diagramId = el.id;
+        const originalCode = originalMermaidCodeStore.get(diagramId);
+        if (originalCode) {
+            console.log(`Failed to render Mermaid diagram (ID: ${diagramId}). Original code:\n${originalCode}`);
+        } else {
+            console.log(`Failed to render Mermaid diagram (ID: ${diagramId}), original code not found in store.`);
+        }
+    });
+}
         if (document.getElementById('statusMessage')) {
             document.getElementById('statusMessage').textContent = 'Error rendering Mermaid diagrams. Check console.';
             document.getElementById('statusMessage').style.color = 'red';
@@ -645,7 +656,7 @@ async function savePdfHandler() {
 
     try {
         const serverPayload = {
-            markdownContent: markdownText,
+            markdown: markdownText,
             pdfOptions: {
                 fontPreference: selectedFontPreference,
                 mermaidTheme: selectedMermaidTheme,
