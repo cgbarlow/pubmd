@@ -557,74 +557,58 @@ async function prepareContentForPreviewAndPdf(isNewPreview = true) {
     const selectedFontFamily = fontFamilySelector.value === 'serif' ? 'DejaVu Serif' : 'DejaVu Sans';
     const selectedMermaidTheme = mermaidThemeSelector.value || 'light';
 
-    // applyMermaidThemeAndFontForPreview(selectedMermaidTheme, selectedFontFamily); // Temporarily commented out
+    applyMermaidThemeAndFontForPreview(selectedMermaidTheme, selectedFontFamily);
 
     const dirtyHtml = marked.parse(markdownText);
     const cleanHtml = DOMPurify.sanitize(dirtyHtml, {
         USE_PROFILES: { html: true },
-        ADD_TAGS: ['style'], 
-        ADD_ATTR: ['id', 'class'] 
+        ADD_TAGS: ['style'], // Allow style tags for Mermaid themes if needed (though CSS vars are preferred)
+        ADD_ATTR: ['id', 'class'] // Allow id and class for Mermaid diagrams
     });
     
     previewModalContent.innerHTML = cleanHtml;
     previewModalContent.style.fontFamily = selectedFontFamily === 'DejaVu Serif' ? "'DejaVu Serif', serif" : "'DejaVu Sans', sans-serif";
 
-    let mermaidElements; 
     try {
-        if (mermaid && mermaid.mermaidAPI && typeof mermaid.mermaidAPI.reset === 'function') {
-            mermaid.mermaidAPI.reset();
-            console.log("Mermaid API reset.");
-        } else {
-            console.warn("Mermaid API or reset function not available for reset call.");
-        }
+        const themeVariables = extractThemeVariables(previewModalContent);
+        console.log("Extracted theme variables for Mermaid:", themeVariables);
 
         mermaid.initialize({
-            startOnLoad: false, 
-            theme: selectedMermaidTheme, 
+            startOnLoad: false, // We will call run manually
+            theme: 'base', // Use 'base' and supply themeVariables
+            themeVariables: themeVariables,
             fontFamily: selectedFontFamily === 'DejaVu Serif' ? 'DejaVu Serif' : 'DejaVu Sans',
-            securityLevel: 'loose', 
+            // securityLevel: 'loose', // Consider implications if using complex diagrams
         });
 
-        mermaidElements = previewModalContent.querySelectorAll('.mermaid'); 
+        // Re-render Mermaid diagrams
+        const mermaidElements = previewModalContent.querySelectorAll('.mermaid');
         if (mermaidElements.length > 0) {
-            // Delay mermaid.run to allow DOM and styles to settle
-            setTimeout(async () => {
-                try {
-                    await mermaid.run({
-                        nodes: mermaidElements,
-                        suppressErrors: false
-                    });
-                    console.log(`Mermaid diagrams (count: ${mermaidElements.length}) rendered in preview after timeout.`);
-                } catch (runError) {
-                    console.error("Error during delayed mermaid.run:", runError);
-                    if (mermaidElements && mermaidElements.forEach && originalMermaidCodeStore) {
-                        mermaidElements.forEach(el => {
-                            const diagramId = el.id;
-                            const originalCode = originalMermaidCodeStore.get(diagramId);
-                            if (originalCode) {
-                                console.log(`Failed to render Mermaid diagram (ID: ${diagramId}) via delayed run. Original code:\n${originalCode}`);
-                            } else {
-                                console.log(`Failed to render Mermaid diagram (ID: ${diagramId}) via delayed run, original code not found in store.`);
-                            }
-                        });
-                    }
-                    const statusMsg = document.getElementById('statusMessage');
-                    if (statusMsg) {
-                        statusMsg.textContent = 'Error rendering Mermaid diagrams (delayed). Check console.';
-                        statusMsg.style.color = 'red';
-                    }
-                }
-            }, 0);
+            await mermaid.run({
+                nodes: mermaidElements,
+                suppressErrors: false
+            });
+            console.log(`Mermaid diagrams (count: ${mermaidElements.length}) rendered in preview.`);
         } else {
             console.log("No Mermaid diagrams found in preview content.");
         }
 
-    } catch (error) { // This catch block will now primarily catch errors from mermaid.initialize or DOM query
-        console.error("Error preparing or initializing Mermaid for preview (before run):", error);
-        const statusMsg = document.getElementById('statusMessage');
-        if (statusMsg) {
-            statusMsg.textContent = 'Error initializing Mermaid diagrams. Check console.';
-            statusMsg.style.color = 'red';
+    } catch (error) {
+        console.error("Error rendering Mermaid diagrams in preview:", error);
+if (mermaidElements && mermaidElements.forEach && originalMermaidCodeStore) {
+    mermaidElements.forEach(el => {
+        const diagramId = el.id;
+        const originalCode = originalMermaidCodeStore.get(diagramId);
+        if (originalCode) {
+            console.log(`Failed to render Mermaid diagram (ID: ${diagramId}). Original code:\n${originalCode}`);
+        } else {
+            console.log(`Failed to render Mermaid diagram (ID: ${diagramId}), original code not found in store.`);
+        }
+    });
+}
+        if (document.getElementById('statusMessage')) {
+            document.getElementById('statusMessage').textContent = 'Error rendering Mermaid diagrams. Check console.';
+            document.getElementById('statusMessage').style.color = 'red';
         }
     }
     
@@ -666,8 +650,8 @@ async function savePdfHandler() {
     statusMessage.style.color = '#333';
 
     const markdownText = markdownEditor.getValue();
-    const selectedFontPreference = fontFamilySelector.value; 
-    const selectedMermaidTheme = mermaidThemeSelector.value; 
+    const selectedFontPreference = fontFamilySelector.value; // 'sans-serif' or 'serif'
+    const selectedMermaidTheme = mermaidThemeSelector.value; // 'light', 'dark', or 'grey'
     const outputFilename = fileNameInputModal.value || generatePdfFilename(currentFileName);
 
     try {
