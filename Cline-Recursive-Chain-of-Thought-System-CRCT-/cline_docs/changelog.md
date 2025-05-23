@@ -1,3 +1,14 @@
+## 2025-05-23
+
+*   **Mermaid Regression Investigation & Planning:**
+    *   Reviewed problem statement: [`documentation/03_Implementation/problem_statement_MermaidGerationRegression_2250523.md`](../../documentation/03_Implementation/problem_statement_MermaidGerationRegression_2250523.md).
+    *   Reviewed research documents:
+        *   [`documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_gemini.md`](../../documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_gemini.md)
+        *   [`documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_o3.md`](../../documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_o3.md)
+    *   Devised a systematic plan to address both client-side Mermaid preview errors ("Could not find a suitable point") and server-side PDF theming regressions.
+    *   Saved the plan to [`documentation/03_Implementation/plan_MermaidRegressionFix_2250523.md`](../../documentation/03_Implementation/plan_MermaidRegressionFix_2250523.md).
+    *   Updated `activeContext.md` to reflect the new plan and next steps, which require user action to resolve server-side TypeScript environment issues before AI proceeds with code changes.
+
 ## 2025-05-22 (Continued)
 
 *   **UI Enhancement: Fixed Dark Mode Flash (FOUC):**
@@ -123,7 +134,7 @@
     *   This change aligns with the strategy outlined in `documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_take8_pivot_o3_mermaid_text_only.md`.
     *   **Affected File:** `nodejs_projects/core/src/services/markdown/markdown.service.ts`
 *   **Updated Playwright PDF Engine for Mermaid SVG Correction:**
-    *   Replaced the content of `nodejs_projects/core/src/services/pdf/playwright.engine.ts` with an updated version from research document [`documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_gemini.md`](documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_gemini.md).
+    *   Replaced the content of `nodejs_projects/core/src/services/pdf/playwright.engine.ts` with an updated version from research document [`documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_gemini.md`](../../documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_gemini.md).
     *   The new engine includes in-browser JavaScript execution (`page.evaluate`) to:
         *   Correctly size `<foreignObject>` elements in Mermaid SVGs.
         *   Fix `NaN` values in `transform` attributes.
