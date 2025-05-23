@@ -34,13 +34,6 @@ graph TD;
             end
         end
 
-        subgraph "Key"
-            Done["Done / little work required"]
-            Priority1["Priority 1 - leading"]
-            Priority2["Priority 2 - leading/supporting"]
-            Priority3["Priority 3 - supporting"]
-        end
-
         Eve1 --> BaseReact
         Eve1 --> SparxConv
 
@@ -67,6 +60,13 @@ graph TD;
         Marama --> RagMod
         Marama --> FamilyHistory
         FamilyTree <--> FamilyHistory
+    end
+
+    subgraph "Key"
+        Done["Done / little work required"]
+        Priority1["Priority 1 - leading"]
+        Priority2["Priority 2 - leading/supporting"]
+        Priority3["Priority 3 - supporting"]
     end
 
     %% Styling
