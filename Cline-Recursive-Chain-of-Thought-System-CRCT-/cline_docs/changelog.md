@@ -1,7 +1,8 @@
 ## 2025-05-24
 
+*   **Architect/Strategy**: Created strategy document [`cline_docs/tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md`](./tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md) detailing the plan for `pubmd/server` auto-start via `systemd` socket activation and auto-shutdown based on inactivity.
 *   **Core Package Verification Complete:**
-    *   Task: [`Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md`](./tasks/Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md:0)
+    *   Task: [`Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md`](./tasks/Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md)
     *   Confirmed that the `@pubmd/core` package build artifacts are present in `nodejs_projects/core/dist/` (containing `cjs/`, `esm/`, and `types/` subdirectories).
     *   The package is now considered available for import by the web UI.
     *   Updated task file status to "Completed".
