@@ -53,20 +53,20 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response): Promise<void> => {
-    console.log('[PDF GEN] Request received for /api/generate-pdf-from-markdown');
-    // Removed immediate dummy send logic from here. Original flow restored.
+    console.log('Simplified PDF gen endpoint hit. Body keys:', Object.keys(req.body || {}));
+    console.log('Request headers:', JSON.stringify(req.headers, null, 2));
+    res.status(200).json({ message: "Simplified endpoint reached successfully. PDF generation bypassed." });
+    return; // Bypass all original PDF generation logic
 
-    // Original logic below is now completely bypassed by the return above.
+    // Original logic starts below, now effectively commented out by the return above
     if (!pdfService || !markdownService) {
-        console.error('[PDF GEN] Core services (PdfService or MarkdownService) not available.');
+        console.error('Core services not available.');
         res.status(500).send('Core services are not available.');
         return;
     }
-    console.log('[PDF GEN] Core services checked, available.');
 
     try {
-        console.log('[PDF GEN] Entering main try block.');
-        console.log('[PDF GEN] Attempting to parse request body. Full req.body:', JSON.stringify(req.body, null, 2).substring(0, 500) + '...'); // Log first 500 chars
+        console.log('Received PDF generation request. Full req.body:', JSON.stringify(req.body, null, 2));
 
         const { markdown, fontPreference: clientFontPreference, markdownOptions: clientMarkdownOptions, pdfOptions: clientPdfOptionsAny } = req.body as {
             markdown: string;
@@ -76,22 +76,22 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
         };
         
         const clientPdfOptions = clientPdfOptionsAny as PdfGenerationOptions; // Cast for known properties if they exist
-        console.log('[PDF GEN] Request body destructured.');
 
         if (!markdown) {
-            console.error('[PDF GEN] Missing "markdown" content in request body.');
             res.status(400).send('Missing "markdown" content in request body.');
             return;
         }
-        console.log('[PDF GEN] Markdown content present.');
 
         console.log(`Markdown length: ${markdown.length}`);
         console.log(`Received fontPreference: ${clientFontPreference}`);
         console.log(`Received markdownOptions: ${JSON.stringify(clientMarkdownOptions)}`);
+        /*
+        // This block is currently unreachable due to the simplified endpoint logic above,
+        // and causes a TS error. Commenting out for the test.
         if (clientMarkdownOptions) {
-            // Added optional chaining to satisfy TS for the bypassed original code
-            console.log(`Received mermaidTheme (from markdownOptions): ${clientMarkdownOptions?.mermaidTheme}`);
+            console.log(`Received mermaidTheme (from markdownOptions): ${clientMarkdownOptions.mermaidTheme}`);
         }
+        */
         console.log('Received clientPdfOptions (for layout etc.):', clientPdfOptionsAny);
 
 
@@ -109,12 +109,12 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
              console.log(`Font preference for MarkdownService (if applicable): ${clientFontPreference}`);
         }
 
-        console.log('[PDF GEN] Preparing options for MarkdownService.parse():', JSON.stringify(markdownParseOptionsForService));
+
+        console.log('Options for MarkdownService.parse():', markdownParseOptionsForService);
         const htmlStart = Date.now();
-        console.log('[PDF GEN] Calling markdownService.parse()...');
         const htmlFromMarkdown = await markdownService.parse(markdown, markdownParseOptionsForService);
         const htmlDuration = Date.now() - htmlStart;
-        console.log(`[PDF GEN] Markdown parsed to HTML in ${htmlDuration}ms. HTML length: ${htmlFromMarkdown ? htmlFromMarkdown.length : 'null/undefined'}`);
+        console.log(`Markdown parsed to HTML in ${htmlDuration}ms. HTML length: ${htmlFromMarkdown.length}`);
 
         // --- 2. Construct Full HTML with Embedded Fonts for PDF ---
         let fontFaceRules = '';
@@ -155,9 +155,9 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
               ul, ol { padding-left: 20pt; margin-left: 0; }
               li { margin-bottom: 5px; }
             </style></head><body>${htmlFromMarkdown}</body></html>`;
-       
-       // fs.writeFileSync(path.join(__dirname, 'debug_pdf_content.html'), finalHtmlForPdf); // Temporarily comment out
-       // console.log('Debug HTML for PDF saved to: ' + path.join(__dirname, 'debug_pdf_content.html')); // Temporarily comment out
+        
+        fs.writeFileSync(path.join(__dirname, 'debug_pdf_content.html'), finalHtmlForPdf);
+        console.log('Debug HTML for PDF saved to: ' + path.join(__dirname, 'debug_pdf_content.html'));
         // console.log('Debug HTML for PDF saved to debug_pdf_content.html');
 
         // --- 3. Prepare options for PdfService.generatePdfFromHtml() ---
@@ -169,39 +169,20 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
             printBackground: clientPdfOptions?.printBackground === undefined ? true : clientPdfOptions.printBackground,
             filename: clientPdfOptionsAny?.filename || 'document_from_md.pdf'
         };
-        console.log('[PDF GEN] PDF layout options prepared:', JSON.stringify(pdfLayoutOptions));
         
         const pdfGenerateTimeStart = Date.now();
-        console.log('[PDF GEN] Calling pdfService.generatePdfFromHtml()...');
         const pdfBlob = await pdfService.generatePdfFromHtml(finalHtmlForPdf, pdfLayoutOptions);
         const pdfGenerateDuration = Date.now() - pdfGenerateTimeStart;
-        console.log(`[PDF GEN] PDF generated from final HTML in ${pdfGenerateDuration}ms. Blob type: ${pdfBlob?.type}, Blob size: ${pdfBlob?.size}`);
+        console.log(`PDF generated from final HTML in ${pdfGenerateDuration}ms.`);
 
-        console.log('[PDF GEN] Converting PDF Blob to Buffer...');
-        const generatedPdfBuffer = Buffer.from(await pdfBlob.arrayBuffer());
-        console.log(`[PDF GEN] PDF Buffer created, length: ${generatedPdfBuffer.length}. Setting response headers.`);
-        
-        // Dummy PDF sending logic removed from here.
-        // Removed 200ms delay and associated logs
-        // Removed explicit res.end() and associated logs
-
+        const pdfBuffer = Buffer.from(await pdfBlob.arrayBuffer());
         res.setHeader('Content-Type', 'application/pdf');
-        // Restore original dynamic filename
         res.setHeader('Content-Disposition', `attachment; filename="${pdfLayoutOptions.filename}"`);
-        console.log('[PDF GEN] Sending PDF response...');
-        res.send(generatedPdfBuffer); // Restore sending the generated buffer
-        console.log('[PDF GEN] PDF response sent.');
+        res.send(pdfBuffer);
 
     } catch (error: any) {
-        console.error('[PDF GEN] CRITICAL ERROR in /api/generate-pdf-from-markdown:', error);
-        console.error('[PDF GEN] Error stack:', error.stack);
-        // Ensure a response is sent even if headers were already partially set, though Express might handle this.
-        if (!res.headersSent) {
-            res.status(500).send(`Error generating PDF from Markdown: ${error.message || 'Unknown error'}`);
-        } else {
-            console.error('[PDF GEN] Headers already sent, cannot send error response normally.');
-            // If headers are sent, we can't change status or body. The connection might just terminate.
-        }
+        console.error('Error in /api/generate-pdf-from-markdown:', error);
+        res.status(500).send(`Error generating PDF from Markdown: ${error.message || 'Unknown error'}`);
     }
 });
 

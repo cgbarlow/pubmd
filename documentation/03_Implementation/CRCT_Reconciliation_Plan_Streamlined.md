@@ -50,3 +50,22 @@
     *   **Action**: Update `/workspaces/pubmd/cline_docs/activeContext.md` to summarize the reconciliation.
     *   **Action**: Update `/workspaces/pubmd/.clinerules` `[LAST_ACTION_STATE]` (e.g., `last_action: "CRCT v7.8 Streamlined Reconciliation Complete"`).
     *   **Rationale**: Standard MUP.
+
+---
+
+## Learnings from WebUI PDF Generation Debugging (Task HDTA_Task_WebUIIntegration / Reversion Debugging) - 2025-05-24
+
+**Context:**
+During the debugging of the "Save PDF" functionality in the WebUI (related to `HDTA_Task_WebUIIntegration_20250519_115200.md` and subsequent reversion debugging), a persistent "TypeError: Failed to fetch" error was observed on the client-side, even though server-side logs indicated that the PDF generation process and the `res.send()` operation were completing.
+
+**Root Cause Identified:**
+The "TypeError: Failed to fetch" was ultimately traced back to a synchronous file write operation (`fs.writeFileSync`) within the Node.js Express request handler for `/api/generate-pdf-from-markdown`. This operation was used to save a debug HTML file.
+
+**Key Learning:**
+Synchronous I/O operations (e.g., `fs.writeFileSync`) in a Node.js asynchronous request handler can critically block the event loop. When such blocking occurs, especially in conjunction with other resource-intensive asynchronous operations like Playwright for PDF generation, it can destabilize the server's state. This destabilization can prevent Node.js/Express from reliably completing subsequent network operations, such as flushing the HTTP response buffer to the client. Consequently, the client connection may be terminated or reset prematurely, leading to generic network errors like "TypeError: Failed to fetch", even if the server-side application code itself does not throw an explicit error and appears to complete all its programmed steps.
+
+**Solution/Best Practice Reinforced:**
+- All I/O operations within Node.js request handlers, particularly those involving potentially long-running or resource-intensive tasks, should be performed asynchronously (e.g., using `fs.promises.writeFile`, streams, or other non-blocking alternatives).
+- In this specific case, commenting out the `fs.writeFileSync` call resolved the "Failed to fetch" error, allowing the PDF to be successfully generated and downloaded. If the debug file is necessary, it should be written asynchronously.
+
+This incident highlights the subtle but severe impact synchronous code can have in an asynchronous environment like Node.js, and underscores the importance of maintaining a non-blocking event loop for robust server behavior.
