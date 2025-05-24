@@ -1,11 +1,11 @@
 [COUNT]
-23
+28
 
 [LAST_ACTION_STATE]
-last_action: "Completed all steps in Execution_Systemd_Socket_File.md"
+last_action: "Halted systemd deployment task. Pivoting to Netlify deployment strategy."
 current_phase: "Execution"
-next_action: "Select next Execution task or transition phase"
-next_phase: "Execution"
+next_action: "Create new strategy task for Netlify API refactor."
+next_phase: "Strategy"
 
 ---
 
@@ -77,6 +77,12 @@ next_phase: "Execution"
 - MUP completion signifies a clean state checkpoint.
 - Client-side script for UI interaction is `src/web/js/main.js`, not `src/web/script.js`. Task instructions should be updated if they refer to the old path.
 - User feedback: Avoid updating `.clinerules` after every minor sub-task. Update at more significant checkpoints, like task completion.
+- Successfully created `systemd_units/pubmd.service` and verified port consistency with `pubmd.socket`.
+- Confirmed server-side socket activation logic in `nodejs_projects/server/src/index.ts` is complete.
+- Confirmed server-side graceful shutdown logic in `nodejs_projects/server/src/index.ts` is complete.
+- Confirmed server-side inactivity termination logic in `nodejs_projects/server/src/index.ts` is complete.
+- Successfully built the server at `nodejs_projects/server/` and assumed `dist/index.js` was created.
+- Pivoted deployment strategy from systemd to Netlify Functions due to target environment clarification. Systemd tasks are superseded. Server API requires refactoring.
 
 [Character_Definitions]
 

@@ -1,0 +1,32 @@
+[Unit]
+Description=PubMD API Server
+Requires=pubmd.socket
+After=network.target pubmd.socket
+
+[Service]
+Type=simple ; Consider 'notify' if server implements sd_notify for readiness. Defaulting to 'simple'.
+
+# --- PLACEHOLDERS - Configure during deployment ---
+User=pubmd_user
+Group=pubmd_group
+WorkingDirectory=/opt/pubmd/server_deploy/nodejs_projects/server
+ExecStart=/usr/bin/node /opt/pubmd/server_deploy/nodejs_projects/server/dist/index.js
+# --- END PLACEHOLDERS ---
+
+Environment="NODE_ENV=production"
+Environment="PORT=3001" ; Should match the port in pubmd.socket and server config
+# Example: Environment="INACTIVITY_TIMEOUT_MS=1800000" ; 30 minutes
+# Example: Environment="GRACEFUL_SHUTDOWN_TIMEOUT_MS=30000" ; 30 seconds
+
+StandardOutput=journal
+StandardError=journal
+Restart=on-failure
+TimeoutStopSec=35 ; Should be slightly longer than GRACEFUL_SHUTDOWN_TIMEOUT_MS in server
+
+; Optional Security Enhancements (uncomment and test if desired)
+; ProtectSystem=full
+; PrivateTmp=true
+; NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

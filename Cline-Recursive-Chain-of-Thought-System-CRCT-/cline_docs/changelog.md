@@ -1,5 +1,36 @@
 ## 2025-05-24 (Continued)
+*   **Strategic Pivot: Deployment Target Changed to Netlify**:
+    *   During execution of `tasks/server_auto_start_stop/Execution_Deploy_Systemd_Units.md`, it was clarified that the long-term deployment target is Netlify, not a traditional server environment requiring `systemd`.
+    *   **Impact**: The `systemd`-based server auto-start/stop strategy and related tasks are superseded. The `@pubmd/server` API will need to be refactored to use Netlify Functions. Playwright integration for PDF generation will need to be adapted for the serverless environment (e.g., using `chrome-aws-lambda`).
+    *   **Action**: Halted `Execution_Deploy_Systemd_Units.md`. Initiating a new strategy phase to plan the API refactor for Netlify.
+    *   Affected Files: [`Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs/activeContext.md`](Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs/activeContext.md:1) updated. `systemd`-related files ([`systemd_units/pubmd.socket`](systemd_units/pubmd.socket:1), [`systemd_units/pubmd.service`](systemd_units/pubmd.service:1)) and tasks are now considered historical or for alternative deployments only.
 
+*   **Server Build**:
+    *   Task: [`./tasks/server_auto_start_stop/Execution_Build_Server.md`](./tasks/server_auto_start_stop/Execution_Build_Server.md)
+    *   Successfully ran `npm install` and `npm run build` in `nodejs_projects/server/`.
+    *   Build artifacts assumed to be correctly generated in `nodejs_projects/server/dist/` based on successful exit code and asset copy message.
+    *   Marked task as complete in the instruction file.
+*   **Server Inactivity Self-Termination Implementation**:
+    *   Task: [`./tasks/server_auto_start_stop/Execution_Server_Inactivity_Termination.md`](./tasks/server_auto_start_stop/Execution_Server_Inactivity_Termination.md)
+    *   Verified that `nodejs_projects/server/src/index.ts` correctly implements inactivity timer logic (`INACTIVITY_TIMEOUT_MS`, `inactivityTimerId`, `resetInactivityTimer()` function, and middleware).
+    *   Confirmed timer is reset on request and calls `shutdownGracefully` on timeout.
+    *   Marked task as complete in the instruction file.
+*   **Server Graceful Shutdown Implementation**:
+    *   Task: [`./tasks/server_auto_start_stop/Execution_Server_Graceful_Shutdown.md`](./tasks/server_auto_start_stop/Execution_Server_Graceful_Shutdown.md)
+    *   Verified that `nodejs_projects/server/src/index.ts` correctly implements `shutdownGracefully` function and registers handlers for `SIGINT` and `SIGTERM`.
+    *   Confirmed logic for `isShuttingDown` flag, shutdown timeout, forceful exit, and `serverInstance.close()` handling.
+    *   Marked task as complete in the instruction file.
+*   **Server Socket Activation Implementation**:
+    *   Task: [`./tasks/server_auto_start_stop/Execution_Server_Socket_Activation.md`](./tasks/server_auto_start_stop/Execution_Server_Socket_Activation.md)
+    *   Verified that `nodejs_projects/server/src/index.ts` correctly implements server startup logic for both direct port listening and systemd socket activation (using `fd: 3`).
+    *   Confirmed `serverInstance` is captured and logging indicates the startup mode.
+    *   Client-side UI handling for potential server wake-up delays was deemed sufficient by existing implementation.
+    *   Marked task as complete in the instruction file.
+*   **Systemd Service File Creation**:
+    *   Task: [`./tasks/server_auto_start_stop/Execution_Systemd_Service_File.md`](./tasks/server_auto_start_stop/Execution_Systemd_Service_File.md)
+    *   Created `systemd_units/pubmd.service` with the specified content.
+    *   Verified that the `PORT` (3001) in `pubmd.service` matches `ListenStream` in `systemd_units/pubmd.socket`.
+    *   Marked all steps in the task instruction file as complete.
 *   **MUP**: Performed Mandatory Update Protocol due to context window usage (28%).
     *   Updated [`./activeContext.md`](./activeContext.md) to reflect completion of the Strategy phase for the "Server Auto-Start/Stop Feature" and readiness for Execution.
 *   **Strategy/Planning**: Completed focused strategy session for the "Server Auto-Start/Stop Feature".

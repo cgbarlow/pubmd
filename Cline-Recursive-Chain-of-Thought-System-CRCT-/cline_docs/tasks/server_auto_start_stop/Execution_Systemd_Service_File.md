@@ -1,6 +1,7 @@
 # Task: Execution_Systemd_Service_File - Create `pubmd.service` Systemd Unit File
    **Parent:** `../../../Strategy_Task_Server_Auto_Start_Stop_20250524.md` (Phase 3)
    **Children:**
+   **Status:** Completed
 
 ## Objective
 Create the `pubmd.service` systemd unit file required to define how the PubMD API server is started and managed by `systemd`, especially when triggered by `pubmd.socket`.
@@ -12,8 +13,8 @@ Create the `pubmd.service` systemd unit file required to define how the PubMD AP
 - Basic `systemd.service` unit file syntax knowledge is helpful.
 
 ## Steps
-1.  Create a new file named `pubmd.service` (this task instruction file is `Execution_Systemd_Service_File.md`, the output is `pubmd.service`).
-2.  Populate the `pubmd.service` file with the following content, paying close attention to placeholders:
+1.  [DONE] Create a new file named `pubmd.service` (this task instruction file is `Execution_Systemd_Service_File.md`, the output is `pubmd.service`).
+2.  [DONE] Populate the `pubmd.service` file with the following content, paying close attention to placeholders:
     ```ini
     [Unit]
     Description=PubMD API Server
@@ -48,10 +49,10 @@ Create the `pubmd.service` systemd unit file required to define how the PubMD AP
     [Install]
     WantedBy=multi-user.target
     ```
-3.  Ensure all placeholder values (`User`, `Group`, `WorkingDirectory`, `ExecStart`) are clearly marked with comments indicating they need to be replaced during deployment.
-4.  Verify that `TimeoutStopSec` is appropriate (e.g., slightly longer than any graceful shutdown timeout configured in the Node.js application itself).
-5.  Confirm the `PORT` environment variable matches the one in `pubmd.socket`.
-6.  Add comments for any other environment variables that the server might need (e.g., `INACTIVITY_TIMEOUT_MS`, `GRACEFUL_SHUTDOWN_TIMEOUT_MS`).
+3.  [DONE] Ensure all placeholder values (`User`, `Group`, `WorkingDirectory`, `ExecStart`) are clearly marked with comments indicating they need to be replaced during deployment.
+4.  [DONE] Verify that `TimeoutStopSec` is appropriate (e.g., slightly longer than any graceful shutdown timeout configured in the Node.js application itself).
+5.  [DONE] Confirm the `PORT` environment variable matches the one in `pubmd.socket`.
+6.  [DONE] Add comments for any other environment variables that the server might need (e.g., `INACTIVITY_TIMEOUT_MS`, `GRACEFUL_SHUTDOWN_TIMEOUT_MS`).
 
 ## Dependencies
 - Requires:

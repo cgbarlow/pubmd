@@ -1,62 +1,45 @@
 # Active Context
 
-**Current Task**: Concluding Strategy Phase for "Server Auto-Start/Stop Feature".
+**Current Task**: Halting Task 7: `tasks/server_auto_start_stop/Execution_Deploy_Systemd_Units.md` due to strategic pivot to Netlify deployment.
 
-**Overall Cycle Goals (Strategy Phase - Focused Session for Server Auto-Start/Stop):**
-1.  Review and finalize the strategy outlined in `cline_docs/tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md`. (Completed)
-2.  Prepare for the creation of detailed Execution Tasks based on this strategy. (Completed - All 9 Execution Tasks created)
-3.  Define the execution sequence for these tasks. (Completed)
+**Strategic Pivot**: The target deployment platform has been identified as Netlify. This supersedes the previous `systemd`-based auto-start/stop strategy for the server. A new strategy phase is required to plan the refactor of the `@pubmd/server` API for Netlify Functions.
 
-**`current_planning_area`**: Server Auto-Start/Stop Feature
+**Previous `current_planning_area`**: Server Auto-Start/Stop Feature (using `systemd`) - Now Superseded.
+**New `current_planning_area`**: API Refactor for Netlify Functions Deployment.
 
-**Strategy Phase Progress (Server Auto-Start/Stop Feature):**
-*   **Step 0 (Initialize Strategy Cycle): Completed.**
-*   **Step 1 (Select Area for Focused Planning): Completed.**
-*   **Step 2 (Focused Dependency Analysis for Selected Area): Completed.**
-*   **Step 3 & 4 (Review/Refine HDTA & Decompose into Atomic Tasks): Completed.**
-    *   The strategy document `cline_docs/tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md` was reviewed.
-    *   Its conceptual phases have been decomposed and formalized into 9 Execution Task files:
-        1.  `tasks/server_auto_start_stop/Execution_Server_Socket_Activation.md`
-        2.  `tasks/server_auto_start_stop/Execution_Server_Graceful_Shutdown.md`
-        3.  `tasks/server_auto_start_stop/Execution_Server_Inactivity_Termination.md`
-        4.  `tasks/server_auto_start_stop/Execution_Systemd_Socket_File.md`
-        5.  `tasks/server_auto_start_stop/Execution_Systemd_Service_File.md`
-        6.  `tasks/server_auto_start_stop/Execution_Build_Server.md`
-        7.  `tasks/server_auto_start_stop/Execution_Deploy_Systemd_Units.md`
-        8.  `tasks/server_auto_start_stop/Execution_Test_Server_Functionality.md`
-        9.  `tasks/server_auto_start_stop/Execution_Document_Feature.md`
-*   **Step 5 (Sequence Atomic Tasks): Completed.**
+**Execution Phase Progress (Server Auto-Start/Stop Feature - `systemd` approach - Superseded):**
 
-**Finalized Execution Sequence for "Server Auto-Start/Stop Feature":**
+*   **Task 1: `tasks/server_auto_start_stop/Execution_Server_Socket_Activation.md`** (Completed, but logic may not be directly applicable to Netlify)
+*   **Task 2: `tasks/server_auto_start_stop/Execution_Server_Graceful_Shutdown.md`** (Completed, but server lifecycle is different on Netlify)
+*   **Task 3: `tasks/server_auto_start_stop/Execution_Server_Inactivity_Termination.md`** (Completed, but inactivity logic is handled by Netlify platform)
+*   **Task 4: `tasks/server_auto_start_stop/Execution_Systemd_Socket_File.md`** (Completed, but `systemd` files not used for Netlify)
+*   **Task 5: `tasks/server_auto_start_stop/Execution_Systemd_Service_File.md`** (Completed, but `systemd` files not used for Netlify)
+*   **Task 6: `tasks/server_auto_start_stop/Execution_Build_Server.md`** (Completed, server build artifacts are still relevant for extracting logic)
+*   **Task 7: `tasks/server_auto_start_stop/Execution_Deploy_Systemd_Units.md`** (Halted - Not applicable to Netlify)
+*   **Task 8: `tasks/server_auto_start_stop/Execution_Test_Server_Functionality.md`** (Pending - Testing approach will change for Netlify)
+*   **Task 9: `tasks/server_auto_start_stop/Execution_Document_Feature.md`** (Pending - Documentation will need to reflect Netlify deployment)
 
-1.  **Parallel Group 1 (Server Code Modifications):**
+**Superseded Execution Sequence for "Server Auto-Start/Stop Feature" (`systemd`):**
+(The previous sequence for systemd is now considered historical context and not the active plan.)
+1.  **Parallel Group 1 (Server Code Modifications):** (Completed)
     *   Task 1: `tasks/server_auto_start_stop/Execution_Server_Socket_Activation.md`
-    *   Task 2: `tasks/server_auto_start_stop/Execution_Server_Graceful_Shutdown.md` (depends on Task 1)
-    *   Task 3: `tasks/server_auto_start_stop/Execution_Server_Inactivity_Termination.md` (depends on Task 1, Task 2)
-
-2.  **Parallel Group 2 (Systemd File Creation - can be done concurrently with Group 1):**
+    *   Task 2: `tasks/server_auto_start_stop/Execution_Server_Graceful_Shutdown.md`
+    *   Task 3: `tasks/server_auto_start_stop/Execution_Server_Inactivity_Termination.md`
+2.  **Parallel Group 2 (Systemd File Creation):** (Completed)
     *   Task 4: `tasks/server_auto_start_stop/Execution_Systemd_Socket_File.md`
-    *   Task 5: `tasks/server_auto_start_stop/Execution_Systemd_Service_File.md` (depends on Task 4)
-
-3.  **Sequential Step 3 (Build - depends on Group 1 completion):**
-    *   Task 6: `tasks/server_auto_start_stop/Execution_Build_Server.md` (depends on Tasks 1, 2, 3)
-
-4.  **Sequential Step 4 (Deploy - depends on Group 2 and Step 3 completion):**
-    *   Task 7: `tasks/server_auto_start_stop/Execution_Deploy_Systemd_Units.md` (depends on Tasks 4, 5, 6)
-
-5.  **Sequential Step 5 (Test - depends on Step 4 completion):**
-    *   Task 8: `tasks/server_auto_start_stop/Execution_Test_Server_Functionality.md` (depends on Task 7)
-
-6.  **Sequential Step 6 (Document - depends on Step 5 completion):**
-    *   Task 9: `tasks/server_auto_start_stop/Execution_Document_Feature.md` (depends on Task 8)
+    *   Task 5: `tasks/server_auto_start_stop/Execution_Systemd_Service_File.md`
+3.  **Sequential Step 3 (Build):** (Completed)
+    *   Task 6: `tasks/server_auto_start_stop/Execution_Build_Server.md`
+4.  **Sequential Step 4 (Deploy):**
+    *   Task 7: `tasks/server_auto_start_stop/Execution_Deploy_Systemd_Units.md` (Halted)
+5.  **Sequential Step 5 (Test):**
+    *   Task 8: `tasks/server_auto_start_stop/Execution_Test_Server_Functionality.md` (Blocked, strategy change)
+6.  **Sequential Step 6 (Document):**
+    *   Task 9: `tasks/server_auto_start_stop/Execution_Document_Feature.md` (Blocked, strategy change)
 
 **Current State & Next Steps:**
-*   The Strategy phase for the "Server Auto-Start/Stop Feature" is now complete.
-*   All Execution Tasks have been defined and sequenced.
-*   The `Strategy_Task_Server_Auto_Start_Stop_20250524.md` is considered fully planned.
-*   The system is ready to transition to the Execution phase to implement these tasks.
-
-**MUP Trigger**: Context window usage at 28%.
-**Action**: Performing Mandatory Update Protocol.
+*   The `systemd`-based deployment strategy for server auto-start/stop is halted due to a pivot to Netlify as the target deployment platform.
+*   The immediate next step is to enter a new Strategy phase to plan the refactor of the `@pubmd/server` API into Netlify Functions. This will include planning how to integrate Playwright for PDF generation within the Netlify Functions environment.
+*   A new task `Strategy_Task_Netlify_API_Refactor_YYYYMMDD.md` (or similar) should be created.
 
 **Server-Side Build Issue (Ongoing - Prerequisite for PDF Theming Fix if revisited):** (No changes this turn)
