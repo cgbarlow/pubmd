@@ -81,10 +81,17 @@ graph TD
     main_js --> md_proc
     main_js --> pdf_svc
 
-    editor --> core %% For DOM elements
-    ui --> core %% For utils (prefs) and DOM elements
-    md_proc --> core %% For utils
-    pdf_svc --> core %% For config, utils, DOM elements
+    %% For DOM elements
+    editor --> core
+
+    %% For utils (prefs) and DOM elements
+    ui --> core 
+    
+    %% For utils
+    md_proc --> core 
+    
+    %% For config, utils, DOM elements
+    pdf_svc --> core 
 
     %% External Libs Conceptual
     ExternalLibraries{{External Libraries: CodeMirror, Marked, DOMPurify, Mermaid}}
