@@ -1,11 +1,11 @@
 [COUNT]
-12
+17
 
 [LAST_ACTION_STATE]
-last_action: "MUP: Completed 'Verify Core Package Availability' (Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md). Updated activeContext.md, changelog.md."
-current_phase: "Execution"
-next_action: "Load next prioritized task from CRCT task list."
-next_phase: "Execution"
+last_action: "Completed outlining Execution Tasks for Server Auto-Start/Stop Feature based on Strategy_Task_Server_Auto_Start_Stop_20250524.md."
+current_phase: "Strategy"
+next_action: "Formalize Outlined Execution Tasks into *.md files or Conclude Focused Strategy Session"
+next_phase: "Strategy"
 
 ---
 
@@ -69,6 +69,11 @@ next_phase: "Execution"
 - **Mermaid Theming Fix**: To dynamically update Mermaid diagram colors when themes change: 1. Remove initial static `mermaid.initialize()`. 2. Create `extractThemeVariables(rootElement)` to get computed CSS values for the current theme. 3. In the rendering function, *after* applying theme classes to the diagram container: call `mermaid.mermaidAPI.reset()` (Mermaid >=10.3), then `mermaid.initialize({ theme: 'base', themeVariables: <extracted_vars> })`, then `mermaid.run()`. This ensures Mermaid uses fresh, resolved color values from CSS variables for each render.
 - CRCT core files (`.clinerules`, `activeContext.md`, `changelog.md`, etc.) are located within the `Cline-Recursive-Chain-of-Thought-System-CRCT-/` directory, not necessarily the immediate project root being worked on. Verify paths carefully.
 - When a tool like `search_and_replace` reports 'No changes needed', it's important to verify the file's actual content with `read_file` before assuming the desired state, as the search string might not have matched for subtle reasons.
+- MUP is crucial for maintaining context and state, especially when context window usage is high.
+- `execute_command` for `dependency_processor.py` subcommands:
+    - Must `cd Cline-Recursive-Chain-of-Thought-System-CRCT-` first if the terminal's CWD is the parent project root.
+    - The `execute_command` tool will remember the CWD change for subsequent commands in the same interaction.
+    - `show-keys` does not take a `--filter` argument; output must be manually parsed.
 
 [Character_Definitions]
 

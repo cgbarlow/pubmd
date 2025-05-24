@@ -1,8 +1,29 @@
+## 2025-05-24 (Continued)
+
+*   **Strategy/Planning**: Completed focused strategy session for the "Server Auto-Start/Stop Feature".
+    *   Reviewed and confirmed the plan outlined in [`./tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md`](./tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md).
+    *   Created 9 detailed Execution Task files based on the strategy:
+        *   [`./tasks/server_auto_start_stop/Execution_Server_Socket_Activation.md`](./tasks/server_auto_start_stop/Execution_Server_Socket_Activation.md) (Updated to include client-side UI feedback for server wake-up)
+        *   [`./tasks/server_auto_start_stop/Execution_Server_Graceful_Shutdown.md`](./tasks/server_auto_start_stop/Execution_Server_Graceful_Shutdown.md)
+        *   [`./tasks/server_auto_start_stop/Execution_Server_Inactivity_Termination.md`](./tasks/server_auto_start_stop/Execution_Server_Inactivity_Termination.md)
+        *   [`./tasks/server_auto_start_stop/Execution_Systemd_Socket_File.md`](./tasks/server_auto_start_stop/Execution_Systemd_Socket_File.md)
+        *   [`./tasks/server_auto_start_stop/Execution_Systemd_Service_File.md`](./tasks/server_auto_start_stop/Execution_Systemd_Service_File.md)
+        *   [`./tasks/server_auto_start_stop/Execution_Build_Server.md`](./tasks/server_auto_start_stop/Execution_Build_Server.md)
+        *   [`./tasks/server_auto_start_stop/Execution_Deploy_Systemd_Units.md`](./tasks/server_auto_start_stop/Execution_Deploy_Systemd_Units.md)
+        *   [`./tasks/server_auto_start_stop/Execution_Test_Server_Functionality.md`](./tasks/server_auto_start_stop/Execution_Test_Server_Functionality.md) (Updated to include testing client-side UI feedback)
+        *   [`./tasks/server_auto_start_stop/Execution_Document_Feature.md`](./tasks/server_auto_start_stop/Execution_Document_Feature.md)
+    *   Updated session tracker files:
+        *   [`./hdta_review_progress_20250524_175705.md`](./hdta_review_progress_20250524_175705.md)
+        *   [`./hierarchical_task_checklist_20250524_175705.md`](./hierarchical_task_checklist_20250524_175705.md)
+    *   Defined the execution sequence for these tasks and recorded it in [`./activeContext.md`](./activeContext.md).
+    *   The "Server Auto-Start/Stop Feature" is now fully planned and ready for the Execution phase.
+*   **MUP**: Performed Mandatory Update Protocol due to context window usage (29%). Updated [`./activeContext.md`](./activeContext.md:1) to reflect current state and pending clarification on task `cline_docs/tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md`.
+
 ## 2025-05-24
 
-*   **Architect/Strategy**: Created strategy document [`cline_docs/tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md`](./tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md) detailing the plan for `pubmd/server` auto-start via `systemd` socket activation and auto-shutdown based on inactivity.
+*   **Architect/Strategy**: Created strategy document [`./tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md`](./tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md:1) detailing the plan for `pubmd/server` auto-start via `systemd` socket activation and auto-shutdown based on inactivity.
 *   **Core Package Verification Complete:**
-    *   Task: [`Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md`](./tasks/Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md)
+    *   Task: [`./tasks/Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md`](./tasks/Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md:1)
     *   Confirmed that the `@pubmd/core` package build artifacts are present in `nodejs_projects/core/dist/` (containing `cjs/`, `esm/`, and `types/` subdirectories).
     *   The package is now considered available for import by the web UI.
     *   Updated task file status to "Completed".
@@ -21,12 +42,12 @@
 ## 2025-05-23
 
 *   **Mermaid Regression Investigation & Planning:**
-    *   Reviewed problem statement: [`documentation/03_Implementation/problem_statement_MermaidGerationRegression_2250523.md`](../../documentation/03_Implementation/problem_statement_MermaidGerationRegression_2250523.md).
+    *   Reviewed problem statement: [`../../documentation/03_Implementation/problem_statement_MermaidGerationRegression_2250523.md`](../../documentation/03_Implementation/problem_statement_MermaidGerationRegression_2250523.md:1).
     *   Reviewed research documents:
-        *   [`documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_gemini.md`](../../documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_gemini.md)
-        *   [`documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_o3.md`](../../documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_o3.md)
+        *   [`../../documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_gemini.md`](../../documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_gemini.md:1)
+        *   [`../../documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_o3.md`](../../documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_o3.md:1)
     *   Devised a systematic plan to address both client-side Mermaid preview errors ("Could not find a suitable point") and server-side PDF theming regressions.
-    *   Saved the plan to [`documentation/03_Implementation/plan_MermaidRegressionFix_2250523.md`](../../documentation/03_Implementation/plan_MermaidRegressionFix_2250523.md).
+    *   Saved the plan to [`../../documentation/03_Implementation/plan_MermaidRegressionFix_2250523.md`](../../documentation/03_Implementation/plan_MermaidRegressionFix_2250523.md:1).
     *   Updated `activeContext.md` to reflect the new plan and next steps, which require user action to resolve server-side TypeScript environment issues before AI proceeds with code changes.
 
 ## 2025-05-22 (Continued)
@@ -154,7 +175,7 @@
     *   This change aligns with the strategy outlined in `documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_take8_pivot_o3_mermaid_text_only.md`.
     *   **Affected File:** `nodejs_projects/core/src/services/markdown/markdown.service.ts`
 *   **Updated Playwright PDF Engine for Mermaid SVG Correction:**
-    *   Replaced the content of `nodejs_projects/core/src/services/pdf/playwright.engine.ts` with an updated version from research document [`documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_gemini.md`](../../documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_gemini.md).
+    *   Replaced the content of `nodejs_projects/core/src/services/pdf/playwright.engine.ts` with an updated version from research document [`../../documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_gemini.md`](../../documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_gemini.md:1).
     *   The new engine includes in-browser JavaScript execution (`page.evaluate`) to:
         *   Correctly size `<foreignObject>` elements in Mermaid SVGs.
         *   Fix `NaN` values in `transform` attributes.

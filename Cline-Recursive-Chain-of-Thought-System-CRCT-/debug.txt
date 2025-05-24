@@ -1,4 +1,4 @@
-2025-05-20 23:24:40,597 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: path_normalization with TTL 600s
-2025-05-20 23:24:40,598 - __main__ - INFO - Attempting to show keys and check status (p, s, S) from tracker: /workspaces/pubmd/nodejs_projects/core/core_module.md
-2025-05-20 23:24:40,598 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: tracker_data with TTL 600s
-2025-05-20 23:24:40,599 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'core_module.md': 4 keys, 4 grid rows
+2025-05-24 18:00:39,103 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: path_normalization with TTL 600s
+2025-05-24 18:00:39,103 - __main__ - INFO - Attempting to show keys and check status (p, s, S) from tracker: /workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_docs/doc_tracker.md
+2025-05-24 18:00:39,103 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: tracker_data with TTL 600s
+2025-05-24 18:00:39,107 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Read tracker 'doc_tracker.md': 62 keys, 62 grid rows
