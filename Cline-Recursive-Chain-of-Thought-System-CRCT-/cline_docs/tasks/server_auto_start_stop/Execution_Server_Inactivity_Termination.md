@@ -1,6 +1,7 @@
 # Task: Execution_Server_Inactivity_Termination - Implement Inactivity Self-Termination in Server
    **Parent:** `../../../Strategy_Task_Server_Auto_Start_Stop_20250524.md` (Phase 2)
    **Children:**
+   **Status:** Completed
 
 ## Objective
 Implement a mechanism in `nodejs_projects/server/src/index.ts` for the server to automatically trigger a graceful shutdown after a configurable period of inactivity.
@@ -12,15 +13,19 @@ Implement a mechanism in `nodejs_projects/server/src/index.ts` for the server to
 - A configurable inactivity timeout (e.g., `INACTIVITY_TIMEOUT_MS`, default 30 minutes).
 
 ## Steps
-1.  In `../../../../nodejs_projects/server/src/index.ts`, define a constant or environment variable for the inactivity timeout duration.
+1.  In `../../../../nodejs_projects/server/src/index.ts`, define a constant or environment variable for the inactivity timeout duration. [DONE]
     ```typescript
     const INACTIVITY_TIMEOUT_MS = parseInt(process.env.INACTIVITY_TIMEOUT_MS || (30 * 60 * 1000).toString(), 10); // Default 30 minutes
     ```
-2.  Declare a module-level variable to hold the inactivity timer ID: `let inactivityTimerId: NodeJS.Timeout | undefined;`.
-3.  Create a function `resetInactivityTimer()`:
+2.  Declare a module-level variable to hold the inactivity timer ID: `let inactivityTimerId: NodeJS.Timeout | undefined;`. [DONE]
+3.  Create a function `resetInactivityTimer()`: [DONE]
     ```typescript
     function resetInactivityTimer() {
         if (INACTIVITY_TIMEOUT_MS <= 0) { // Allow disabling timer
+            if (inactivityTimerId) clearTimeout(inactivityTimerId); // Clear if previously set and now disabled
+            return;
+        }
+        if (isShuttingDown) { // Don't reset timer if already shutting down
             return;
         }
         if (inactivityTimerId) {
@@ -33,18 +38,18 @@ Implement a mechanism in `nodejs_projects/server/src/index.ts` for the server to
         // console.log(`Inactivity timer reset. Will shut down in ${INACTIVITY_TIMEOUT_MS}ms if no activity.`); // Optional: for debugging
     }
     ```
-4.  Call `resetInactivityTimer()` once when the server successfully starts (inside the `app.listen` callback, after `serverInstance` is assigned and startup is logged).
-5.  Integrate `resetInactivityTimer()` calls into the request handling flow.
-    *   **Preferred Method: Middleware**:
+4.  Call `resetInactivityTimer()` once when the server successfully starts (inside the `app.listen` callback, after `serverInstance` is assigned and startup is logged). [DONE]
+5.  Integrate `resetInactivityTimer()` calls into the request handling flow. [DONE]
+    *   **Preferred Method: Middleware**: [DONE]
         ```typescript
-        // Place this before your API routes
+        // Place this before your API routes and other general middleware like cors/json
         app.use((req, res, next) => {
             resetInactivityTimer();
             next();
         });
         ```
-    *   Ensure this middleware is placed correctly to intercept all relevant API requests.
-6.  Consider edge cases: If `INACTIVITY_TIMEOUT_MS` is 0 or negative, the timer logic should effectively be disabled. The `resetInactivityTimer` function already includes a check for this.
+    *   Ensure this middleware is placed correctly to intercept all relevant API requests. [DONE - Placed before cors and json middleware]
+6.  Consider edge cases: If `INACTIVITY_TIMEOUT_MS` is 0 or negative, the timer logic should effectively be disabled. The `resetInactivityTimer` function already includes a check for this. [DONE]
 
 ## Dependencies
 - Requires:
@@ -53,7 +58,7 @@ Implement a mechanism in `nodejs_projects/server/src/index.ts` for the server to
 - Blocks: None.
 
 ## Expected Output
-- `../../../../nodejs_projects/server/src/index.ts` is updated with the inactivity self-termination logic.
-- The server automatically initiates a graceful shutdown after the configured period without receiving any requests.
-- The inactivity period is configurable via the `INACTIVITY_TIMEOUT_MS` environment variable and can be disabled.
-- Logs indicate when the inactivity timer is reset and when it triggers a shutdown.
+- `../../../../nodejs_projects/server/src/index.ts` is updated with the inactivity self-termination logic. (Achieved)
+- The server automatically initiates a graceful shutdown after the configured period without receiving any requests. (Achieved)
+- The inactivity period is configurable via the `INACTIVITY_TIMEOUT_MS` environment variable and can be disabled. (Achieved)
+- Logs indicate when the inactivity timer is reset and when it triggers a shutdown. (Achieved via console logs in functions)

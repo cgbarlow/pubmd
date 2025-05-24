@@ -1,11 +1,11 @@
 [COUNT]
-17
+23
 
 [LAST_ACTION_STATE]
-last_action: "Completed outlining Execution Tasks for Server Auto-Start/Stop Feature based on Strategy_Task_Server_Auto_Start_Stop_20250524.md."
-current_phase: "Strategy"
-next_action: "Formalize Outlined Execution Tasks into *.md files or Conclude Focused Strategy Session"
-next_phase: "Strategy"
+last_action: "Completed all steps in Execution_Systemd_Socket_File.md"
+current_phase: "Execution"
+next_action: "Select next Execution task or transition phase"
+next_phase: "Execution"
 
 ---
 
@@ -74,6 +74,9 @@ next_phase: "Strategy"
     - Must `cd Cline-Recursive-Chain-of-Thought-System-CRCT-` first if the terminal's CWD is the parent project root.
     - The `execute_command` tool will remember the CWD change for subsequent commands in the same interaction.
     - `show-keys` does not take a `--filter` argument; output must be manually parsed.
+- MUP completion signifies a clean state checkpoint.
+- Client-side script for UI interaction is `src/web/js/main.js`, not `src/web/script.js`. Task instructions should be updated if they refer to the old path.
+- User feedback: Avoid updating `.clinerules` after every minor sub-task. Update at more significant checkpoints, like task completion.
 
 [Character_Definitions]
 

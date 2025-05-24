@@ -1,5 +1,7 @@
 ## 2025-05-24 (Continued)
 
+*   **MUP**: Performed Mandatory Update Protocol due to context window usage (28%).
+    *   Updated [`./activeContext.md`](./activeContext.md) to reflect completion of the Strategy phase for the "Server Auto-Start/Stop Feature" and readiness for Execution.
 *   **Strategy/Planning**: Completed focused strategy session for the "Server Auto-Start/Stop Feature".
     *   Reviewed and confirmed the plan outlined in [`./tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md`](./tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md).
     *   Created 9 detailed Execution Task files based on the strategy:

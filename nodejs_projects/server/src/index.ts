@@ -3,6 +3,7 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import * as http from 'http';
 // Ensure PdfGenerationOptions and MarkdownParseOptions are imported, even if TS struggles with their latest definitions
 import { PdfService, PdfGenerationOptions, MarkdownService, MarkdownParseOptions, MermaidTheme } from '@pubmd/core';
 
@@ -11,6 +12,17 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 3001;
+const INACTIVITY_TIMEOUT_MS = parseInt(process.env.INACTIVITY_TIMEOUT_MS || (30 * 60 * 1000).toString(), 10); // Default 30 minutes
+
+let serverInstance: http.Server;
+let isShuttingDown = false; // Flag to prevent multiple shutdown attempts
+let inactivityTimerId: NodeJS.Timeout | undefined;
+
+// Middleware to reset inactivity timer on each request
+app.use((req, res, next) => {
+    resetInactivityTimer();
+    next();
+});
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -54,9 +66,6 @@ app.get('/', (req: Request, res: Response) => {
 
 app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response): Promise<void> => {
     console.log('[PDF GEN] Request received for /api/generate-pdf-from-markdown');
-    // Removed immediate dummy send logic from here. Original flow restored.
-
-    // Original logic below is now completely bypassed by the return above.
     if (!pdfService || !markdownService) {
         console.error('[PDF GEN] Core services (PdfService or MarkdownService) not available.');
         res.status(500).send('Core services are not available.');
@@ -66,16 +75,16 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
 
     try {
         console.log('[PDF GEN] Entering main try block.');
-        console.log('[PDF GEN] Attempting to parse request body. Full req.body:', JSON.stringify(req.body, null, 2).substring(0, 500) + '...'); // Log first 500 chars
+        console.log('[PDF GEN] Attempting to parse request body. Full req.body:', JSON.stringify(req.body, null, 2).substring(0, 500) + '...'); 
 
         const { markdown, fontPreference: clientFontPreference, markdownOptions: clientMarkdownOptions, pdfOptions: clientPdfOptionsAny } = req.body as {
             markdown: string;
-            fontPreference?: 'sans-serif' | 'serif'; // Expected top-level
-            markdownOptions?: { mermaidTheme?: MermaidTheme }; // Expected top-level
-            pdfOptions?: any; // For other PDF settings like margins, format
+            fontPreference?: 'sans-serif' | 'serif'; 
+            markdownOptions?: { mermaidTheme?: MermaidTheme }; 
+            pdfOptions?: any; 
         };
         
-        const clientPdfOptions = clientPdfOptionsAny as PdfGenerationOptions; // Cast for known properties if they exist
+        const clientPdfOptions = clientPdfOptionsAny as PdfGenerationOptions; 
         console.log('[PDF GEN] Request body destructured.');
 
         if (!markdown) {
@@ -89,20 +98,17 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
         console.log(`Received fontPreference: ${clientFontPreference}`);
         console.log(`Received markdownOptions: ${JSON.stringify(clientMarkdownOptions)}`);
         if (clientMarkdownOptions) {
-            // Added optional chaining to satisfy TS for the bypassed original code
             console.log(`Received mermaidTheme (from markdownOptions): ${clientMarkdownOptions?.mermaidTheme}`);
         }
         console.log('Received clientPdfOptions (for layout etc.):', clientPdfOptionsAny);
 
-
-        // --- 1. Prepare options for MarkdownService.parse() ---
         const markdownParseOptionsForService: MarkdownParseOptions = {
             gfm: true,
             breaks: true,
         };
 
-        const selectedMermaidTheme = clientMarkdownOptions?.mermaidTheme || 'light'; // Default to 'light'
-        (markdownParseOptionsForService as any).mermaidTheme = selectedMermaidTheme; // Use 'mermaidTheme' as per core service
+        const selectedMermaidTheme = clientMarkdownOptions?.mermaidTheme || 'light'; 
+        (markdownParseOptionsForService as any).mermaidTheme = selectedMermaidTheme; 
         console.log(`Using Mermaid theme for MarkdownService: ${selectedMermaidTheme}`);
         
         if (clientFontPreference) {
@@ -116,21 +122,19 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
         const htmlDuration = Date.now() - htmlStart;
         console.log(`[PDF GEN] Markdown parsed to HTML in ${htmlDuration}ms. HTML length: ${htmlFromMarkdown ? htmlFromMarkdown.length : 'null/undefined'}`);
 
-        // --- 2. Construct Full HTML with Embedded Fonts for PDF ---
         let fontFaceRules = '';
-        let bodyFontFamily = `sans-serif`; // Default
+        let bodyFontFamily = `sans-serif`; 
         const overallFontPreference = clientFontPreference || 'sans-serif'; 
         console.log(`Determined overallFontPreference for PDF body: ${overallFontPreference}`);
-
 
         if (serverFontBase64Sans && serverFontBase64Serif) {
             fontFaceRules = `
               @font-face {
-                font-family: 'DejaVu Sans'; /* Simplified name */
+                font-family: 'DejaVu Sans'; 
                 src: url(data:font/ttf;base64,${serverFontBase64Sans}) format('truetype');
               }
               @font-face {
-                font-family: 'DejaVu Serif'; /* Simplified name */
+                font-family: 'DejaVu Serif'; 
                 src: url(data:font/ttf;base64,${serverFontBase64Serif}) format('truetype');
               }
             `;
@@ -156,11 +160,6 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
               li { margin-bottom: 5px; }
             </style></head><body>${htmlFromMarkdown}</body></html>`;
        
-       // fs.writeFileSync(path.join(__dirname, 'debug_pdf_content.html'), finalHtmlForPdf); // Temporarily comment out
-       // console.log('Debug HTML for PDF saved to: ' + path.join(__dirname, 'debug_pdf_content.html')); // Temporarily comment out
-        // console.log('Debug HTML for PDF saved to debug_pdf_content.html');
-
-        // --- 3. Prepare options for PdfService.generatePdfFromHtml() ---
         const pdfLayoutOptions: PdfGenerationOptions = {
             pageFormat: clientPdfOptions?.pageFormat || 'a4',
             orientation: clientPdfOptions?.orientation || 'portrait',
@@ -181,26 +180,19 @@ app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response):
         const generatedPdfBuffer = Buffer.from(await pdfBlob.arrayBuffer());
         console.log(`[PDF GEN] PDF Buffer created, length: ${generatedPdfBuffer.length}. Setting response headers.`);
         
-        // Dummy PDF sending logic removed from here.
-        // Removed 200ms delay and associated logs
-        // Removed explicit res.end() and associated logs
-
         res.setHeader('Content-Type', 'application/pdf');
-        // Restore original dynamic filename
         res.setHeader('Content-Disposition', `attachment; filename="${pdfLayoutOptions.filename}"`);
         console.log('[PDF GEN] Sending PDF response...');
-        res.send(generatedPdfBuffer); // Restore sending the generated buffer
+        res.send(generatedPdfBuffer); 
         console.log('[PDF GEN] PDF response sent.');
 
     } catch (error: any) {
         console.error('[PDF GEN] CRITICAL ERROR in /api/generate-pdf-from-markdown:', error);
         console.error('[PDF GEN] Error stack:', error.stack);
-        // Ensure a response is sent even if headers were already partially set, though Express might handle this.
         if (!res.headersSent) {
             res.status(500).send(`Error generating PDF from Markdown: ${error.message || 'Unknown error'}`);
         } else {
             console.error('[PDF GEN] Headers already sent, cannot send error response normally.');
-            // If headers are sent, we can't change status or body. The connection might just terminate.
         }
     }
 });
@@ -211,8 +203,8 @@ app.post('/api/generate-pdf', async (req: Request, res: Response): Promise<void>
         return;
     }
     try {
-        const { html, options: clientOptionsAny } = req.body as { html: string; options?: any }; // Temp any
-        const options = clientOptionsAny as PdfGenerationOptions; // Cast back
+        const { html, options: clientOptionsAny } = req.body as { html: string; options?: any }; 
+        const options = clientOptionsAny as PdfGenerationOptions; 
 
         if (!html) {
             res.status(400).send('Missing "html" content in request body.');
@@ -237,12 +229,96 @@ app.post('/api/generate-pdf', async (req: Request, res: Response): Promise<void>
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-    if (!pdfService || !markdownService) {
-        console.warn('Warning: Core services may not have initialized correctly.');
+// Inactivity Timer Logic
+function resetInactivityTimer() {
+    if (INACTIVITY_TIMEOUT_MS <= 0) { // Allow disabling timer
+        if (inactivityTimerId) clearTimeout(inactivityTimerId); // Clear if previously set and now disabled
+        return;
     }
-    if (!serverFontBase64Sans || !serverFontBase64Serif) {
-        console.warn('Warning: Server DejaVu fonts failed to load. PDFs may use default fonts.');
+    if (isShuttingDown) { // Don't reset timer if already shutting down
+        return;
     }
-});
+    if (inactivityTimerId) {
+        clearTimeout(inactivityTimerId);
+    }
+    inactivityTimerId = setTimeout(() => {
+        console.log(`Inactivity timeout of ${INACTIVITY_TIMEOUT_MS}ms reached. Initiating shutdown.`);
+        shutdownGracefully('INACTIVITY_TIMEOUT'); 
+    }, INACTIVITY_TIMEOUT_MS);
+    // console.log(`Inactivity timer reset. Will shut down in ${INACTIVITY_TIMEOUT_MS}ms if no activity.`);
+}
+
+
+// Start the server
+const listenFds = parseInt(process.env.LISTEN_FDS || '0', 10);
+const listenPid = process.env.LISTEN_PID;
+
+if (listenFds >= 1 && listenPid && listenPid === String(process.pid)) {
+    // Started by systemd with socket activation
+    const systemdSocketFd = 3; // Standard first passed FD
+    console.log(`Server starting via systemd socket activation on fd ${systemdSocketFd}`);
+    serverInstance = app.listen({ fd: systemdSocketFd }, () => {
+        console.log(`Server listening on systemd-provided socket (fd ${systemdSocketFd})`);
+        if (!pdfService || !markdownService) {
+            console.warn('Warning: Core services may not have initialized correctly during socket activation startup.');
+        }
+        if (!serverFontBase64Sans || !serverFontBase64Serif) {
+            console.warn('Warning: Server DejaVu fonts failed to load during socket activation startup. PDFs may use default fonts.');
+        }
+        resetInactivityTimer(); // Start inactivity timer once server is listening
+    });
+} else {
+    // Standard startup
+    console.log(`Server starting normally on port ${port}`);
+    serverInstance = app.listen(port, () => {
+        console.log(`Server listening on port ${port}`);
+        if (!pdfService || !markdownService) {
+            console.warn('Warning: Core services may not have initialized correctly.');
+        }
+        if (!serverFontBase64Sans || !serverFontBase64Serif) {
+            console.warn('Warning: Server DejaVu fonts failed to load. PDFs may use default fonts.');
+        }
+        resetInactivityTimer(); // Start inactivity timer once server is listening
+    });
+}
+
+// Graceful Shutdown Logic
+function shutdownGracefully(signal: string) {
+    if (isShuttingDown) {
+        console.log('Shutdown already in progress. Ignoring signal.');
+        return;
+    }
+    isShuttingDown = true;
+    console.log(`Received ${signal}. Shutting down gracefully...`);
+
+    if (inactivityTimerId) { // Clear inactivity timer during shutdown
+        clearTimeout(inactivityTimerId);
+    }
+
+    const shutdownTimeoutMs = parseInt(process.env.GRACEFUL_SHUTDOWN_TIMEOUT_MS || '30000', 10);
+
+    const forceExitTimeout = setTimeout(() => {
+        console.warn(`Graceful shutdown timed out after ${shutdownTimeoutMs}ms. Forcing exit.`);
+        process.exit(1); 
+    }, shutdownTimeoutMs);
+
+    if (serverInstance) {
+        serverInstance.close((err) => {
+            clearTimeout(forceExitTimeout); 
+            if (err) {
+                console.error('Error during server.close():', err);
+                process.exit(1);
+            } else {
+                console.log('Server closed gracefully.');
+                process.exit(0);
+            }
+        });
+    } else {
+        console.warn('Server instance not found. Exiting immediately.');
+        clearTimeout(forceExitTimeout);
+        process.exit(1); 
+    }
+}
+
+process.on('SIGINT', () => shutdownGracefully('SIGINT'));
+process.on('SIGTERM', () => shutdownGracefully('SIGTERM'));

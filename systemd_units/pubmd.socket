@@ -1,0 +1,9 @@
+[Unit]
+Description=PubMD API Server Socket
+
+[Socket]
+ListenStream=0.0.0.0:3001 ; Ensure this port matches server config (PORT env var)
+Accept=false             ; The service (pubmd.service) will accept connections
+
+[Install]
+WantedBy=sockets.target

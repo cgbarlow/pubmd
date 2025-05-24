@@ -1,6 +1,7 @@
 # Task: Execution_Server_Graceful_Shutdown - Implement Graceful Shutdown in Server
    **Parent:** `../../../Strategy_Task_Server_Auto_Start_Stop_20250524.md` (Phase 2)
    **Children:**
+   **Status:** Completed
 
 ## Objective
 Implement signal handlers in `nodejs_projects/server/src/index.ts` for `SIGINT` and `SIGTERM` to ensure the server shuts down gracefully, allowing existing connections to complete within a timeout and cleaning up resources.
@@ -13,30 +14,30 @@ Implement signal handlers in `nodejs_projects/server/src/index.ts` for `SIGINT` 
 - A configurable timeout for graceful shutdown (e.g., `GRACEFUL_SHUTDOWN_TIMEOUT_MS`, default 30s).
 
 ## Steps
-1.  In `../../../../nodejs_projects/server/src/index.ts`, define a function, e.g., `shutdownGracefully(signal: string)`.
-2.  Inside `shutdownGracefully(signal)`:
-    *   Log that shutdown is initiated due to the received `signal` (e.g., "Received ${signal}. Shutting down gracefully...").
-    *   Implement a `shuttingDown` flag (e.g., `let isShuttingDown = false;`) to prevent multiple concurrent shutdown attempts. If `isShuttingDown` is true, log and return. Set `isShuttingDown = true;` at the start of the function.
-    *   Define the graceful shutdown timeout value (e.g., `const shutdownTimeoutMs = parseInt(process.env.GRACEFUL_SHUTDOWN_TIMEOUT_MS || '30000', 10);`).
-    *   Create a timeout for forceful exit:
+1.  In `../../../../nodejs_projects/server/src/index.ts`, define a function, e.g., `shutdownGracefully(signal: string)`. [DONE]
+2.  Inside `shutdownGracefully(signal)`: [DONE]
+    *   Log that shutdown is initiated due to the received `signal` (e.g., "Received ${signal}. Shutting down gracefully..."). [DONE]
+    *   Implement a `shuttingDown` flag (e.g., `let isShuttingDown = false;` at module level) to prevent multiple concurrent shutdown attempts. If `isShuttingDown` is true, log and return. Set `isShuttingDown = true;` at the start of the function. [DONE]
+    *   Define the graceful shutdown timeout value (e.g., `const shutdownTimeoutMs = parseInt(process.env.GRACEFUL_SHUTDOWN_TIMEOUT_MS || '30000', 10);`). [DONE]
+    *   Create a timeout for forceful exit: [DONE]
         ```typescript
         const forceExitTimeout = setTimeout(() => {
             console.warn(`Graceful shutdown timed out after ${shutdownTimeoutMs}ms. Forcing exit.`);
             process.exit(1); // Or a specific error code
         }, shutdownTimeoutMs);
         ```
-    *   Call `serverInstance.close((err) => { ... })`:
-        *   Inside the `server.close()` callback:
-            *   `clearTimeout(forceExitTimeout);` // Crucial: clear the forceful exit timeout
-            *   If `err`, log the error: `console.error('Error during server.close():', err);`.
-            *   Else, log successful shutdown: `console.log('Server closed gracefully.');`.
-            *   Exit the process: `process.exit(err ? 1 : 0);`.
-3.  Register `shutdownGracefully` as a handler for `SIGINT` and `SIGTERM` signals:
+    *   Call `serverInstance.close((err) => { ... })`: [DONE]
+        *   Inside the `server.close()` callback: [DONE]
+            *   `clearTimeout(forceExitTimeout);` // Crucial: clear the forceful exit timeout [DONE]
+            *   If `err`, log the error: `console.error('Error during server.close():', err);`. [DONE]
+            *   Else, log successful shutdown: `console.log('Server closed gracefully.');`. [DONE]
+            *   Exit the process: `process.exit(err ? 1 : 0);`. [DONE]
+3.  Register `shutdownGracefully` as a handler for `SIGINT` and `SIGTERM` signals: [DONE]
     ```typescript
     process.on('SIGINT', () => shutdownGracefully('SIGINT'));
     process.on('SIGTERM', () => shutdownGracefully('SIGTERM'));
     ```
-4.  Ensure `serverInstance` (from `Execution_Server_Socket_Activation.md` task) is accessible to `shutdownGracefully`.
+4.  Ensure `serverInstance` (from `Execution_Server_Socket_Activation.md` task) is accessible to `shutdownGracefully`. [DONE]
 
 ## Dependencies
 - Requires:
@@ -45,6 +46,6 @@ Implement signal handlers in `nodejs_projects/server/src/index.ts` for `SIGINT` 
     - `Execution_Server_Inactivity_Termination.md` (will call `shutdownGracefully`)
 
 ## Expected Output
-- `../../../../nodejs_projects/server/src/index.ts` is updated with `SIGINT` and `SIGTERM` handlers that trigger a graceful shutdown.
-- The server attempts to shut down gracefully when these signals are received, closing existing connections within a timeout.
-- Logs clearly indicate the shutdown process, including success, errors, or forced exit due to timeout.
+- `../../../../nodejs_projects/server/src/index.ts` is updated with `SIGINT` and `SIGTERM` handlers that trigger a graceful shutdown. (Achieved)
+- The server attempts to shut down gracefully when these signals are received, closing existing connections within a timeout. (Achieved)
+- Logs clearly indicate the shutdown process, including success, errors, or forced exit due to timeout. (Achieved)
