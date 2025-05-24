@@ -1,0 +1,119 @@
+{
+  "excluded_dirs": [
+    "__pycache__",
+    ".git",
+    ".svn",
+    ".hg",
+    ".vscode",
+    ".idea",
+    "__MACOSX",
+    "venv",
+    "env",
+    ".venv",
+    "node_modules",
+    "bower_components",
+    "build",
+    "dist",
+    "target",
+    "out",
+    "tmp",
+    "temp",
+    "tests",
+    "examples",
+    "embeddings",
+    "cline_utils/dependency_system/analysis/embeddings",
+    "cline_docs/dependency_diagrams"
+  ],
+  "excluded_extensions": [
+    ".pyc",
+    ".pyo",
+    ".pyd",
+    ".dll",
+    ".exe",
+    ".so",
+    ".o",
+    ".a",
+    ".lib",
+    ".dll",
+    ".pdb",
+    ".sdf",
+    ".suo",
+    ".user",
+    ".swp",
+    ".log",
+    ".tmp",
+    ".bak",
+    ".d",
+    ".DS_Store",
+    ".jar",
+    ".war",
+    ".ear",
+    ".zip",
+    ".tar.gz",
+    ".tar",
+    ".tgz",
+    ".rar",
+    ".7z",
+    ".dmg",
+    ".iso",
+    ".img",
+    ".bin",
+    ".dat",
+    ".db",
+    ".sqlite",
+    ".sqlite3",
+    ".dbf",
+    ".mdb",
+    ".sav",
+    ".eot",
+    ".ttf",
+    ".woff",
+    ".woff2",
+    ".otf",
+    ".swf",
+    ".bak",
+    ".old",
+    ".orig",
+    ".embedding",
+    ".npy",
+    ".mermaid"
+  ],
+  "thresholds": {
+    "doc_similarity": 0.65,
+    "code_similarity": 0.7
+  },
+  "models": {
+    "doc_model_name": "all-mpnet-base-v2",
+    "code_model_name": "all-mpnet-base-v2"
+  },
+  "compute": {
+    "embedding_device": "auto"
+  },
+  "paths": {
+    "doc_dir": "docs",
+    "memory_dir": "cline_docs",
+    "embeddings_dir": "cline_utils/dependency_system/analysis/embeddings",
+    "backups_dir": "cline_docs/backups"
+  },
+  "excluded_paths": [
+    "src/node_modules",
+    "src/client/node_modules"
+  ],
+  "allowed_dependency_chars": [
+    "<",
+    ">",
+    "x",
+    "d",
+    "s",
+    "S"
+  ],
+  "excluded_file_patterns": [
+    "*_module.md",
+    "implementation_plan_*.md",
+    "*_task.md"
+  ],
+  "visualization": {
+    "auto_generate_on_analyze": true,
+    "auto_diagram_output_dir": null
+  }
+}

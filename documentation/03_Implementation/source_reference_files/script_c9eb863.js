@@ -424,13 +424,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (convertToPdfButton) convertToPdfButton.addEventListener('click', () => prepareContentForPreviewAndPdf(true));
             
-            // if (mermaidThemeSelector) {
-            //     mermaidThemeSelector.addEventListener('change', () => {
-            //          if (previewModalOverlay.style.display === 'flex') {
-            //             prepareContentForPreviewAndPdf(false);
-            //         }
-            //     });
-            // }
+            if (mermaidThemeSelector) {
+                mermaidThemeSelector.addEventListener('change', () => {
+                     if (previewModalOverlay.style.display === 'flex') {
+                        prepareContentForPreviewAndPdf(false); 
+                    }
+                });
+            }
 
             if (cancelModalButton) {
                 cancelModalButton.addEventListener('click', () => {
@@ -442,22 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            if (savePdfFromModalButton) {
-                savePdfFromModalButton.addEventListener('click', async (event) => {
-                    event.preventDefault(); // Explicitly prevent default action
-                    console.log('Save PDF button clicked, event default prevented.');
-                    try {
-                        await savePdfHandler();
-                    } catch (e) {
-                        console.error("Error directly from savePdfHandler invocation:", e);
-                        const statusMsg = document.getElementById('statusMessage');
-                        if (statusMsg) {
-                            statusMsg.textContent = `Critical error during PDF save: ${e.message}. Check console.`;
-                            statusMsg.style.color = 'red';
-                        }
-                    }
-                });
-            }
+            if (savePdfFromModalButton) savePdfFromModalButton.addEventListener('click', savePdfHandler);
 
             if (darkModeToggle) darkModeToggle.addEventListener('change', () => {
                 const isChecked = darkModeToggle.checked;
@@ -560,7 +545,7 @@ async function prepareContentForPreviewAndPdf(isNewPreview = true) {
     const fontFamilySelector = document.getElementById('fontFamilySelector');
     const mermaidThemeSelector = document.getElementById('mermaidThemeSelector');
 
-    if (!previewModalOverlay || !previewModalContent || !fileNameInputModal || !fontFamilySelector) { // Removed !mermaidThemeSelector
+    if (!previewModalOverlay || !previewModalContent || !fileNameInputModal || !fontFamilySelector || !mermaidThemeSelector) {
         console.error("One or more critical UI elements for PDF preview are missing.");
         if (document.getElementById('statusMessage')) {
             document.getElementById('statusMessage').textContent = 'Error: Preview UI elements missing.';
@@ -570,7 +555,7 @@ async function prepareContentForPreviewAndPdf(isNewPreview = true) {
     }
     
     const selectedFontFamily = fontFamilySelector.value === 'serif' ? 'DejaVu Serif' : 'DejaVu Sans';
-    const selectedMermaidTheme = mermaidThemeSelector ? mermaidThemeSelector.value : 'light'; // Safely default to 'light'
+    const selectedMermaidTheme = mermaidThemeSelector.value || 'light';
 
     // applyMermaidThemeAndFontForPreview(selectedMermaidTheme, selectedFontFamily); // Temporarily commented out
 
@@ -658,7 +643,7 @@ async function savePdfHandler() {
     const mermaidThemeSelector = document.getElementById('mermaidThemeSelector');
     const fileNameInputModal = document.getElementById('fileNameInputModal');
 
-    if (!statusMessage || !savePdfButton || !cancelModalButton || !fontFamilySelector || !fileNameInputModal) { // Removed !mermaidThemeSelector
+    if (!statusMessage || !savePdfButton || !cancelModalButton || !fontFamilySelector || !mermaidThemeSelector || !fileNameInputModal) {
         console.error("One or more critical UI elements for PDF saving are missing.");
         if (statusMessage) {
             statusMessage.textContent = 'Error: PDF saving UI elements missing.';
@@ -682,7 +667,7 @@ async function savePdfHandler() {
 
     const markdownText = markdownEditor.getValue();
     const selectedFontPreference = fontFamilySelector.value; // 'sans-serif' or 'serif'
-    const selectedMermaidTheme = mermaidThemeSelector ? mermaidThemeSelector.value : 'light'; // Default to 'light'
+    const selectedMermaidTheme = mermaidThemeSelector.value; // 'light', 'dark', or 'grey'
     const outputFilename = fileNameInputModal.value || generatePdfFilename(currentFileName);
 
     try {
@@ -699,7 +684,7 @@ async function savePdfHandler() {
         const response = await fetch(`${API_BASE_URL}/api/generate-pdf-from-markdown`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(serverPayload) // Reverted to use original serverPayload
+            body: JSON.stringify(serverPayload)
         });
 
         if (!response.ok) {
@@ -707,26 +692,15 @@ async function savePdfHandler() {
             throw new Error(`Server error: ${response.status} - ${errorText}`);
         }
 
-        console.log('Response OK, attempting to get blob...');
         const blob = await response.blob();
-        console.log('Blob received:', blob);
-        if (!blob || blob.size === 0) {
-            throw new Error('Received an empty blob from server.');
-        }
         const url = window.URL.createObjectURL(blob);
-        console.log('Blob URL created:', url);
         const a = document.createElement('a');
         a.href = url;
         a.download = outputFilename;
-        console.log(`Anchor created: href=${a.href}, download=${a.download}`);
         document.body.appendChild(a);
-        console.log('Anchor appended to body.');
         a.click();
-        console.log('Anchor clicked.');
         a.remove();
-        console.log('Anchor removed.');
         window.URL.revokeObjectURL(url);
-        console.log('Blob URL revoked.');
 
         statusMessage.textContent = `PDF "${outputFilename}" generated successfully!`;
         statusMessage.style.color = 'green';

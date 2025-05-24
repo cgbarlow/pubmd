@@ -1,183 +1,785 @@
 {
-  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs": {
+  "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs": {
     "key_string": "1A",
-    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs",
+    "norm_path": "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/docs",
     "parent_path": null,
     "tier": 1,
     "is_directory": true
   },
-  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core": {
+  "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src": {
     "key_string": "1B",
-    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core",
+    "norm_path": "/workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src",
     "parent_path": null,
     "tier": 1,
     "is_directory": true
   },
-  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/package.json": {
-    "key_string": "1B1",
-    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/package.json",
-    "parent_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core",
-    "tier": 1,
-    "is_directory": false
-  },
-  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.build.json": {
-    "key_string": "1B2",
-    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.build.json",
-    "parent_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core",
-    "tier": 1,
-    "is_directory": false
-  },
-  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.esm.json": {
-    "key_string": "1B3",
-    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.esm.json",
-    "parent_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core",
-    "tier": 1,
-    "is_directory": false
-  },
-  "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src": {
+  "/workspaces/pubmd/documentation": {
     "key_string": "1C",
-    "norm_path": "c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/src",
+    "norm_path": "/workspaces/pubmd/documentation",
     "parent_path": null,
     "tier": 1,
     "is_directory": true
   },
-  "c:/NotBackedUp/pubmd/documentation": {
+  "/workspaces/pubmd/documentation/00_Planning_And_Initiation": {
+    "key_string": "1Ca",
+    "norm_path": "/workspaces/pubmd/documentation/00_Planning_And_Initiation",
+    "parent_path": "/workspaces/pubmd/documentation",
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/00_Planning_And_Initiation/nextstepsforthisproject.md": {
+    "key_string": "1Ca1",
+    "norm_path": "/workspaces/pubmd/documentation/00_Planning_And_Initiation/nextstepsforthisproject.md",
+    "parent_path": "/workspaces/pubmd/documentation/00_Planning_And_Initiation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/01_Requirements": {
+    "key_string": "1Cb",
+    "norm_path": "/workspaces/pubmd/documentation/01_Requirements",
+    "parent_path": "/workspaces/pubmd/documentation",
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/01_Requirements/.Business_Requirements.md": {
+    "key_string": "1Cb1",
+    "norm_path": "/workspaces/pubmd/documentation/01_Requirements/.Business_Requirements.md",
+    "parent_path": "/workspaces/pubmd/documentation/01_Requirements",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/02_Architecture": {
+    "key_string": "1Cc",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "parent_path": "/workspaces/pubmd/documentation",
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Log.md": {
+    "key_string": "1Cc1",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Log.md",
+    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Pending.md": {
+    "key_string": "1Cc2",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/.Architectural_Decisions_Pending.md",
+    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/02_Architecture/Core_Logic_Componentization_Strategy.md": {
+    "key_string": "1Cc3",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/Core_Logic_Componentization_Strategy.md",
+    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md": {
+    "key_string": "1Cc4",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md",
+    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/02_Architecture/solution_options_analysis.md": {
+    "key_string": "1Cc5",
+    "norm_path": "/workspaces/pubmd/documentation/02_Architecture/solution_options_analysis.md",
+    "parent_path": "/workspaces/pubmd/documentation/02_Architecture",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation": {
+    "key_string": "1Cd",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "parent_path": "/workspaces/pubmd/documentation",
+    "tier": 1,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/ADR_003_RestoreServerSidePDFGeneration.md": {
+    "key_string": "1Cd1",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/ADR_003_RestoreServerSidePDFGeneration.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/CRCT_Reconciliation_Plan_Streamlined.md": {
+    "key_string": "1Cd2",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/CRCT_Reconciliation_Plan_Streamlined.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md": {
+    "key_string": "1Cd3",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/Implementation_Plan.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive": {
+    "key_string": "2A",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 2,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_gemini.md": {
+    "key_string": "2A1",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_gemini.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_o3.md": {
+    "key_string": "2A2",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_o3.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take10_pivot_o3.md": {
+    "key_string": "2A3",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take10_pivot_o3.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take2_gemini.md": {
+    "key_string": "2A4",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take2_gemini.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take3_gemini.md": {
+    "key_string": "2A5",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take3_gemini.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take4_gemini.md": {
+    "key_string": "2A6",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take4_gemini.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take5_gemini.md": {
+    "key_string": "2A7",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take5_gemini.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take6_gemini.md": {
+    "key_string": "2A8",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take6_gemini.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take7_gemini.md": {
+    "key_string": "2A9",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take7_gemini.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take8_pivot_o3_mermaid_text_only.md": {
+    "key_string": "2A10",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take8_pivot_o3_mermaid_text_only.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take9_pivot_o3.md": {
+    "key_string": "2A11",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_20250521_mermaid-diagram-issue_take9_pivot_o3.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_ClientSideMermaidRenderingError_20250522.md": {
+    "key_string": "2A12",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_ClientSideMermaidRenderingError_20250522.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_DOMPurify.sanitize_mermaid.md": {
+    "key_string": "2A13",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_DOMPurify.sanitize_mermaid.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_DOMPurify.sanitize_mermaid_2nd_attempt.md": {
+    "key_string": "2A14",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_DOMPurify.sanitize_mermaid_2nd_attempt.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_DOMPurify.sanitize_mermaid_3rd_attempt.md": {
+    "key_string": "2A15",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_DOMPurify.sanitize_mermaid_3rd_attempt.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_DOMPurify.sanitize_mermaid_4th_attempt.md": {
+    "key_string": "2A16",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_DOMPurify.sanitize_mermaid_4th_attempt.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_DOMPurify.sanitize_mermaid_5th_attempt.md": {
+    "key_string": "2A17",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_DOMPurify.sanitize_mermaid_5th_attempt.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_MermaidThemeColorUpdateFailureInClient-SidePreview_20250522.md": {
+    "key_string": "2A18",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_MermaidThemeColorUpdateFailureInClient-SidePreview_20250522.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_markdown.service_not_found.md": {
+    "key_string": "2A19",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_markdown.service_not_found.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_test-pdf-service_JSDOM_ESMbuild_html2canvas.md": {
+    "key_string": "2A20",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/issue_research_test-pdf-service_JSDOM_ESMbuild_html2canvas.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/learnings_mermaid_dompurify_nodejs.md": {
+    "key_string": "2A21",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/learnings_mermaid_dompurify_nodejs.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/next_steps_20250522_server_pdf_fixes.md": {
+    "key_string": "2A22",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/next_steps_20250522_server_pdf_fixes.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/plan_docx_service_implementation.md": {
+    "key_string": "2A23",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/plan_docx_service_implementation.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/plan_pdf_service_refactor.md": {
+    "key_string": "2A24",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/plan_pdf_service_refactor.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-ClientSideMermaidRenderingError_20250522.md": {
+    "key_string": "2A25",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-ClientSideMermaidRenderingError_20250522.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidDiagramGarbledInPDF_20250521.md": {
+    "key_string": "2A26",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidDiagramGarbledInPDF_20250521.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidDiagramRenderingFailureInPlaywrightPDFOutput_20250520.md": {
+    "key_string": "2A27",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidDiagramRenderingFailureInPlaywrightPDFOutput_20250520.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidDiagramRenderingIssuesInJSDOMAndPlaywright_20250521.md": {
+    "key_string": "2A28",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidDiagramRenderingIssuesInJSDOMAndPlaywright_20250521.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidDiagramRenderingIssuesInJSDOMAndPlaywright_20250521_minus_dom-correction.md": {
+    "key_string": "2A29",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidDiagramRenderingIssuesInJSDOMAndPlaywright_20250521_minus_dom-correction.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidGetComputedTextLengthJSDOMPolyfill_20250521.md": {
+    "key_string": "2A30",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidGetComputedTextLengthJSDOMPolyfill_20250521.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidThemeColorUpdateFailureInClient-SidePreview_20250522.md": {
+    "key_string": "2A31",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/problem_statement-MermaidThemeColorUpdateFailureInClient-SidePreview_20250522.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files": {
+    "key_string": "2Aa",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive",
+    "tier": 2,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files/nodejs_core_markdown_service_ts_commit_044327a.ts": {
+    "key_string": "2Aa1",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files/nodejs_core_markdown_service_ts_commit_044327a.ts",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files/nodejs_core_pdf_service_ts_commit_044327a.ts": {
+    "key_string": "2Aa2",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files/nodejs_core_pdf_service_ts_commit_044327a.ts",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files/nodejs_core_playwright_engine_ts_commit_044327a.ts": {
+    "key_string": "2Aa3",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files/nodejs_core_playwright_engine_ts_commit_044327a.ts",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files/nodejs_server_src_index_ts_commit_044327a.ts": {
+    "key_string": "2Aa4",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files/nodejs_server_src_index_ts_commit_044327a.ts",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files/src_web_script_js_commit_044327a.js": {
+    "key_string": "2Aa5",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files/src_web_script_js_commit_044327a.js",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/archive/source_reference_files",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/bugs": {
+    "key_string": "2B",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/bugs",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 2,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/bugs/bug_mermaid_font_not_pulling_theme_from_client.md": {
+    "key_string": "2B1",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/bugs/bug_mermaid_font_not_pulling_theme_from_client.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation/bugs",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/crct_summary_20250522_mermaid_theming_status.md": {
+    "key_string": "1Cd4",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/crct_summary_20250522_mermaid_theming_status.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_take11_pivot_to_playwright.md": {
+    "key_string": "1Cd5",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/issue_research_20250521_mermaid-diagram-issue_take11_pivot_to_playwright.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_gemini.md": {
+    "key_string": "1Cd6",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_gemini.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_o3.md": {
+    "key_string": "1Cd7",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/issue_research_MermaidGerationRegression_2250523_o3.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/plan_MermaidRegressionFix_2250523.md": {
+    "key_string": "1Cd8",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/plan_MermaidRegressionFix_2250523.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/documentation/03_Implementation/problem_statement_MermaidGerationRegression_2250523.md": {
+    "key_string": "1Cd9",
+    "norm_path": "/workspaces/pubmd/documentation/03_Implementation/problem_statement_MermaidGerationRegression_2250523.md",
+    "parent_path": "/workspaces/pubmd/documentation/03_Implementation",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core": {
     "key_string": "1D",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core",
     "parent_path": null,
     "tier": 1,
     "is_directory": true
   },
-  "c:/NotBackedUp/pubmd/documentation/00_Planning_And_Initiation": {
+  "/workspaces/pubmd/nodejs_projects/core/implementation_plan_core_package_setup.md": {
+    "key_string": "1D1",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/implementation_plan_core_package_setup.md",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/implementation_plan_core_script_refactor.md": {
+    "key_string": "1D2",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/implementation_plan_core_script_refactor.md",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/package-lock.json": {
+    "key_string": "1D3",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/package-lock.json",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/package.json": {
+    "key_string": "1D4",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/package.json",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/scripts": {
     "key_string": "1Da",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/00_Planning_And_Initiation",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core",
     "tier": 1,
     "is_directory": true
   },
-  "c:/NotBackedUp/pubmd/documentation/00_Planning_And_Initiation/nextstepsforthisproject.md": {
+  "/workspaces/pubmd/nodejs_projects/core/scripts/bootstrap-mermaid.mjs": {
     "key_string": "1Da1",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/00_Planning_And_Initiation/nextstepsforthisproject.md",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation/00_Planning_And_Initiation",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/bootstrap-mermaid.mjs",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
     "tier": 1,
     "is_directory": false
   },
-  "c:/NotBackedUp/pubmd/documentation/01_Requirements": {
+  "/workspaces/pubmd/nodejs_projects/core/scripts/copy-assets.mjs": {
+    "key_string": "1Da2",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/copy-assets.mjs",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/scripts/debug_markdown_service_output.html": {
+    "key_string": "1Da3",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/debug_markdown_service_output.html",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/scripts/debug_screenshots": {
+    "key_string": "2A",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/debug_screenshots",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
+    "tier": 2,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/nodejs_projects/core/scripts/debug_screenshots/mermaid_debug_screenshot.png": {
+    "key_string": "2A1",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/debug_screenshots/mermaid_debug_screenshot.png",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts/debug_screenshots",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/scripts/test-markdown-service.mjs": {
+    "key_string": "1Da4",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/test-markdown-service.mjs",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/scripts/test-pdf-service - Copy.mjs": {
+    "key_string": "1Da5",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/test-pdf-service - Copy.mjs",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/scripts/test-pdf-service.mjs": {
+    "key_string": "1Da6",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/test-pdf-service.mjs",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/scripts/test_html_output.pdf": {
+    "key_string": "1Da7",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/test_html_output.pdf",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/scripts/test_html_playwright_output.pdf": {
+    "key_string": "1Da8",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/test_html_playwright_output.pdf",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/scripts/test_markdown_output.pdf": {
+    "key_string": "1Da9",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/test_markdown_output.pdf",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/scripts/test_markdown_playwright_output.pdf": {
+    "key_string": "1Da10",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/scripts/test_markdown_playwright_output.pdf",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/scripts",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src": {
     "key_string": "1Db",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/01_Requirements",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core",
     "tier": 1,
     "is_directory": true
   },
-  "c:/NotBackedUp/pubmd/documentation/01_Requirements/.Business_Requirements.md": {
+  "/workspaces/pubmd/nodejs_projects/core/src/index.ts": {
     "key_string": "1Db1",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/01_Requirements/.Business_Requirements.md",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation/01_Requirements",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/index.ts",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src",
     "tier": 1,
     "is_directory": false
   },
-  "c:/NotBackedUp/pubmd/documentation/02_Architecture": {
-    "key_string": "1Dc",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation",
-    "tier": 1,
+  "/workspaces/pubmd/nodejs_projects/core/src/services": {
+    "key_string": "2A",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src",
+    "tier": 2,
     "is_directory": true
   },
-  "c:/NotBackedUp/pubmd/documentation/02_Architecture/.Architectural_Decisions_Log.md": {
-    "key_string": "1Dc1",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture/.Architectural_Decisions_Log.md",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
-    "tier": 1,
-    "is_directory": false
-  },
-  "c:/NotBackedUp/pubmd/documentation/02_Architecture/.Architectural_Decisions_Pending.md": {
-    "key_string": "1Dc2",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture/.Architectural_Decisions_Pending.md",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
-    "tier": 1,
-    "is_directory": false
-  },
-  "c:/NotBackedUp/pubmd/documentation/02_Architecture/Core_Logic_Componentization_Strategy.md": {
-    "key_string": "1Dc3",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture/Core_Logic_Componentization_Strategy.md",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
-    "tier": 1,
-    "is_directory": false
-  },
-  "c:/NotBackedUp/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md": {
-    "key_string": "1Dc4",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture/Solution_Architecture_Design_Specification.md",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
-    "tier": 1,
-    "is_directory": false
-  },
-  "c:/NotBackedUp/pubmd/documentation/02_Architecture/solution_options_analysis.md": {
-    "key_string": "1Dc5",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture/solution_options_analysis.md",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation/02_Architecture",
-    "tier": 1,
-    "is_directory": false
-  },
-  "c:/NotBackedUp/pubmd/documentation/03_Implementation": {
-    "key_string": "1Dd",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/03_Implementation",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation",
-    "tier": 1,
+  "/workspaces/pubmd/nodejs_projects/core/src/services/markdown": {
+    "key_string": "2Aa",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/markdown",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services",
+    "tier": 2,
     "is_directory": true
   },
-  "c:/NotBackedUp/pubmd/documentation/03_Implementation/Implementation_Plan.md": {
-    "key_string": "1Dd1",
-    "norm_path": "c:/NotBackedUp/pubmd/documentation/03_Implementation/Implementation_Plan.md",
-    "parent_path": "c:/NotBackedUp/pubmd/documentation/03_Implementation",
+  "/workspaces/pubmd/nodejs_projects/core/src/services/markdown/markdown-types.ts": {
+    "key_string": "2Aa1",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/markdown/markdown-types.ts",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services/markdown",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src/services/markdown/markdown.service.ts": {
+    "key_string": "2Aa2",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/markdown/markdown.service.ts",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services/markdown",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src/services/markdown/markdown.service_backup_20250521_svg_approach.ts": {
+    "key_string": "2Aa3",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/markdown/markdown.service_backup_20250521_svg_approach.ts",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services/markdown",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src/services/markdown/markdown.types.ts": {
+    "key_string": "2Aa4",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/markdown/markdown.types.ts",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services/markdown",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src/services/pdf": {
+    "key_string": "2Ab",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services",
+    "tier": 2,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/pdf-engine.interface.ts": {
+    "key_string": "2Ab1",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/pdf-engine.interface.ts",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/pdf.service.ts": {
+    "key_string": "2Ab2",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/pdf.service.ts",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/pdf.types.ts": {
+    "key_string": "2Ab3",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/pdf.types.ts",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/playwright-dom-correction.js": {
+    "key_string": "2Ab4",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/playwright-dom-correction.js",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/playwright-dom-correction_backup_20250521_svg_approach.js": {
+    "key_string": "2Ab5",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/playwright-dom-correction_backup_20250521_svg_approach.js",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/playwright.engine.ts": {
+    "key_string": "2Ab6",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/playwright.engine.ts",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/playwright.engine_backup_20250521_svg_approach.ts": {
+    "key_string": "2Ab7",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf/playwright.engine_backup_20250521_svg_approach.ts",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core/src/services/pdf",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/nodejs_projects/core/tsconfig.build.json": {
+    "key_string": "1D5",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/tsconfig.build.json",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core",
     "tier": 1,
     "is_directory": false
   },
-  "c:/NotBackedUp/pubmd/src": {
+  "/workspaces/pubmd/nodejs_projects/core/tsconfig.esm.json": {
+    "key_string": "1D6",
+    "norm_path": "/workspaces/pubmd/nodejs_projects/core/tsconfig.esm.json",
+    "parent_path": "/workspaces/pubmd/nodejs_projects/core",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/src": {
     "key_string": "1E",
-    "norm_path": "c:/NotBackedUp/pubmd/src",
+    "norm_path": "/workspaces/pubmd/src",
     "parent_path": null,
     "tier": 1,
     "is_directory": true
   },
-  "c:/NotBackedUp/pubmd/src/cli": {
+  "/workspaces/pubmd/src/web": {
     "key_string": "1Ea",
-    "norm_path": "c:/NotBackedUp/pubmd/src/cli",
-    "parent_path": "c:/NotBackedUp/pubmd/src",
+    "norm_path": "/workspaces/pubmd/src/web",
+    "parent_path": "/workspaces/pubmd/src",
     "tier": 1,
     "is_directory": true
   },
-  "c:/NotBackedUp/pubmd/src/web": {
-    "key_string": "1Eb",
-    "norm_path": "c:/NotBackedUp/pubmd/src/web",
-    "parent_path": "c:/NotBackedUp/pubmd/src",
-    "tier": 1,
+  "/workspaces/pubmd/src/web/archive": {
+    "key_string": "2A",
+    "norm_path": "/workspaces/pubmd/src/web/archive",
+    "parent_path": "/workspaces/pubmd/src/web",
+    "tier": 2,
     "is_directory": true
   },
-  "c:/NotBackedUp/pubmd/src/web/default.md": {
-    "key_string": "1Eb1",
-    "norm_path": "c:/NotBackedUp/pubmd/src/web/default.md",
-    "parent_path": "c:/NotBackedUp/pubmd/src/web",
+  "/workspaces/pubmd/src/web/archive/index_lastcommit.html": {
+    "key_string": "2A1",
+    "norm_path": "/workspaces/pubmd/src/web/archive/index_lastcommit.html",
+    "parent_path": "/workspaces/pubmd/src/web/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/src/web/archive/script_lastcommit.js": {
+    "key_string": "2A2",
+    "norm_path": "/workspaces/pubmd/src/web/archive/script_lastcommit.js",
+    "parent_path": "/workspaces/pubmd/src/web/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/src/web/archive/style_lastcommit.css": {
+    "key_string": "2A3",
+    "norm_path": "/workspaces/pubmd/src/web/archive/style_lastcommit.css",
+    "parent_path": "/workspaces/pubmd/src/web/archive",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/src/web/default.md": {
+    "key_string": "1Ea1",
+    "norm_path": "/workspaces/pubmd/src/web/default.md",
+    "parent_path": "/workspaces/pubmd/src/web",
     "tier": 1,
     "is_directory": false
   },
-  "c:/NotBackedUp/pubmd/src/web/index.html": {
-    "key_string": "1Eb2",
-    "norm_path": "c:/NotBackedUp/pubmd/src/web/index.html",
-    "parent_path": "c:/NotBackedUp/pubmd/src/web",
+  "/workspaces/pubmd/src/web/index.html": {
+    "key_string": "1Ea2",
+    "norm_path": "/workspaces/pubmd/src/web/index.html",
+    "parent_path": "/workspaces/pubmd/src/web",
     "tier": 1,
     "is_directory": false
   },
-  "c:/NotBackedUp/pubmd/src/web/script.js": {
-    "key_string": "1Eb3",
-    "norm_path": "c:/NotBackedUp/pubmd/src/web/script.js",
-    "parent_path": "c:/NotBackedUp/pubmd/src/web",
+  "/workspaces/pubmd/src/web/mermaid-themes.css": {
+    "key_string": "1Ea3",
+    "norm_path": "/workspaces/pubmd/src/web/mermaid-themes.css",
+    "parent_path": "/workspaces/pubmd/src/web",
     "tier": 1,
     "is_directory": false
   },
-  "c:/NotBackedUp/pubmd/src/web/style.css": {
-    "key_string": "1Eb4",
-    "norm_path": "c:/NotBackedUp/pubmd/src/web/style.css",
-    "parent_path": "c:/NotBackedUp/pubmd/src/web",
+  "/workspaces/pubmd/src/web/reference": {
+    "key_string": "2B",
+    "norm_path": "/workspaces/pubmd/src/web/reference",
+    "parent_path": "/workspaces/pubmd/src/web",
+    "tier": 2,
+    "is_directory": true
+  },
+  "/workspaces/pubmd/src/web/reference/github_css_research.css": {
+    "key_string": "2B1",
+    "norm_path": "/workspaces/pubmd/src/web/reference/github_css_research.css",
+    "parent_path": "/workspaces/pubmd/src/web/reference",
+    "tier": 2,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/src/web/script.js": {
+    "key_string": "1Ea4",
+    "norm_path": "/workspaces/pubmd/src/web/script.js",
+    "parent_path": "/workspaces/pubmd/src/web",
+    "tier": 1,
+    "is_directory": false
+  },
+  "/workspaces/pubmd/src/web/style.css": {
+    "key_string": "1Ea5",
+    "norm_path": "/workspaces/pubmd/src/web/style.css",
+    "parent_path": "/workspaces/pubmd/src/web",
     "tier": 1,
     "is_directory": false
   }

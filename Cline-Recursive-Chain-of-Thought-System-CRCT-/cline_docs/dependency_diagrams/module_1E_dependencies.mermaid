@@ -6,34 +6,10 @@ flowchart TB
   linkStyle default stroke:#CCCCCC,stroke-width:1px
 
   %% -- Nodes and Subgraphs --
-  subgraph sg_1D ["1D<br>documentation"]
-    style sg_1D fill:#282828,stroke:#39FF14,stroke-width:4px
-    subgraph sg_1Dc ["1Dc<br>02_Architecture"]
-      style sg_1Dc fill:#282828,stroke:#39FF14,stroke-width:4px
-      1Dc4["1Dc4<br>Solution_Architecture_Design_Specification.md"]
-      class 1Dc4 doc
-    end
-    subgraph sg_1Dd ["1Dd<br>03_Implementation"]
-      style sg_1Dd fill:#282828,stroke:#39FF14,stroke-width:4px
-      1Dd1["1Dd1<br>Implementation_Plan.md"]
-      class 1Dd1 doc
-    end
-  end
   subgraph sg_1E ["1E<br>src"]
     style sg_1E fill:#282828,stroke:#39FF14,stroke-width:4px
-    subgraph sg_1Eb ["1Eb<br>web"]
-      style sg_1Eb fill:#282828,stroke:#39FF14,stroke-width:4px
-      1Eb2["1Eb2<br>index.html"]
-      class 1Eb2 file
-      1Eb3["1Eb3<br>script.js"]
-      class 1Eb3 file
-    end
   end
 
   %% -- Fallback Node Definitions --
 
   %% -- Dependencies --
-  1Dc4 -.->|"docs"| 1Eb2
-  1Dc4 -.->|"docs"| 1Eb3
-  1Dd1 -.->|"docs"| 1Eb2
-  1Dd1 -.->|"docs"| 1Eb3

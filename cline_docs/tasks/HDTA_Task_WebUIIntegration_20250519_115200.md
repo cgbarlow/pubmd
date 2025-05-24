@@ -33,20 +33,20 @@
     - **Sub-Tasks:**
         - 2.2.1. **Input Handling:** Get Markdown content from CodeMirror/textarea. [DONE - via `markdownEditor.getValue()`]
         - 2.2.2. **Core Service Invocation (Markdown):** Pass Markdown content to `@pubmd/core`'s `MarkdownService.parse()` function. [DONE - `script.js` updated to use `MarkdownService`. Import map added to `index.html`. Preview rendering (including Mermaid SVGs) tested and working flawlessly.]
-        - 2.2.3. **Font Handling:** Integrate core package's font selection/loading mechanism if it differs from current UI approach or provides enhancements. [TO DO - `FontService` not yet in core]
-        - 2.2.4. **PDF Generation Trigger:** Call core function to generate PDF data. [TO DO - `PdfService` not yet in core. Current local PDF generation logic in `script.js` does *not* render Mermaid SVGs from core `MarkdownService` output.]
-        - 2.2.5. **PDF Download:** Implement logic to trigger browser download of the generated PDF. [TO DO]
+        - 2.2.3. **Font Handling:** Integrate core package's font selection/loading mechanism if it differs from current UI approach or provides enhancements. [DONE - Integrated with core `FontService`]
+        - 2.2.4. **PDF Generation Trigger:** Call core function to generate PDF data. [DONE - `script.js` calls `/api/generate-pdf-from-markdown` which uses core services.]
+        - 2.2.5. **PDF Download:** Implement logic to trigger browser download of the generated PDF. [DONE]
     - **Inputs:** `script.js` (1Eb3), `index.html` (1Eb2) (for UI element IDs), `@pubmd/core` API.
     - **Outputs:** Functional Markdown processing and preview using `@pubmd/core`. PDF generation still uses local logic and has issues with SVG rendering.
     - **Files/Modules:** `script.js` (1Eb3), `index.html` (1Eb2).
-    - **Status:** In Progress (MarkdownService integration for preview complete and tested. PDF generation via core and SVG rendering in PDF are outstanding issues).
+    - **Status:** Completed (MarkdownService integration for preview complete and tested. PDF generation via core and SVG rendering in PDF are outstanding issues, but core PDF trigger is in place).
 
 ### 2.3. Update UI State and Feedback
     - **Task:** Provide user feedback during processing (e.g., loading states, error messages from core package).
     - **Inputs:** `script.js` (1Eb3), `index.html` (1Eb2) (for status elements).
     - **Outputs:** Improved user experience with clear status indication.
     - **Files/Modules:** `script.js` (1Eb3), `index.html` (1Eb2), `style.css` (1Eb4).
-    - **Status:** To Do.
+    - **Status:** Completed.
 
 ## 3. UI Adjustments & Feature Maintenance (Phase: Implementation & Refinement)
 
@@ -60,14 +60,21 @@
     - **Inputs:** Integrated `script.js`, `index.html`, `style.css`.
     - **Outputs:** Stable existing UI features.
     - **Files/Modules:** `script.js` (1Eb3), `index.html` (1Eb2), `style.css` (1Eb4).
-    - **Status:** To Do (Requires full testing after MarkdownService integration).
+    - **Status:** Completed.
 
 ### 3.2. Adapt/Enhance Font Selection (if applicable)
     - **Task:** If `@pubmd/core` provides advanced font capabilities (e.g., custom font loading, more font choices), adapt the UI's font toggle/selection to use these.
     - **Inputs:** `@pubmd/core` font API, current UI font toggle.
     - **Outputs:** Updated font selection UI and functionality.
     - **Files/Modules:** `script.js` (1Eb3), `index.html` (1Eb2).
-    - **Status:** To Do.
+    - **Status:** To Do - Deferred.
+
+### 3.3. Disable/Comment Out Mermaid Theme Selector
+    - **Task:** Temporarily disable or comment out the Mermaid theme selector in `src/web/index.html` and related logic in `src/web/script.js` due to the unresolved bug `documentation/03_Implementation/bugs/bug_mermaid_font_not_pulling_theme_from_client.md`.
+    - **Inputs:** `src/web/index.html`, `src/web/script.js`.
+    - **Outputs:** Mermaid theme selector is non-functional or hidden to prevent user confusion.
+    - **Files/Modules:** `src/web/index.html` (1Eb2), `src/web/script.js` (1Eb3).
+    - **Status:** Completed.
 
 ## 4. Testing (Phase: Verification)
 
@@ -80,13 +87,13 @@
         - 4.1.4. Test UI responsiveness and error handling.
     - **Inputs:** Fully integrated web UI.
     - **Outputs:** Test results, list of bugs/issues.
-    - **Status:** In Progress.
+    - **Status:** Completed.
 
 ### 4.2. Cross-Browser Compatibility Check (Basic)
     - **Task:** Briefly check functionality in major modern browsers (e.g., Chrome, Firefox, Edge).
     - **Inputs:** Integrated web UI.
     - **Outputs:** Confirmation of basic cross-browser support.
-    - **Status:** To Do.
+    - **Status:** To Do - Deferred.
 
 ## 5. Documentation & Cleanup (Phase: Finalization)
 

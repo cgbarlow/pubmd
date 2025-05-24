@@ -1,9 +1,6 @@
 # Active Context
 
-**Current Task**: COMPLETED - Debugging session for Mermaid font/theme regressions and PDF custom font rendering.
-    *   Primary PDF custom font rendering issue (Playwright) logged as BUG-20250523-PDF-FONT in `documentation/03_Implementation/bugs/BUG_PDF_CustomFont_Playwright_Rendering_Issue_20250523.md`.
-    *   Client-side Mermaid theme rendering issue noted in `documentation/03_Implementation/bugs/bug_mermaid_font_not_pulling_theme_from_client.md`.
-    *   Server-side Mermaid diagram font in PDF identified as a known limitation (fonts not passed to `MarkdownService`'s Playwright instance).
+**Current Task**: COMPLETED - Execution Task: Verify Core Package Availability ([`Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md`](./tasks/Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md:0)). `@pubmd/core` build artifacts confirmed in `nodejs_projects/core/dist/`.
 
 **Recent UI Adjustments (User Requests):**
 *   Modified `src/web/index.html` and `src/web/style.css` to change the layout and styling of the main title (h1) and tagline (h2). The h1 is now left-aligned, and the h2 is on the same line, right-aligned, italic, and light grey. Vertical alignment of h2 adjusted to center within the title bar.
@@ -27,8 +24,7 @@
 **`current_planning_area`**: Awaiting next CRCT task.
 
 **Current State & Next Steps:**
-*   The debugging session for PDF font rendering and Mermaid theming is complete.
-*   Key issues have been identified and documented.
+*   The "Verify Core Package Availability" task ([`Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md`](./tasks/Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md:0)) is complete. The `@pubmd/core` build artifacts are confirmed present in `nodejs_projects/core/dist/`.
 *   The system should now load and proceed with the next prioritized task from the CRCT task list.
 
 **Server-Side Build Issue (Ongoing - Prerequisite for PDF Theming Fix if revisited):**

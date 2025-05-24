@@ -1,0 +1,219 @@
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+// Ensure PdfGenerationOptions and MarkdownParseOptions are imported, even if TS struggles with their latest definitions
+import { PdfService, PdfGenerationOptions, MarkdownService, MarkdownParseOptions, MermaidTheme } from '@pubmd/core';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const port = process.env.PORT || 3001;
+
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
+
+let serverFontBase64Sans: string | null = null;
+let serverFontBase64Serif: string | null = null;
+
+try {
+    const sansFontPath = path.join(__dirname, 'assets/fonts/DejaVuSans.ttf');
+    const serifFontPath = path.join(__dirname, 'assets/fonts/DejaVuSerif.ttf');
+    if (fs.existsSync(sansFontPath)) {
+        serverFontBase64Sans = fs.readFileSync(sansFontPath).toString('base64');
+        console.log('DejaVuSans.ttf loaded for server-side PDF generation.');
+    } else {
+        console.warn(`Server font not found: ${sansFontPath}.`);
+    }
+    if (fs.existsSync(serifFontPath)) {
+        serverFontBase64Serif = fs.readFileSync(serifFontPath).toString('base64');
+        console.log('DejaVuSerif.ttf loaded for server-side PDF generation.');
+    } else {
+        console.warn(`Server font not found: ${serifFontPath}.`);
+    }
+} catch (error) {
+    console.error('Error loading server-side fonts:', error);
+}
+
+let pdfService: PdfService;
+let markdownService: MarkdownService;
+
+try {
+    markdownService = new MarkdownService();
+    pdfService = new PdfService(markdownService);
+    console.log('PdfService and MarkdownService instantiated successfully.');
+} catch (error) {
+    console.error('Failed to instantiate core services:', error);
+}
+
+app.get('/', (req: Request, res: Response) => {
+    res.send('PubMD Core API Server is running!');
+});
+
+app.post('/api/generate-pdf-from-markdown', async (req: Request, res: Response): Promise<void> => {
+    if (!pdfService || !markdownService) {
+        console.error('Core services not available.');
+        res.status(500).send('Core services are not available.');
+        return;
+    }
+
+    try {
+        console.log('Received PDF generation request. Full req.body:', JSON.stringify(req.body, null, 2));
+
+        const { markdown, fontPreference: clientFontPreference, markdownOptions: clientMarkdownOptions, pdfOptions: clientPdfOptionsAny } = req.body as {
+            markdown: string;
+            fontPreference?: 'sans-serif' | 'serif'; // Expected top-level
+            markdownOptions?: { mermaidTheme?: MermaidTheme }; // Expected top-level
+            pdfOptions?: any; // For other PDF settings like margins, format
+        };
+        
+        const clientPdfOptions = clientPdfOptionsAny as PdfGenerationOptions; // Cast for known properties if they exist
+
+        if (!markdown) {
+            res.status(400).send('Missing "markdown" content in request body.');
+            return;
+        }
+
+        console.log(`Markdown length: ${markdown.length}`);
+        console.log(`Received fontPreference: ${clientFontPreference}`);
+        console.log(`Received markdownOptions: ${JSON.stringify(clientMarkdownOptions)}`);
+        if (clientMarkdownOptions) {
+            console.log(`Received mermaidTheme (from markdownOptions): ${clientMarkdownOptions.mermaidTheme}`);
+        }
+        console.log('Received clientPdfOptions (for layout etc.):', clientPdfOptionsAny);
+
+
+        // --- 1. Prepare options for MarkdownService.parse() ---
+        const markdownParseOptionsForService: MarkdownParseOptions = {
+            gfm: true,
+            breaks: true,
+        };
+
+        const selectedMermaidTheme = clientMarkdownOptions?.mermaidTheme || 'light'; // Default to 'light'
+        (markdownParseOptionsForService as any).mermaidTheme = selectedMermaidTheme; // Use 'mermaidTheme' as per core service
+        console.log(`Using Mermaid theme for MarkdownService: ${selectedMermaidTheme}`);
+        
+        if (clientFontPreference) {
+             console.log(`Font preference for MarkdownService (if applicable): ${clientFontPreference}`);
+        }
+
+
+        console.log('Options for MarkdownService.parse():', markdownParseOptionsForService);
+        const htmlStart = Date.now();
+        const htmlFromMarkdown = await markdownService.parse(markdown, markdownParseOptionsForService);
+        const htmlDuration = Date.now() - htmlStart;
+        console.log(`Markdown parsed to HTML in ${htmlDuration}ms. HTML length: ${htmlFromMarkdown.length}`);
+
+        // --- 2. Construct Full HTML with Embedded Fonts for PDF ---
+        let fontFaceRules = '';
+        let bodyFontFamily = `sans-serif`; // Default
+        const overallFontPreference = clientFontPreference || 'sans-serif'; 
+        console.log(`Determined overallFontPreference for PDF body: ${overallFontPreference}`);
+
+
+        if (serverFontBase64Sans && serverFontBase64Serif) {
+            fontFaceRules = `
+              @font-face {
+                font-family: 'DejaVu Sans'; /* Simplified name */
+                src: url(data:font/ttf;base64,${serverFontBase64Sans}) format('truetype');
+              }
+              @font-face {
+                font-family: 'DejaVu Serif'; /* Simplified name */
+                src: url(data:font/ttf;base64,${serverFontBase64Serif}) format('truetype');
+              }
+            `;
+            bodyFontFamily = overallFontPreference === 'serif' ? `'DejaVu Serif', serif` : `'DejaVu Sans', sans-serif`;
+        } else {
+            console.warn("Server-side DejaVu fonts not available for PDF. PDF will use system default fonts.");
+        }
+        console.log(`Applying body font-family to PDF: ${bodyFontFamily}`);
+        
+        const finalHtmlForPdf = `
+            <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>PDF Document</title>
+            <style>
+              ${fontFaceRules}
+              body { margin: 0; font-family: ${bodyFontFamily}; }
+              table { border-collapse: collapse; width: 100%; margin-bottom: 1em; }
+              th, td { border: 1px solid #ccc; padding: 0.5em; text-align: left; }
+              th { background-color: #f0f0f0; }
+              pre { background-color: #f5f5f5; padding: 1em; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; }
+              code:not(pre code) { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; }
+              blockquote { border-left: 3px solid #ccc; padding-left: 1em; margin-left: 0; }
+              img { max-width: 100%; height: auto; }
+              ul, ol { padding-left: 20pt; margin-left: 0; }
+              li { margin-bottom: 5px; }
+            </style></head><body>${htmlFromMarkdown}</body></html>`;
+        
+        fs.writeFileSync(path.join(__dirname, 'debug_pdf_content.html'), finalHtmlForPdf);
+        console.log('Debug HTML for PDF saved to: ' + path.join(__dirname, 'debug_pdf_content.html'));
+        // console.log('Debug HTML for PDF saved to debug_pdf_content.html');
+
+        // --- 3. Prepare options for PdfService.generatePdfFromHtml() ---
+        const pdfLayoutOptions: PdfGenerationOptions = {
+            pageFormat: clientPdfOptions?.pageFormat || 'a4',
+            orientation: clientPdfOptions?.orientation || 'portrait',
+            margins: clientPdfOptions?.margins || { top: 20, right: 20, bottom: 20, left: 20 },
+            scale: clientPdfOptions?.scale || 1,
+            printBackground: clientPdfOptions?.printBackground === undefined ? true : clientPdfOptions.printBackground,
+            filename: clientPdfOptionsAny?.filename || 'document_from_md.pdf'
+        };
+        
+        const pdfGenerateTimeStart = Date.now();
+        const pdfBlob = await pdfService.generatePdfFromHtml(finalHtmlForPdf, pdfLayoutOptions);
+        const pdfGenerateDuration = Date.now() - pdfGenerateTimeStart;
+        console.log(`PDF generated from final HTML in ${pdfGenerateDuration}ms.`);
+
+        const pdfBuffer = Buffer.from(await pdfBlob.arrayBuffer());
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${pdfLayoutOptions.filename}"`);
+        res.send(pdfBuffer);
+
+    } catch (error: any) {
+        console.error('Error in /api/generate-pdf-from-markdown:', error);
+        res.status(500).send(`Error generating PDF from Markdown: ${error.message || 'Unknown error'}`);
+    }
+});
+
+app.post('/api/generate-pdf', async (req: Request, res: Response): Promise<void> => {
+    if (!pdfService) {
+        res.status(500).send('PDF generation service is not available.');
+        return;
+    }
+    try {
+        const { html, options: clientOptionsAny } = req.body as { html: string; options?: any }; // Temp any
+        const options = clientOptionsAny as PdfGenerationOptions; // Cast back
+
+        if (!html) {
+            res.status(400).send('Missing "html" content in request body.');
+            return;
+        }
+        const generationOptions: PdfGenerationOptions = {
+            pageFormat: options?.pageFormat || 'a4',
+            orientation: options?.orientation || 'portrait',
+            margins: options?.margins || { top: 15, right: 15, bottom: 15, left: 15 },
+            scale: options?.scale || 1,
+            printBackground: options?.printBackground === undefined ? true : options.printBackground,
+            filename: options?.filename || 'document_from_html.pdf'
+        };
+        const pdfBlob = await pdfService.generatePdfFromHtml(html, generationOptions);
+        const pdfBuffer = Buffer.from(await pdfBlob.arrayBuffer());
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${generationOptions.filename}"`);
+        res.send(pdfBuffer);
+    } catch (error: any) {
+        console.error('Error in /api/generate-pdf:', error);
+        res.status(500).send(`Error generating PDF: ${error.message || 'Unknown error'}`);
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+    if (!pdfService || !markdownService) {
+        console.warn('Warning: Core services may not have initialized correctly.');
+    }
+    if (!serverFontBase64Sans || !serverFontBase64Serif) {
+        console.warn('Warning: Server DejaVu fonts failed to load. PDFs may use default fonts.');
+    }
+});

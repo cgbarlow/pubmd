@@ -1,0 +1,31 @@
+2025-05-24 03:56:06,257 - __main__ - INFO - CLI: visualize-dependencies called. Focus Keys: Project Overview
+2025-05-24 03:56:06,257 - __main__ - INFO - Loading global key map...
+2025-05-24 03:56:06,257 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: path_normalization with TTL 600s
+2025-05-24 03:56:06,257 - cline_utils.dependency_system.core.key_manager - INFO - Successfully loaded global key map (112 entries) from: /workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_utils/dependency_system/core/global_key_map.json
+2025-05-24 03:56:06,258 - __main__ - INFO - Global key map loaded successfully.
+2025-05-24 03:56:06,258 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: project_root with TTL 600s
+2025-05-24 03:56:06,258 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: config_data with TTL 600s
+2025-05-24 03:56:06,259 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Path Components: project_root='/workspaces/pubmd', memory_dir_rel='/workspaces/pubmd/cline_docs', calculated memory_dir_abs='/workspaces/pubmd/cline_docs'
+2025-05-24 03:56:06,259 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Using main_tracker_abs from config (or default): '/workspaces/pubmd/cline_docs/module_relationship_tracker.md'
+2025-05-24 03:56:06,259 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Main tracker not found at: /workspaces/pubmd/cline_docs/module_relationship_tracker.md
+2025-05-24 03:56:06,259 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Using doc_tracker_abs from config (or default): '/workspaces/pubmd/cline_docs/doc_tracker.md'
+2025-05-24 03:56:06,259 - cline_utils.dependency_system.utils.tracker_utils - DEBUG - Doc tracker not found at: /workspaces/pubmd/cline_docs/doc_tracker.md
+2025-05-24 03:56:06,259 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: code_roots with TTL 600s
+2025-05-24 03:56:06,259 - cline_utils.dependency_system.utils.config_manager - WARNING - '.clinerules' file not found. Cannot read code root directories.
+2025-05-24 03:56:06,259 - cline_utils.dependency_system.utils.config_manager - DEBUG - Found and sorted code roots: []
+2025-05-24 03:56:06,260 - cline_utils.dependency_system.utils.tracker_utils - WARNING - No code_root_directories configured. Cannot find mini trackers.
+2025-05-24 03:56:06,260 - cline_utils.dependency_system.utils.tracker_utils - INFO - Found 0 total tracker files.
+2025-05-24 03:56:06,260 - __main__ - DEBUG - Building path migration map for visualize-dependencies command...
+2025-05-24 03:56:06,260 - cline_utils.dependency_system.core.key_manager - INFO - Loaded previous global key map (26 entries) from: /workspaces/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/cline_utils/dependency_system/core/global_key_map_old.json
+2025-05-24 03:56:06,260 - cline_utils.dependency_system.io.tracker_io - INFO - Building path migration map based on global key maps...
+2025-05-24 03:56:06,261 - cline_utils.dependency_system.io.tracker_io - DEBUG - Old global map: Found 26 unique paths.
+2025-05-24 03:56:06,263 - cline_utils.dependency_system.io.tracker_io - DEBUG - New global map: Found 112 unique paths.
+2025-05-24 03:56:06,263 - cline_utils.dependency_system.io.tracker_io - INFO - Path comparison: Stable=0, Removed=26, Added=112
+2025-05-24 03:56:06,264 - cline_utils.dependency_system.io.tracker_io - INFO - Path migration map built with 138 total path entries.
+2025-05-24 03:56:06,264 - cline_utils.dependency_system.utils.visualize_dependencies - INFO - Generating Mermaid diagram. Focus Keys: Project Overview
+2025-05-24 03:56:06,264 - cline_utils.dependency_system.utils.cache_manager - DEBUG - Spun up new cache: aggregation with TTL 300s
+2025-05-24 03:56:06,264 - cline_utils.dependency_system.utils.tracker_utils - INFO - Aggregating dependencies from 0 trackers using path migration map...
+2025-05-24 03:56:06,264 - cline_utils.dependency_system.utils.tracker_utils - INFO - Aggregation complete. Processed 0 trackers. Found 0 unique directed links (based on current keys for stable paths).
+2025-05-24 03:56:06,264 - cline_utils.dependency_system.utils.visualize_dependencies - DEBUG - Aggregated 0 consolidated directed links using current keys.
+2025-05-24 03:56:06,264 - cline_utils.dependency_system.utils.visualize_dependencies - INFO - Final count of edges to draw: 0
+2025-05-24 03:56:06,318 - __main__ - INFO - Successfully wrote Mermaid visualization to: /workspaces/pubmd/cline_docs/dependency_diagrams/project_overview_reconciliation_check.mermaid

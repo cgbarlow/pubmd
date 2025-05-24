@@ -1,0 +1,73 @@
+# Module: scripts
+
+## Purpose & Responsibility
+{1-2 paragraphs on module purpose & responsibility}
+
+## Interfaces
+* `{InterfaceName}`: {purpose}
+* `{Method1}`: {description}
+* `{Method2}`: {description}
+* Input: [Data received]
+* Output: [Data provided]
+...
+
+## Implementation Details
+* Files: [List with 1-line descriptions]
+* Important algorithms: [List with 1-line descriptions]
+* Data Models
+    * `{Model1}`: {description}
+    * `{Model2}`: {description}
+
+## Current Implementation Status
+* Completed: [List of completed items]
+* In Progress: [Current work]
+* Pending: [Future work]
+
+## Implementation Plans & Tasks
+* `implementation_plan_{filename1}.md`
+* [Task1]: {brief description}
+* [Task2]: {brief description}
+* `implementation_plan_{filename2}.md`
+* [Task1]: {brief description}
+* [Task2]: {brief description} 
+...
+
+## Mini Dependency Tracker
+---mini_tracker_start---
+
+---KEY_DEFINITIONS_START---
+Key Definitions:
+1Da: /workspaces/pubmd/nodejs_projects/core/scripts
+1Da1: /workspaces/pubmd/nodejs_projects/core/scripts/bootstrap-mermaid.mjs
+1Da2: /workspaces/pubmd/nodejs_projects/core/scripts/copy-assets.mjs
+1Da3: /workspaces/pubmd/nodejs_projects/core/scripts/debug_markdown_service_output.html
+1Da4: /workspaces/pubmd/nodejs_projects/core/scripts/test-markdown-service.mjs
+1Da5: /workspaces/pubmd/nodejs_projects/core/scripts/test-pdf-service - Copy.mjs
+1Da6: /workspaces/pubmd/nodejs_projects/core/scripts/test-pdf-service.mjs
+1Da7: /workspaces/pubmd/nodejs_projects/core/scripts/test_html_output.pdf
+1Da8: /workspaces/pubmd/nodejs_projects/core/scripts/test_html_playwright_output.pdf
+1Da9: /workspaces/pubmd/nodejs_projects/core/scripts/test_markdown_output.pdf
+1Da10: /workspaces/pubmd/nodejs_projects/core/scripts/test_markdown_playwright_output.pdf
+2A: /workspaces/pubmd/documentation/03_Implementation/archive
+---KEY_DEFINITIONS_END---
+
+last_KEY_edit: Assigned keys: 1Da, 1Da1, 1Da2, 1Da3, 1Da4, 1Da5, 1Da6, 1Da7, 1Da8, 1Da9, 1Da10, 2A, 2A, 2A, 2A
+last_GRID_edit: Initial creation
+
+---GRID_START---
+X 1Da 1Da1 1Da2 1Da3 1Da4 1Da5 1Da6 1Da7 1Da8 1Da9 1Da10 2A
+1Da = op11
+1Da1 = pop10
+1Da2 = ppop9
+1Da3 = p3op8
+1Da4 = p4op7
+1Da5 = p5op6
+1Da6 = p6op5
+1Da7 = p7op4
+1Da8 = p8op3
+1Da9 = p9opp
+1Da10 = p10op
+2A = p11o
+---GRID_END---
+
+---mini_tracker_end---

@@ -1,3 +1,12 @@
+## 2025-05-24
+
+*   **Core Package Verification Complete:**
+    *   Task: [`Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md`](./tasks/Execution_Task_WebUI_VerifyCorePackage_20250519_115800.md:0)
+    *   Confirmed that the `@pubmd/core` package build artifacts are present in `nodejs_projects/core/dist/` (containing `cjs/`, `esm/`, and `types/` subdirectories).
+    *   The package is now considered available for import by the web UI.
+    *   Updated task file status to "Completed".
+
+---
 ## 2025-05-23 (Continued)
 
 *   **PDF Font & Mermaid Theme Debugging Session Concluded:**

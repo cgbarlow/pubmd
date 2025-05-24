@@ -74,21 +74,31 @@ This module aims to be UI-agnostic, focusing purely on the transformation and do
 
 ---KEY_DEFINITIONS_START---
 Key Definitions:
-1B: c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core
-1B1: c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/package.json
-1B2: c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.build.json
-1B3: c:/NotBackedUp/pubmd/Cline-Recursive-Chain-of-Thought-System-CRCT-/packages/core/tsconfig.esm.json
+1D: /workspaces/pubmd/nodejs_projects/core
+1D1: /workspaces/pubmd/nodejs_projects/core/implementation_plan_core_package_setup.md
+1D2: /workspaces/pubmd/nodejs_projects/core/implementation_plan_core_script_refactor.md
+1D3: /workspaces/pubmd/nodejs_projects/core/package-lock.json
+1D4: /workspaces/pubmd/nodejs_projects/core/package.json
+1D5: /workspaces/pubmd/nodejs_projects/core/tsconfig.build.json
+1D6: /workspaces/pubmd/nodejs_projects/core/tsconfig.esm.json
+1Da: /workspaces/pubmd/nodejs_projects/core/scripts
+1Db: /workspaces/pubmd/nodejs_projects/core/src
 ---KEY_DEFINITIONS_END---
 
-last_KEY_edit: Assigned keys: 1B, 1B1, 1B2, 1B3
-last_GRID_edit: Grid content updated (2025-05-19T11:32:08.058870)
+last_KEY_edit: Assigned keys: 1D, 1D1, 1D2, 1D3, 1D4, 1D5, 1D6, 1Da, 1Db
+last_GRID_edit: Grid structure updated (2025-05-24T03:52:06.984753)
 
 ---GRID_START---
-X 1B 1B1 1B2 1B3
-1B = ox3
-1B1 = xopp
-1B2 = xpoS
-1B3 = xpSo
+X 1D 1D1 1D2 1D3 1D4 1D5 1D6 1Da 1Db
+1D = ox8
+1D1 = xop7
+1D2 = xpop6
+1D3 = xppop5
+1D4 = xp3op4
+1D5 = xp4op3
+1D6 = xp5opp
+1Da = xp6op
+1Db = xp7o
 ---GRID_END---
 
 ---mini_tracker_end---
