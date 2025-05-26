@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Markdown Export PoC</title>
+
+  <!-- CDNs -->
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it@14/dist/markdown-it.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html-to-pdfmake/browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2/build/pdfmake.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2/build/vfs_fonts.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html-to-docx/dist/html-to-docx.js"></script>
+
+  <style>body{font-family:Arial,Helvetica,sans-serif;margin:1rem}</style>
+</head>
+<body>
+  <button id="pdfBtn">Download PDF</button>
+  <button id="docxBtn">Download DOCX</button>
+  <hr>
+  <div id="preview"></div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

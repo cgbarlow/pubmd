@@ -12,17 +12,8 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 3001;
-const INACTIVITY_TIMEOUT_MS = parseInt(process.env.INACTIVITY_TIMEOUT_MS || (30 * 60 * 1000).toString(), 10); // Default 30 minutes
-
 let serverInstance: http.Server;
 let isShuttingDown = false; // Flag to prevent multiple shutdown attempts
-let inactivityTimerId: NodeJS.Timeout | undefined;
-
-// Middleware to reset inactivity timer on each request
-app.use((req, res, next) => {
-    resetInactivityTimer();
-    next();
-});
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -229,96 +220,13 @@ app.post('/api/generate-pdf', async (req: Request, res: Response): Promise<void>
     }
 });
 
-// Inactivity Timer Logic
-function resetInactivityTimer() {
-    if (INACTIVITY_TIMEOUT_MS <= 0) { // Allow disabling timer
-        if (inactivityTimerId) clearTimeout(inactivityTimerId); // Clear if previously set and now disabled
-        return;
-    }
-    if (isShuttingDown) { // Don't reset timer if already shutting down
-        return;
-    }
-    if (inactivityTimerId) {
-        clearTimeout(inactivityTimerId);
-    }
-    inactivityTimerId = setTimeout(() => {
-        console.log(`Inactivity timeout of ${INACTIVITY_TIMEOUT_MS}ms reached. Initiating shutdown.`);
-        shutdownGracefully('INACTIVITY_TIMEOUT'); 
-    }, INACTIVITY_TIMEOUT_MS);
-    // console.log(`Inactivity timer reset. Will shut down in ${INACTIVITY_TIMEOUT_MS}ms if no activity.`);
-}
-
-
 // Start the server
-const listenFds = parseInt(process.env.LISTEN_FDS || '0', 10);
-const listenPid = process.env.LISTEN_PID;
-
-if (listenFds >= 1 && listenPid && listenPid === String(process.pid)) {
-    // Started by systemd with socket activation
-    const systemdSocketFd = 3; // Standard first passed FD
-    console.log(`Server starting via systemd socket activation on fd ${systemdSocketFd}`);
-    serverInstance = app.listen({ fd: systemdSocketFd }, () => {
-        console.log(`Server listening on systemd-provided socket (fd ${systemdSocketFd})`);
-        if (!pdfService || !markdownService) {
-            console.warn('Warning: Core services may not have initialized correctly during socket activation startup.');
-        }
-        if (!serverFontBase64Sans || !serverFontBase64Serif) {
-            console.warn('Warning: Server DejaVu fonts failed to load during socket activation startup. PDFs may use default fonts.');
-        }
-        resetInactivityTimer(); // Start inactivity timer once server is listening
-    });
-} else {
-    // Standard startup
-    console.log(`Server starting normally on port ${port}`);
-    serverInstance = app.listen(port, () => {
-        console.log(`Server listening on port ${port}`);
-        if (!pdfService || !markdownService) {
-            console.warn('Warning: Core services may not have initialized correctly.');
-        }
-        if (!serverFontBase64Sans || !serverFontBase64Serif) {
-            console.warn('Warning: Server DejaVu fonts failed to load. PDFs may use default fonts.');
-        }
-        resetInactivityTimer(); // Start inactivity timer once server is listening
-    });
-}
-
-// Graceful Shutdown Logic
-function shutdownGracefully(signal: string) {
-    if (isShuttingDown) {
-        console.log('Shutdown already in progress. Ignoring signal.');
-        return;
+serverInstance = app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+    if (!pdfService || !markdownService) {
+        console.warn('Warning: Core services may not have initialized correctly.');
     }
-    isShuttingDown = true;
-    console.log(`Received ${signal}. Shutting down gracefully...`);
-
-    if (inactivityTimerId) { // Clear inactivity timer during shutdown
-        clearTimeout(inactivityTimerId);
+    if (!serverFontBase64Sans || !serverFontBase64Serif) {
+        console.warn('Warning: Server DejaVu fonts failed to load. PDFs may use default fonts.');
     }
-
-    const shutdownTimeoutMs = parseInt(process.env.GRACEFUL_SHUTDOWN_TIMEOUT_MS || '30000', 10);
-
-    const forceExitTimeout = setTimeout(() => {
-        console.warn(`Graceful shutdown timed out after ${shutdownTimeoutMs}ms. Forcing exit.`);
-        process.exit(1); 
-    }, shutdownTimeoutMs);
-
-    if (serverInstance) {
-        serverInstance.close((err) => {
-            clearTimeout(forceExitTimeout); 
-            if (err) {
-                console.error('Error during server.close():', err);
-                process.exit(1);
-            } else {
-                console.log('Server closed gracefully.');
-                process.exit(0);
-            }
-        });
-    } else {
-        console.warn('Server instance not found. Exiting immediately.');
-        clearTimeout(forceExitTimeout);
-        process.exit(1); 
-    }
-}
-
-process.on('SIGINT', () => shutdownGracefully('SIGINT'));
-process.on('SIGTERM', () => shutdownGracefully('SIGTERM'));
+});

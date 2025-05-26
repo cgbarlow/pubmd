@@ -1,0 +1,189 @@
+import { Canvg } from 'https://esm.sh/canvg@4.0.3';
+
+// other global libs are on window
+
+const md = window.markdownit();
+
+// Initialize Mermaid before use
+mermaid.initialize({
+  startOnLoad: false, // We call mermaid.run() manually
+  theme: 'base',       // Revert to 'base' theme for now
+  flowchart: { htmlLabels: false } // Use SVG text for flowchart labels
+});
+
+const preview = document.getElementById('preview');
+const pdfBtn = document.getElementById('pdfBtn');
+const docxBtn = document.getElementById('docxBtn');
+
+// Disable buttons initially
+if (pdfBtn) pdfBtn.disabled = true;
+if (docxBtn) docxBtn.disabled = true;
+
+// 1. load + preview
+fetch('./default.md')
+  .then(r => r.text())
+  .then(src => {
+    const html = md.render(src).replace(
+      /<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g,
+      // Add a specific ID to the mermaid container div
+      (_, code) => `<div class="mermaid" id="mermaid-diagram-container">${code}</div>`
+    );
+    preview.innerHTML = html;
+    return mermaid.run(); // mermaid.run() renders diagrams and returns a promise
+  })
+  .then(() => {
+    console.log("Mermaid rendering complete. Enabling export buttons.");
+    if (pdfBtn) pdfBtn.disabled = false;
+    if (docxBtn) docxBtn.disabled = false;
+  })
+  .catch(error => {
+    console.error("Error during initial load or Mermaid rendering:", error);
+    alert("Failed to render Mermaid diagram. Export functionality may be affected. Check console.");
+  });
+
+// ----- helpers -----
+function addBookmarks(nodesInput) { // pdfMake outline
+  // Ensure nodesInput is an array, even if htmlToPdfmake returns a single object or undefined
+  const nodes = Array.isArray(nodesInput) ? nodesInput : (nodesInput ? [nodesInput] : []);
+  
+  return nodes.map(n => {
+    if (n && n.style && typeof n.style === 'string' && /^h[1-6]$/.test(n.style)) {
+      let label = '';
+      if (Array.isArray(n.text)) {
+        label = n.text.map(t => (t && t.text) || (typeof t === 'string' ? t : '')).join('');
+      } else if (typeof n.text === 'string') {
+        label = n.text;
+      }
+      // Only add bookmark if label is not empty
+      if (label) {
+        n.bookmark = label;
+      }
+    }
+    return n;
+  }).filter(item => item !== null && item !== undefined); // Filter out any null/undefined items
+}
+
+async function inlineSvgStyles(svg) {
+  svg.querySelectorAll('style').forEach(s => s.remove());     // 1️⃣ ditch CSS
+  const props = ['fill','stroke','font-family','font-size',
+                 'stroke-width','font-weight'];
+  const queue = [svg];
+  while (queue.length) {
+    const el = queue.shift();
+    queue.push(...el.children);
+    const cs = getComputedStyle(el);
+    props.forEach(p => {
+      const v = cs.getPropertyValue(p);
+      if (v && !el.hasAttribute(p)) el.setAttribute(p, v);
+    });
+  }
+}
+
+async function mermaidSvgToPngDataUri(svgElement, width, height) {
+  if (typeof Canvg === 'undefined' || typeof Canvg.from !== 'function') {
+    console.error('Canvg.from is not defined. Ensure the library is imported correctly and is v4+.');
+    throw new Error('Canvg.from library function not available.');
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width  = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  
+  // Note: inlineSvgStyles has already modified svgElement in the calling scope
+  const v = await Canvg.from(ctx, svgElement.outerHTML, {
+    fetch,
+    log: true,
+  });
+  await v.render();
+  return canvas.toDataURL('image/png');
+}
+
+// 2. PDF export
+if (pdfBtn) {
+  pdfBtn.onclick = async () => { // Make it async
+    try {
+      let htmlContentForPdf = preview.innerHTML; // Start with the original preview content
+
+      const mermaidContainer = document.getElementById('mermaid-diagram-container');
+      if (mermaidContainer) {
+        const originalSvgElement = mermaidContainer.querySelector('svg');
+        // Check if Canvg and its fromString method are available
+        if (originalSvgElement && typeof Canvg !== 'undefined' && typeof Canvg.from === 'function') {
+          console.log("Waiting for document fonts to be ready...");
+          await document.fonts.ready;
+          console.log("Fonts ready. Inlining SVG styles...");
+          await inlineSvgStyles(originalSvgElement); // Inline styles before rasterizing
+          console.log("Styles inlined. Rasterizing Mermaid diagram with Canvg...");
+          
+          let svgWidth = originalSvgElement.width.baseVal.value;
+          let svgHeight = originalSvgElement.height.baseVal.value;
+
+          // If width/height are 0 or not set, try viewBox
+          if (!svgWidth || !svgHeight) {
+            const viewBox = originalSvgElement.viewBox.baseVal;
+            if (viewBox && viewBox.width && viewBox.height) {
+              svgWidth = viewBox.width;
+              svgHeight = viewBox.height;
+            } else {
+              // Fallback if no dimensions found - this might lead to issues
+              console.warn("Could not determine SVG dimensions, using fallback.");
+              svgWidth = 600; // Default fallback width
+              svgHeight = 400; // Default fallback height
+            }
+          }
+          
+          const pngUri = await mermaidSvgToPngDataUri(originalSvgElement, svgWidth, svgHeight);
+          
+          // Create a temporary div to modify the HTML structure safely
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = htmlContentForPdf;
+          
+          const mcInTemp = tempDiv.querySelector('#mermaid-diagram-container');
+          if (mcInTemp) {
+            // Scale dimensions for PDF (assuming 96 DPI screen, 72 DPI PDF)
+            // Use direct SVG dimensions for the image tag
+            mcInTemp.innerHTML = `<img src="${pngUri}" alt="Mermaid Diagram" width="${svgWidth}" height="${svgHeight}" />`;
+            htmlContentForPdf = tempDiv.innerHTML; // Update the HTML content for PDF
+            console.log("Mermaid diagram replaced with PNG image for PDF export.");
+          }
+        } else if (!originalSvgElement) {
+          console.warn("Mermaid SVG element not found for PDF export. Skipping rasterization.");
+        } else {
+          console.warn("Canvg.from function not found. Skipping rasterization for PDF export. Ensure Canvg is imported correctly (expected v4+).");
+        }
+      }
+
+      console.log("Attempting PDF generation...");
+      
+      const contentForPdf = htmlToPdfmake(htmlContentForPdf);
+      const pdfDef = {
+        content: addBookmarks(contentForPdf),
+        defaultStyle: { fontSize: 11, lineHeight: 1.2 }
+      };
+      pdfMake.createPdf(pdfDef).download('document.pdf');
+    } catch (e) {
+      console.error("Error during PDF generation:", e);
+      alert("Error generating PDF. Check console for details.");
+    }
+  };
+}
+
+// 3. DOCX export
+if (docxBtn) {
+  docxBtn.onclick = async () => {
+    try {
+      // Ensure htmlToDocx is available on the window object
+      if (typeof window.htmlToDocx !== 'function') {
+          throw new Error('htmlToDocx function not found on window object. Check CDN script.');
+      }
+      const blob = await window.htmlToDocx(preview.outerHTML, null, { pageSize: 'A4' });
+      const url = URL.createObjectURL(blob);
+      const link = Object.assign(document.createElement('a'), { href: url, download: 'document.docx' });
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("Error during DOCX generation:", e);
+      alert("Error generating DOCX. Check console for details.");
+    }
+  };
+}

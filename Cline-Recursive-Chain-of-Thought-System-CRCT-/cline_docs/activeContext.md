@@ -1,62 +1,28 @@
 # Active Context
 
-**Current Task**: Concluding Strategy Phase for "Server Auto-Start/Stop Feature".
+**Current Task**: Completed full rollback of the "Server Auto-Start/Stop Feature".
 
-**Overall Cycle Goals (Strategy Phase - Focused Session for Server Auto-Start/Stop):**
-1.  Review and finalize the strategy outlined in `cline_docs/tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md`. (Completed)
-2.  Prepare for the creation of detailed Execution Tasks based on this strategy. (Completed - All 9 Execution Tasks created)
-3.  Define the execution sequence for these tasks. (Completed)
+**Overall Cycle Goals:**
+*   The "Server Auto-Start/Stop Feature" has been fully rolled back. This includes:
+    *   Reversion of all code changes made to `nodejs_projects/server/src/index.ts`.
+    *   Deletion of the `systemd_units/pubmd.socket` file and the `systemd_units` directory.
+    *   Deletion of the `nodejs_projects/server/dist/` directory.
+    *   Deletion of all strategy and execution task definition files related to this feature (`Strategy_Task_Server_Auto_Start_Stop_20250524.md` and all files within `cline_docs/tasks/server_auto_start_stop/`).
+*   The system is now in a state equivalent to before this feature was initiated.
 
-**`current_planning_area`**: Server Auto-Start/Stop Feature
+**`current_planning_area`**: None (feature rolled back)
 
 **Strategy Phase Progress (Server Auto-Start/Stop Feature):**
-*   **Step 0 (Initialize Strategy Cycle): Completed.**
-*   **Step 1 (Select Area for Focused Planning): Completed.**
-*   **Step 2 (Focused Dependency Analysis for Selected Area): Completed.**
-*   **Step 3 & 4 (Review/Refine HDTA & Decompose into Atomic Tasks): Completed.**
-    *   The strategy document `cline_docs/tasks/Strategy_Task_Server_Auto_Start_Stop_20250524.md` was reviewed.
-    *   Its conceptual phases have been decomposed and formalized into 9 Execution Task files:
-        1.  `tasks/server_auto_start_stop/Execution_Server_Socket_Activation.md`
-        2.  `tasks/server_auto_start_stop/Execution_Server_Graceful_Shutdown.md`
-        3.  `tasks/server_auto_start_stop/Execution_Server_Inactivity_Termination.md`
-        4.  `tasks/server_auto_start_stop/Execution_Systemd_Socket_File.md`
-        5.  `tasks/server_auto_start_stop/Execution_Systemd_Service_File.md`
-        6.  `tasks/server_auto_start_stop/Execution_Build_Server.md`
-        7.  `tasks/server_auto_start_stop/Execution_Deploy_Systemd_Units.md`
-        8.  `tasks/server_auto_start_stop/Execution_Test_Server_Functionality.md`
-        9.  `tasks/server_auto_start_stop/Execution_Document_Feature.md`
-*   **Step 5 (Sequence Atomic Tasks): Completed.**
+*   All planning and execution artifacts for this feature have been removed.
 
 **Finalized Execution Sequence for "Server Auto-Start/Stop Feature":**
-
-1.  **Parallel Group 1 (Server Code Modifications):**
-    *   Task 1: `tasks/server_auto_start_stop/Execution_Server_Socket_Activation.md`
-    *   Task 2: `tasks/server_auto_start_stop/Execution_Server_Graceful_Shutdown.md` (depends on Task 1)
-    *   Task 3: `tasks/server_auto_start_stop/Execution_Server_Inactivity_Termination.md` (depends on Task 1, Task 2)
-
-2.  **Parallel Group 2 (Systemd File Creation - can be done concurrently with Group 1):**
-    *   Task 4: `tasks/server_auto_start_stop/Execution_Systemd_Socket_File.md`
-    *   Task 5: `tasks/server_auto_start_stop/Execution_Systemd_Service_File.md` (depends on Task 4)
-
-3.  **Sequential Step 3 (Build - depends on Group 1 completion):**
-    *   Task 6: `tasks/server_auto_start_stop/Execution_Build_Server.md` (depends on Tasks 1, 2, 3)
-
-4.  **Sequential Step 4 (Deploy - depends on Group 2 and Step 3 completion):**
-    *   Task 7: `tasks/server_auto_start_stop/Execution_Deploy_Systemd_Units.md` (depends on Tasks 4, 5, 6)
-
-5.  **Sequential Step 5 (Test - depends on Step 4 completion):**
-    *   Task 8: `tasks/server_auto_start_stop/Execution_Test_Server_Functionality.md` (depends on Task 7)
-
-6.  **Sequential Step 6 (Document - depends on Step 5 completion):**
-    *   Task 9: `tasks/server_auto_start_stop/Execution_Document_Feature.md` (depends on Task 8)
+*   Not applicable (feature rolled back).
 
 **Current State & Next Steps:**
-*   The Strategy phase for the "Server Auto-Start/Stop Feature" is now complete.
-*   All Execution Tasks have been defined and sequenced.
-*   The `Strategy_Task_Server_Auto_Start_Stop_20250524.md` is considered fully planned.
-*   The system is ready to transition to the Execution phase to implement these tasks.
+*   The "Server Auto-Start/Stop Feature" is fully rolled back.
+*   The system is awaiting new instructions or selection of a new planning area.
 
-**MUP Trigger**: Context window usage at 28%.
+**MUP Trigger**: Context window usage at 29%.
 **Action**: Performing Mandatory Update Protocol.
 
 **Server-Side Build Issue (Ongoing - Prerequisite for PDF Theming Fix if revisited):** (No changes this turn)
